@@ -58,7 +58,7 @@ function App() {
   }, [messages]);
 
   const createNewConversation = () => {
-    const newConv = conversationStorage.create('New Conversation', language, uiLang);
+    const newConv = conversationStorage.create('New Conversation', language, 'en');  // Default en, lingua rilevata automaticamente
     newConv.messages = [{ role: 'assistant', content: t.greeting }];
     conversationStorage.save(newConv);
     conversationStorage.setCurrentId(newConv.id);
@@ -66,7 +66,7 @@ function App() {
     setCurrentConversationId(newConv.id);
     setMessages(newConv.messages);
     setLanguage(newConv.language);
-    setUiLang(newConv.uiLang);
+    // uiLang rimosso: rilevato automaticamente
     setConversations(conversationStorage.getAll());
     setSidebarOpen(false);
   };
@@ -77,7 +77,7 @@ function App() {
       setCurrentConversationId(conv.id);
       setMessages(conv.messages);
       setLanguage(conv.language);
-      setUiLang(conv.uiLang);
+      // uiLang rimosso: rilevato automaticamente
       conversationStorage.setCurrentId(conv.id);
       setSidebarOpen(false);
     }
