@@ -4,6 +4,7 @@ from main import CodeAssistant
 from languages import languages
 from knowledge_base import find_answer
 from llm_handler import LLMHandler, get_fallback_response
+from language_detector import get_language_detector
 import json
 
 app = Flask(__name__)
@@ -19,13 +20,19 @@ if llm.available:
     models = llm.list_available_models()
     print(f"Available models: {models}")
 
+# Initialize language detector
+lang_detector = get_language_detector()
+print("Language detector initialized")
+
 @app.route('/api/query', methods=['POST'])
 def handle_query():
     data = request.json
     query = data.get('query', '')
     language = data.get('language', 'Python')
-    ui_language = data.get('uiLanguage', 'en')
-    print(f"Received request - Query: '{query}', Language: '{language}', UI Language: '{ui_language}'")
+    
+    # Rileva automaticamente la lingua dell'utente dal testo
+    ui_language = lang_detector.detect_language(query)
+    print(f"Received request - Query: '{query}', Language: '{language}', Auto-detected UI Language: '{ui_language}'")
     
     # Set the language
     assistant.set_language(language)
@@ -82,9 +89,10 @@ def handle_query_stream():
     data = request.json
     query = data.get('query', '')
     language = data.get('language', 'Python')
-    ui_language = data.get('uiLanguage', 'en')
     
-    print(f"Streaming request - Query: '{query}', Language: '{language}'")
+    # Rileva automaticamente la lingua dell'utente dal testo
+    ui_language = lang_detector.detect_language(query)
+    print(f"Streaming request - Query: '{query}', Language: '{language}', Auto-detected UI Language: '{ui_language}'")
     
     def generate():
         # Set the language

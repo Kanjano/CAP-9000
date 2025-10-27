@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Send, Circle, Globe, Menu } from 'lucide-react'
+import { Send, Circle, Menu } from 'lucide-react'
 import { translations, languageNames } from './i18n/translations'
 import MessageContent from './components/MessageContent'
 import ConversationSidebar from './components/ConversationSidebar'
@@ -8,7 +8,6 @@ import { conversationStorage } from './utils/conversationStorage'
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
-  const [uiLang, setUiLang] = useState('en')
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [language, setLanguage] = useState('Python')
@@ -19,29 +18,29 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const messagesEndRef = useRef(null)
 
-  const t = translations[uiLang]
+  // Lingua rilevata automaticamente dal backend
+  const t = translations['en']  // Fallback, la lingua vera viene rilevata dal backend
 
-  // Load conversations on mount
+  // Load conversations on mount - DOPO splash screen
   useEffect(() => {
-    console.log('App mounted. electronAPI available:', !!window.electronAPI);
-    const savedConversations = conversationStorage.getAll();
-    setConversations(savedConversations);
-    
-    const currentId = conversationStorage.getCurrentId();
-    if (currentId && savedConversations.find(c => c.id === currentId)) {
-      loadConversation(currentId);
-    } else {
-      // Create new conversation
-      createNewConversation();
+    if (!isLoading) {
+      console.log('App ready. Loading conversations...');
+      const savedConversations = conversationStorage.getAll();
+      console.log('Found saved conversations:', savedConversations.length);
+      setConversations(savedConversations);
+      
+      const currentId = conversationStorage.getCurrentId();
+      if (currentId && savedConversations.find(c => c.id === currentId)) {
+        console.log('Loading conversation:', currentId);
+        loadConversation(currentId);
+      } else {
+        console.log('Creating new conversation');
+        createNewConversation();
+      }
     }
-  }, []);
+  }, [isLoading]);  // Trigger quando splash finisce
 
-  // Update greeting when UI language changes
-  useEffect(() => {
-    if (messages.length === 1 && messages[0].role === 'assistant') {
-      setMessages([{ role: 'assistant', content: t.greeting }]);
-    }
-  }, [uiLang]);
+  // Rimosso: lingua rilevata automaticamente dal backend
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -157,8 +156,8 @@ function App() {
         const cleanup = window.electronAPI.sendQueryStream(
           {
             query: currentQuery,
-            language: language,
-            uiLanguage: uiLang
+            language: language
+            // uiLanguage rimosso: rilevato automaticamente dal backend
           },
           // onChunk - riceve ogni pezzo di testo
           (chunk) => {
@@ -198,8 +197,8 @@ function App() {
         console.log('Using non-streaming query');
         const data = await window.electronAPI.sendQuery({
           query: currentQuery,
-          language: language,
-          uiLanguage: uiLang
+          language: language
+          // uiLanguage rimosso: rilevato automaticamente dal backend
         });
         
         setTimeout(() => {
@@ -267,27 +266,13 @@ function App() {
             </div>
           </div>
 
-          {/* Right: Language Selectors */}
-          <div className="flex items-center gap-4">
-            {/* UI Language */}
-            <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-red-500" />
-              <select 
-                value={uiLang}
-                onChange={(e) => setUiLang(e.target.value)}
-                className="bg-black border border-red-900 text-red-400 px-2 py-1 rounded text-sm focus:outline-none focus:border-hal-red"
-              >
-                {Object.entries(languageNames).map(([code, name]) => (
-                  <option key={code} value={code}>{name}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Programming Language */}
+          {/* Right: Programming Language Selector Only */}
+          <div className="flex items-center gap-2">
+            <span className="text-red-500 text-xs opacity-70">Language:</span>
             <select 
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="bg-black border border-red-900 text-red-400 px-3 py-1 rounded text-sm focus:outline-none focus:border-hal-red"
+              className="bg-black border border-red-900 text-red-400 px-3 py-1.5 rounded text-sm focus:outline-none focus:border-hal-red"
             >
               {languages.map(lang => (
                 <option key={lang} value={lang}>{lang}</option>

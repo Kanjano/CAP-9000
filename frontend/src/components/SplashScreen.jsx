@@ -10,8 +10,10 @@ export default function SplashScreen({ onComplete }) {
     "Inizializzazione sistemi CAP 9000...",
     "Caricamento moduli di intelligenza artificiale...",
     "Verifica integrità neural network...",
-    "Connessione a Ollama LLM in corso...",
+    "Avvio servizio Ollama LLM...",
+    "Connessione a Ollama in corso...",
     "Calibrazione assistente di programmazione...",
+    "Caricamento conversazioni precedenti...",
     "Attivazione knowledge base linguaggi...",
     "Sincronizzazione interfaccia utente...",
     "Preparazione ambiente di sviluppo...",
@@ -28,7 +30,7 @@ export default function SplashScreen({ onComplete }) {
         }
         return prev;
       });
-    }, 800);
+    }, 600);  // Rallentato per dare tempo a Ollama
 
     // Incrementa la progress bar
     const progressInterval = setInterval(() => {
@@ -39,9 +41,9 @@ export default function SplashScreen({ onComplete }) {
           setTimeout(() => onComplete(), 500);
           return 100;
         }
-        return prev + 2;
+        return prev + 1.5;  // Rallentato per ~6-7 secondi totali
       });
-    }, 80);
+    }, 100);
 
     return () => {
       clearInterval(phraseInterval);
