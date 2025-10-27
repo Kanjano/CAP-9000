@@ -285,20 +285,20 @@ function App() {
                 key={index}
                 className={`w-full ${
                   message.role === 'user' 
-                    ? 'bg-hal-bg' 
-                    : 'bg-gray-900/30'
+                    ? 'bg-transparent' 
+                    : 'bg-[#2f2f2f]/40'
                 }`}
               >
-                <div className="max-w-4xl mx-auto px-6 py-6">
-                  <div className="flex gap-4">
+                <div className="max-w-3xl mx-auto px-6 py-8">
+                  <div className="flex gap-6">
                     {/* Avatar */}
                     <div className="flex-shrink-0">
                       {message.role === 'user' ? (
-                        <div className="w-8 h-8 rounded-full bg-red-900 flex items-center justify-center text-white text-sm font-bold">
+                        <div className="w-8 h-8 rounded-sm bg-red-900/80 flex items-center justify-center text-white text-sm font-bold">
                           U
                         </div>
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-gradient-radial from-hal-red to-red-900 hal-eye-glow flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-sm bg-gradient-radial from-hal-red to-red-900 hal-eye-glow flex items-center justify-center">
                           <Circle className="w-4 h-4 text-black fill-black opacity-30" />
                         </div>
                       )}
@@ -306,10 +306,10 @@ function App() {
                     
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs text-red-400 opacity-70 mb-2 font-semibold">
+                      <div className="text-xs text-red-400/80 mb-3 font-medium tracking-wide">
                         {message.role === 'user' ? t.userLabel : t.halLabel}
                       </div>
-                      <div className="text-gray-200 prose prose-invert max-w-none">
+                      <div className="text-gray-100 max-w-none">
                         <MessageContent content={message.content} />
                       </div>
                     </div>
@@ -320,14 +320,14 @@ function App() {
           })}
           
           {isTyping && (
-            <div className="w-full bg-gray-900/30">
-              <div className="max-w-4xl mx-auto px-6 py-6">
-                <div className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-gradient-radial from-hal-red to-red-900 hal-eye-glow flex items-center justify-center">
+            <div className="w-full bg-[#2f2f2f]/40">
+              <div className="max-w-3xl mx-auto px-6 py-8">
+                <div className="flex gap-6">
+                  <div className="w-8 h-8 rounded-sm bg-gradient-radial from-hal-red to-red-900 hal-eye-glow flex items-center justify-center">
                     <Circle className="w-4 h-4 text-black fill-black opacity-30" />
                   </div>
                   <div className="flex-1">
-                    <div className="text-xs text-red-400 opacity-70 mb-2 font-semibold">{t.halLabel}</div>
+                    <div className="text-xs text-red-400/80 mb-3 font-medium tracking-wide">{t.halLabel}</div>
                     <div className="flex gap-1">
                       <span className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></span>
                       <span className="w-2 h-2 bg-red-500 rounded-full animate-bounce delay-100"></span>

@@ -56,15 +56,20 @@ export default function MessageContent({ content }) {
           // Processa il testo per mantenere i ritorni a capo e la formattazione
           const formattedContent = part.content
             .split('\n')
-            .filter(line => line.trim() !== '')
-            .map((line, i) => (
-              <div key={i} className="text-gray-200 mb-2 leading-relaxed">
-                {line || <br />}
-              </div>
-            ));
+            .map((line, i) => {
+              // Mantieni le righe vuote come <br />
+              if (line.trim() === '') {
+                return <br key={i} />;
+              }
+              return (
+                <p key={i} className="text-gray-100 leading-7 mb-3">
+                  {line}
+                </p>
+              );
+            });
             
           return (
-            <div key={index} className="mb-4">
+            <div key={index} className="text-base">
               {formattedContent}
             </div>
           );
