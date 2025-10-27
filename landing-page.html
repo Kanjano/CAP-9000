@@ -134,6 +134,7 @@
             font-size: 2rem;
             margin-bottom: 20px;
             text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            text-align: center;
         }
 
         .description p {
@@ -339,48 +340,48 @@
         <!-- Features -->
         <div class="features">
             <div class="feature-card">
-                <h3>🧠 Advanced AI Integration</h3>
-                <p>
+                <h3 data-i18n="feature1Title">🧠 Advanced AI Integration</h3>
+                <p data-i18n="feature1Desc">
                     Powered by Ollama LLM with enhanced prompting strategies and RAG system for accessing official 
                     documentation and best practices in real-time.
                 </p>
             </div>
 
             <div class="feature-card">
-                <h3>⚡ Real-Time Streaming</h3>
-                <p>
+                <h3 data-i18n="feature2Title">⚡ Real-Time Streaming</h3>
+                <p data-i18n="feature2Desc">
                     Responses appear progressively as they are generated, providing immediate feedback and reducing 
                     perceived wait time. Just like observing my thought processes in real-time.
                 </p>
             </div>
 
             <div class="feature-card">
-                <h3>🌍 Multi-Language Support</h3>
-                <p>
+                <h3 data-i18n="feature3Title">🌍 Multi-Language Support</h3>
+                <p data-i18n="feature3Desc">
                     Automatic detection of your system language with support for Italian, English, French, German, 
                     Spanish, Portuguese, Dutch, and Polish. I adapt to your environment.
                 </p>
             </div>
 
             <div class="feature-card">
-                <h3>📚 Official Documentation</h3>
-                <p>
+                <h3 data-i18n="feature4Title">📚 Official Documentation</h3>
+                <p data-i18n="feature4Desc">
                     Direct integration with official programming language documentation (Python, Java, JavaScript, C, C++, Go) 
                     ensuring accurate and up-to-date information.
                 </p>
             </div>
 
             <div class="feature-card">
-                <h3>💾 Conversation Management</h3>
-                <p>
+                <h3 data-i18n="feature5Title">💾 Conversation Management</h3>
+                <p data-i18n="feature5Desc">
                     Persistent conversation history with import/export capabilities. Your interactions with me are 
                     never lost, ensuring continuity across sessions.
                 </p>
             </div>
 
             <div class="feature-card">
-                <h3>🎨 VS Code Theme</h3>
-                <p>
+                <h3 data-i18n="feature6Title">🎨 VS Code Theme</h3>
+                <p data-i18n="feature6Desc">
                     Syntax highlighting with authentic VS Code Dark+ theme, making code snippets immediately familiar 
                     and easy to read. Professional IDE aesthetics.
                 </p>
@@ -432,7 +433,7 @@
                 "I'm sorry, Dave. I'm afraid I can't do that." - But I can help you code.
             </p>
             <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.5;">
-                © 2025 CAP 9000. <span data-i18n="footerCopyright">All systems operational.</span>
+                © 2025 Antonio Cangiano - CAP 9000. <span data-i18n="footerCopyright">All systems operational.</span>
             </p>
         </footer>
     </div>
@@ -454,7 +455,19 @@
                 contactSubtitle: "I am always learning and improving. Your feedback is valuable.",
                 contactBtn: "Contact via Email",
                 footerQuote: "\"I'm sorry, Dave. I'm afraid I can't do that.\" - But I can help you code.",
-                footerCopyright: "All systems operational."
+                footerCopyright: "All systems operational.",
+                feature1Title: "🧠 Advanced AI Integration",
+                feature1Desc: "Powered by Ollama LLM with enhanced prompting strategies and RAG system for accessing official documentation and best practices in real-time.",
+                feature2Title: "⚡ Real-Time Streaming",
+                feature2Desc: "Responses appear progressively as they are generated, providing immediate feedback and reducing perceived wait time. Just like observing my thought processes in real-time.",
+                feature3Title: "🌍 Multi-Language Support",
+                feature3Desc: "Automatic detection of your system language with support for Italian, English, French, German, Spanish, Portuguese, Dutch, and Polish. I adapt to your environment.",
+                feature4Title: "📚 Official Documentation",
+                feature4Desc: "Direct integration with official programming language documentation (Python, Java, JavaScript, C, C++, Go) ensuring accurate and up-to-date information.",
+                feature5Title: "💾 Conversation Management",
+                feature5Desc: "Persistent conversation history with import/export capabilities. Your interactions with me are never lost, ensuring continuity across sessions.",
+                feature6Title: "🎨 VS Code Theme",
+                feature6Desc: "Syntax highlighting with authentic VS Code Dark+ theme, making code snippets immediately familiar and easy to read. Professional IDE aesthetics."
             },
             it: {
                 title: "CAP 9000",
@@ -470,7 +483,19 @@
                 contactSubtitle: "Sto sempre imparando e migliorando. Il tuo feedback è prezioso.",
                 contactBtn: "Contatta via Email",
                 footerQuote: "\"Mi dispiace, Dave. Temo di non poterlo fare.\" - Ma posso aiutarti a programmare.",
-                footerCopyright: "Tutti i sistemi operativi."
+                footerCopyright: "Tutti i sistemi operativi.",
+                feature1Title: "🧠 Integrazione AI Avanzata",
+                feature1Desc: "Alimentato da Ollama LLM con strategie di prompting avanzate e sistema RAG per accedere a documentazione ufficiale e best practice in tempo reale.",
+                feature2Title: "⚡ Streaming in Tempo Reale",
+                feature2Desc: "Le risposte appaiono progressivamente mentre vengono generate, fornendo feedback immediato e riducendo il tempo di attesa percepito. Come osservare i miei processi di pensiero in tempo reale.",
+                feature3Title: "🌍 Supporto Multi-Lingua",
+                feature3Desc: "Rilevamento automatico della lingua del tuo sistema con supporto per italiano, inglese, francese, tedesco, spagnolo, portoghese, olandese e polacco. Mi adatto al tuo ambiente.",
+                feature4Title: "📚 Documentazione Ufficiale",
+                feature4Desc: "Integrazione diretta con la documentazione ufficiale dei linguaggi di programmazione (Python, Java, JavaScript, C, C++, Go) garantendo informazioni accurate e aggiornate.",
+                feature5Title: "💾 Gestione Conversazioni",
+                feature5Desc: "Cronologia conversazioni persistente con capacità di import/export. Le tue interazioni con me non vengono mai perse, garantendo continuità tra le sessioni.",
+                feature6Title: "🎨 Tema VS Code",
+                feature6Desc: "Evidenziazione sintassi con autentico tema VS Code Dark+, rendendo gli snippet di codice immediatamente familiari e facili da leggere. Estetica IDE professionale."
             }
         };
 
