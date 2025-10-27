@@ -90,7 +90,7 @@ function App() {
     if (conv) {
       conv.messages = messages;
       conv.language = language;
-      conv.uiLang = uiLang;
+      conv.uiLang = 'en';  // Default, lingua rilevata automaticamente
       
       // Auto-generate title from first user message
       if (conv.title === 'New Conversation' && messages.length >= 2) {
