@@ -36,20 +36,28 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      // Disabilita funzionalità browser non necessarie
+      webSecurity: true,
+      allowRunningInsecureContent: false
     },
     icon: path.join(__dirname, 'icon.png'),
-    title: 'CAP 9000 - Code Assistant'
+    title: 'CAP 9000 - Code Assistant',
+    // Ottimizzazioni desktop
+    show: false, // Non mostrare finestra finché non è pronta
+    autoHideMenuBar: true // Nascondi menu bar di default
   });
 
-  // Load the app
+  // Load the app (Desktop-only - no browser fallback)
   const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
-  console.log('Loading app from:', indexPath);
+  console.log('Loading desktop app from:', indexPath);
   
   mainWindow.loadFile(indexPath).then(() => {
-    console.log('App loaded successfully');
+    console.log('Desktop app loaded successfully');
+    mainWindow.show(); // Mostra finestra solo quando pronta
   }).catch((err) => {
-    console.error('Failed to load app:', err);
+    console.error('Failed to load desktop app:', err);
+    app.quit();
   });
   
   // Open DevTools in development

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🔴 Starting HAL 9000 Code Assistant..."
+echo "🚀 Starting CAP 9000 Code Assistant (Desktop App)..."
 echo ""
 
 # Check if Python is installed
@@ -11,7 +11,7 @@ fi
 
 # Check if Flask is installed
 if ! python3 -c "import flask" &> /dev/null; then
-    echo "❌ Flask is not installed. Installing..."
+    echo "📦 Installing Flask..."
     pip3 install flask flask-cors
 fi
 
@@ -23,21 +23,13 @@ fi
 
 # Check if dependencies are installed
 if [ ! -d "frontend/node_modules" ]; then
-    echo "📦 Installing Node.js dependencies..."
+    echo "📦 Installing dependencies..."
     cd frontend
     npm install
     cd ..
 fi
 
-# Build frontend if dist doesn't exist
-if [ ! -d "frontend/dist" ]; then
-    echo "🔨 Building frontend..."
-    cd frontend
-    npm run build
-    cd ..
-fi
-
-# Start the Electron app
-echo "🚀 Launching HAL 9000..."
+# Build and start desktop app
+echo "🔨 Building and launching desktop application..."
 cd frontend
-npm run electron:dev
+npm run start

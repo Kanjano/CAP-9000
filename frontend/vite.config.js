@@ -1,15 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// Configurazione ottimizzata per applicazione desktop Electron
 export default defineConfig({
   plugins: [react()],
   base: './',
-  server: {
-    port: 3000,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5001',
-        changeOrigin: true,
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
       }
     }
   }
