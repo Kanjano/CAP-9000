@@ -52,7 +52,7 @@ export default function ConversationSidebar({
 
       {/* Sidebar */}
       <div className={`
-        fixed lg:relative top-0 left-0 h-full w-80 bg-hal-panel border-r-2 border-red-900 
+        fixed lg:relative top-0 left-0 h-full w-80 bg-hal-bg border-r-2 border-red-900 
         flex flex-col z-50 transition-transform duration-300
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
@@ -62,12 +62,6 @@ export default function ConversationSidebar({
             <MessageSquare className="w-5 h-5" />
             {translations.conversations}
           </h2>
-          <button
-            onClick={onClose}
-            className="lg:hidden text-red-500 hover:text-red-400"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
         {/* New conversation button */}
@@ -81,8 +75,8 @@ export default function ConversationSidebar({
           </button>
         </div>
 
-        {/* Conversations list */}
-        <div className="flex-1 overflow-y-auto p-2">
+        {/* Conversations list - scrollable */}
+        <div className="flex-1 overflow-y-auto p-2 pb-20">
           {conversations.length === 0 ? (
             <div className="text-center text-red-400 opacity-60 py-8 px-4">
               {translations.noConversations}<br />
@@ -147,11 +141,10 @@ export default function ConversationSidebar({
           )}
         </div>
 
-        {/* Import button */}
-        <div className="p-4 border-t border-red-900">
-          <label className="w-full bg-black hover:bg-red-950 text-red-400 px-4 py-2 rounded flex items-center justify-center gap-2 transition-colors cursor-pointer border border-red-900">
-            <Upload className="w-4 h-4" />
-            {translations.importConversation}
+        {/* Import button - Fixed bottom right */}
+        <div className="absolute bottom-4 right-4">
+          <label className="bg-red-900 hover:bg-red-800 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110 cursor-pointer block" title={translations.import}>
+            <Upload className="w-5 h-5" />
             <input
               type="file"
               accept=".json"

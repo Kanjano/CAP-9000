@@ -103,16 +103,30 @@ function App() {
   };
 
   const deleteConversation = (id) => {
-    conversationStorage.delete(id);
-    const remaining = conversationStorage.getAll();
-    setConversations(remaining);
+    console.log('Deleting conversation:', id);
     
+    // Se è la conversazione corrente, cambia prima
     if (id === currentConversationId) {
+      const remaining = conversationStorage.getAll().filter(c => c.id !== id);
+      
+      // Clear current ID per evitare auto-save
+      setCurrentConversationId(null);
+      conversationStorage.setCurrentId('');
+      
+      // Elimina la conversazione
+      conversationStorage.delete(id);
+      setConversations(conversationStorage.getAll());
+      
+      // Carica altra conversazione o crea nuova
       if (remaining.length > 0) {
-        loadConversation(remaining[0].id);
+        setTimeout(() => loadConversation(remaining[0].id), 100);
       } else {
-        createNewConversation();
+        setTimeout(() => createNewConversation(), 100);
       }
+    } else {
+      // Non è la corrente, elimina direttamente
+      conversationStorage.delete(id);
+      setConversations(conversationStorage.getAll());
     }
   };
 
@@ -292,11 +306,12 @@ function App() {
             return (
               <div
                 key={index}
-                className={`w-full ${
+                className={`w-full animate-fadeIn ${
                   message.role === 'user' 
                     ? 'bg-transparent' 
                     : 'bg-[#2f2f2f]/40'
                 }`}
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div className="max-w-3xl mx-auto px-6 py-8">
                   <div className="flex gap-6">
