@@ -49,10 +49,4 @@
   
   <!-- Outer ring -->
   <circle cx="256" cy="256" r="140" fill="none" stroke="#ff0000" stroke-width="4"/>
-  
-  <!-- Text CAP -->
-  <text x="256" y="420" font-family="'Courier New', monospace" font-size="48" font-weight="bold" fill="#ff0000" text-anchor="middle">CAP</text>
-  
-  <!-- Text 9000 -->
-  <text x="256" y="465" font-family="'Courier New', monospace" font-size="32" fill="#ff0000" text-anchor="middle">9000</text>
 </svg>
