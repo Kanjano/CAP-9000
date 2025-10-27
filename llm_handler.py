@@ -1,10 +1,11 @@
 """
 LLM Handler per CAP 9000 Code Assistant
-Supporta Ollama per modelli locali
+Supporta Ollama per modelli locali con RAG per documentazioni ufficiali
 """
 
 import requests
 import json
+from rag_system import get_rag_system
 
 class LLMHandler:
     def __init__(self, model="codellama", ollama_url="http://localhost:11434"):
@@ -18,6 +19,7 @@ class LLMHandler:
         self.model = model
         self.ollama_url = ollama_url
         self.available = self.check_ollama_available()
+        self.rag = get_rag_system()  # Sistema RAG per documentazioni
     
     def check_ollama_available(self):
         """Verifica se Ollama è disponibile"""
@@ -97,18 +99,23 @@ Response language: {response_language}
 
 Provide comprehensive, professional assistance:"""
 
+        # Arricchisci il prompt con contesto RAG (documentazioni ufficiali + best practices)
+        enriched_system_prompt = self.rag.enrich_prompt(system_prompt, language, query)
+        
         user_prompt = f"Question about {language}: {query}"
         
         if context:
             user_prompt = f"{context}\n\n{user_prompt}"
         
+        print(f"[RAG] Prompt enriched with official documentation and best practices for {language}")
+        
         try:
-            # Chiamata API Ollama
+            # Chiamata API Ollama con prompt arricchito
             response = requests.post(
                 f"{self.ollama_url}/api/generate",
                 json={
                     "model": self.model,
-                    "prompt": f"{system_prompt}\n\n{user_prompt}",
+                    "prompt": f"{enriched_system_prompt}\n\n{user_prompt}",
                     "stream": False,
                     "options": {
                         "temperature": 0.7,
@@ -200,14 +207,19 @@ Response language: {response_language}
 
 Provide comprehensive, professional assistance:"""
 
+        # Arricchisci il prompt con contesto RAG anche per streaming
+        enriched_system_prompt = self.rag.enrich_prompt(system_prompt, language, query)
+        
         user_prompt = f"Question about {language}: {query}"
+        
+        print(f"[RAG Streaming] Prompt enriched with official documentation for {language}")
 
         try:
             response = requests.post(
                 f"{self.ollama_url}/api/generate",
                 json={
                     "model": self.model,
-                    "prompt": f"{system_prompt}\n\n{user_prompt}",
+                    "prompt": f"{enriched_system_prompt}\n\n{user_prompt}",
                     "stream": True,
                     "options": {
                         "temperature": 0.7,
