@@ -3,9 +3,11 @@ import { Send, Circle, Globe, Menu } from 'lucide-react'
 import { translations, languageNames } from './i18n/translations'
 import MessageContent from './components/MessageContent'
 import ConversationSidebar from './components/ConversationSidebar'
+import SplashScreen from './components/SplashScreen'
 import { conversationStorage } from './utils/conversationStorage'
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true)
   const [uiLang, setUiLang] = useState('en')
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
@@ -201,6 +203,11 @@ function App() {
         setIsTyping(false)
       }, 500)
     }
+  }
+
+  // Mostra splash screen durante il caricamento
+  if (isLoading) {
+    return <SplashScreen onComplete={() => setIsLoading(false)} />;
   }
 
   return (

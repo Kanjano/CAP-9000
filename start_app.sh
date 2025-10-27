@@ -21,6 +21,23 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
+# Check and start Ollama if needed
+echo ""
+./check_ollama.sh
+OLLAMA_STATUS=$?
+
+if [ $OLLAMA_STATUS -ne 0 ]; then
+    echo ""
+    echo "⚠️  ATTENZIONE: Ollama non è disponibile"
+    echo "L'applicazione si avvierà comunque, ma le risposte AI saranno limitate."
+    echo ""
+    read -p "Continuare comunque? (y/n) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        exit 1
+    fi
+fi
+
 # Check if dependencies are installed
 if [ ! -d "frontend/node_modules" ]; then
     echo "📦 Installing dependencies..."
@@ -30,6 +47,7 @@ if [ ! -d "frontend/node_modules" ]; then
 fi
 
 # Build and start desktop app
+echo ""
 echo "🔨 Building and launching desktop application..."
 cd frontend
 npm run start
