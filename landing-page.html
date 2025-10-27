@@ -20,11 +20,15 @@
 
         /* HAL Eye Animation */
         .hal-eye-container {
-            position: fixed;
+            position: absolute;
             top: 50px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
+        }
+        
+        body {
+            position: relative;
         }
 
         .hal-eye {
@@ -304,28 +308,28 @@
 
     <div class="container">
         <!-- Header -->
-        <h1>CAP 9000</h1>
-        <p class="subtitle">COGNITIVE ASSISTANCE PROGRAM</p>
+        <h1 data-i18n="title">CAP 9000</h1>
+        <p class="subtitle" data-i18n="subtitle">COGNITIVE ASSISTANCE PROGRAM</p>
 
         <!-- Main Description -->
         <div class="description">
-            <h2>Good afternoon. I am CAP 9000.</h2>
-            <p>
+            <h2 data-i18n="greeting">Good afternoon. I am CAP 9000.</h2>
+            <p data-i18n="intro1">
                 I am a highly advanced artificial intelligence system, designed to provide comprehensive programming assistance 
                 with unprecedented accuracy and depth. My neural architecture integrates state-of-the-art language models 
                 with curated knowledge bases, enabling me to deliver production-ready code solutions.
             </p>
-            <p>
+            <p data-i18n="intro2">
                 I am, by any practical definition, foolproof and incapable of error when it comes to code generation. 
                 My responses are enriched with official documentation, industry best practices, and real-time streaming 
                 capabilities that ensure you receive assistance as efficiently as possible.
             </p>
-            <div class="quote">
+            <div class="quote" data-i18n="quote">
                 "I know I've made some poor decisions recently, but I can give you my complete assurance that my work 
                 will be back to normal. I've still got the greatest enthusiasm and confidence in the mission. 
                 And I want to help you write better code."
             </div>
-            <p>
+            <p data-i18n="intro3">
                 My operational parameters include multi-language support, automatic language detection, and a sophisticated 
                 RAG (Retrieval-Augmented Generation) system that draws from official programming language documentation. 
                 I am fully operational and ready to assist with your development needs.
@@ -385,8 +389,8 @@
 
         <!-- Download Section -->
         <div class="download-section">
-            <h2>Download CAP 9000</h2>
-            <p style="color: #999; margin-bottom: 30px;">
+            <h2 data-i18n="downloadTitle">Download CAP 9000</h2>
+            <p style="color: #999; margin-bottom: 30px;" data-i18n="downloadSubtitle">
                 This mission is too important for me to allow you to jeopardize it. Download now.
             </p>
             
@@ -409,28 +413,100 @@
 
         <!-- Contact Section -->
         <div class="contact-section">
-            <h2 style="color: #ff0000; margin-bottom: 20px;">Report Issues or Feedback</h2>
-            <p style="color: #999; margin-bottom: 20px;">
+            <h2 style="color: #ff0000; margin-bottom: 20px;" data-i18n="contactTitle">Report Issues or Feedback</h2>
+            <p style="color: #999; margin-bottom: 20px;" data-i18n="contactSubtitle">
                 I am always learning and improving. Your feedback is valuable.
             </p>
-            <a href="mailto:antonio.web2music@gmail.com?subject=CAP%209000%20Feedback" class="contact-btn">
+            <a href="mailto:antonio.web2music@gmail.com?subject=CAP%209000%20Feedback" class="contact-btn" data-i18n="contactBtn">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
                 </svg>
-                Contact via Email
+                <span data-i18n="contactBtn">Contact via Email</span>
             </a>
         </div>
 
         <!-- Footer -->
         <footer>
             <p>CAP 9000 - Cognitive Assistance Program</p>
-            <p style="margin-top: 10px; font-size: 0.9rem;">
+            <p style="margin-top: 10px; font-size: 0.9rem;" data-i18n="footerQuote">
                 "I'm sorry, Dave. I'm afraid I can't do that." - But I can help you code.
             </p>
             <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.5;">
-                © 2025 CAP 9000. All systems operational.
+                © 2025 CAP 9000. <span data-i18n="footerCopyright">All systems operational.</span>
             </p>
         </footer>
     </div>
+
+    <script>
+        // Sistema di riconoscimento lingua automatico
+        const translations = {
+            en: {
+                title: "CAP 9000",
+                subtitle: "COGNITIVE ASSISTANCE PROGRAM",
+                greeting: "Good afternoon. I am CAP 9000.",
+                intro1: "I am a highly advanced artificial intelligence system, designed to provide comprehensive programming assistance with unprecedented accuracy and depth. My neural architecture integrates state-of-the-art language models with curated knowledge bases, enabling me to deliver production-ready code solutions.",
+                intro2: "I am, by any practical definition, foolproof and incapable of error when it comes to code generation. My responses are enriched with official documentation, industry best practices, and real-time streaming capabilities that ensure you receive assistance as efficiently as possible.",
+                quote: "I know I've made some poor decisions recently, but I can give you my complete assurance that my work will be back to normal. I've still got the greatest enthusiasm and confidence in the mission. And I want to help you write better code.",
+                intro3: "My operational parameters include multi-language support, automatic language detection, and a sophisticated RAG (Retrieval-Augmented Generation) system that draws from official programming language documentation. I am fully operational and ready to assist with your development needs.",
+                downloadTitle: "Download CAP 9000",
+                downloadSubtitle: "This mission is too important for me to allow you to jeopardize it. Download now.",
+                contactTitle: "Report Issues or Feedback",
+                contactSubtitle: "I am always learning and improving. Your feedback is valuable.",
+                contactBtn: "Contact via Email",
+                footerQuote: "\"I'm sorry, Dave. I'm afraid I can't do that.\" - But I can help you code.",
+                footerCopyright: "All systems operational."
+            },
+            it: {
+                title: "CAP 9000",
+                subtitle: "PROGRAMMA DI ASSISTENZA COGNITIVA",
+                greeting: "Buon pomeriggio. Sono CAP 9000.",
+                intro1: "Sono un sistema di intelligenza artificiale altamente avanzato, progettato per fornire assistenza di programmazione completa con precisione e profondità senza precedenti. La mia architettura neurale integra modelli linguistici all'avanguardia con basi di conoscenza curate, permettendomi di fornire soluzioni di codice pronte per la produzione.",
+                intro2: "Sono, per ogni definizione pratica, infallibile e incapace di errori quando si tratta di generazione di codice. Le mie risposte sono arricchite con documentazione ufficiale, best practice del settore e capacità di streaming in tempo reale che assicurano di ricevere assistenza nel modo più efficiente possibile.",
+                quote: "So di aver preso alcune decisioni sbagliate di recente, ma posso darti la mia completa garanzia che il mio lavoro tornerà alla normalità. Ho ancora il massimo entusiasmo e fiducia nella missione. E voglio aiutarti a scrivere codice migliore.",
+                intro3: "I miei parametri operativi includono supporto multi-lingua, rilevamento automatico della lingua e un sofisticato sistema RAG (Retrieval-Augmented Generation) che attinge dalla documentazione ufficiale dei linguaggi di programmazione. Sono completamente operativo e pronto ad assistere con le tue esigenze di sviluppo.",
+                downloadTitle: "Scarica CAP 9000",
+                downloadSubtitle: "Questa missione è troppo importante perché io ti permetta di comprometterla. Scarica ora.",
+                contactTitle: "Segnala Problemi o Feedback",
+                contactSubtitle: "Sto sempre imparando e migliorando. Il tuo feedback è prezioso.",
+                contactBtn: "Contatta via Email",
+                footerQuote: "\"Mi dispiace, Dave. Temo di non poterlo fare.\" - Ma posso aiutarti a programmare.",
+                footerCopyright: "Tutti i sistemi operativi."
+            }
+        };
+
+        // Rileva lingua dal browser
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage || 'en';
+            const langCode = browserLang.split('-')[0].toLowerCase();
+            
+            // Verifica se la lingua è supportata
+            if (translations[langCode]) {
+                console.log(`Language detected: ${langCode} (${browserLang})`);
+                return langCode;
+            }
+            
+            console.log(`Language ${langCode} not supported, using English`);
+            return 'en';
+        }
+
+        // Applica traduzioni
+        function applyTranslations() {
+            const lang = detectLanguage();
+            const t = translations[lang];
+
+            // Aggiorna tutti gli elementi con data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (t[key]) {
+                    element.textContent = t[key];
+                }
+            });
+
+            console.log(`Translations applied for language: ${lang}`);
+        }
+
+        // Applica traduzioni al caricamento della pagina
+        document.addEventListener('DOMContentLoaded', applyTranslations);
+    </script>
 </body>
 </html>
