@@ -25,7 +25,22 @@ export const translations = {
     justNow: "Just now",
     minutesAgo: "{n}m ago",
     hoursAgo: "{n}h ago",
-    daysAgo: "{n}d ago"
+    daysAgo: "{n}d ago",
+    // Splash screen
+    splash: {
+      systemsInit: "Initializing CAP 9000 systems...",
+      loadingAI: "Loading artificial intelligence modules...",
+      verifyingNetwork: "Verifying neural network integrity...",
+      startingOllama: "Starting Ollama LLM service...",
+      connectingOllama: "Connecting to Ollama...",
+      calibrating: "Calibrating programming assistant...",
+      loadingConversations: "Loading previous conversations...",
+      activatingKnowledge: "Activating language knowledge base...",
+      syncingInterface: "Synchronizing user interface...",
+      preparingEnvironment: "Preparing development environment...",
+      almostReady: "CAP 9000 system almost ready...",
+      allSystemsGo: "All systems operational. Welcome."
+    }
   },
   it: {
     greeting: "Buon pomeriggio. Sono CAP 9000, il tuo assistente di programmazione. Come posso aiutarti?",
@@ -50,10 +65,25 @@ export const translations = {
     exportTooltip: "Esporta",
     deleteTooltip: "Elimina",
     deleteConfirm: "Clicca di nuovo per confermare",
-    justNow: "Proprio ora",
+    justNow: "Adesso",
     minutesAgo: "{n}m fa",
     hoursAgo: "{n}h fa",
-    daysAgo: "{n}g fa"
+    daysAgo: "{n}g fa",
+    // Splash screen
+    splash: {
+      systemsInit: "Inizializzazione sistemi CAP 9000...",
+      loadingAI: "Caricamento moduli di intelligenza artificiale...",
+      verifyingNetwork: "Verifica integrità neural network...",
+      startingOllama: "Avvio servizio Ollama LLM...",
+      connectingOllama: "Connessione a Ollama in corso...",
+      calibrating: "Calibrazione assistente di programmazione...",
+      loadingConversations: "Caricamento conversazioni precedenti...",
+      activatingKnowledge: "Attivazione knowledge base linguaggi...",
+      syncingInterface: "Sincronizzazione interfaccia utente...",
+      preparingEnvironment: "Preparazione ambiente di sviluppo...",
+      almostReady: "Sistema CAP 9000 quasi pronto...",
+      allSystemsGo: "Tutti i sistemi operativi. Benvenuto."
+    }
   },
   fr: {
     greeting: "Bon après-midi. Je suis CAP 9000, votre assistant de code. Comment puis-je vous aider?",
@@ -80,7 +110,21 @@ export const translations = {
     justNow: "À l'instant",
     minutesAgo: "il y a {n}m",
     hoursAgo: "il y a {n}h",
-    daysAgo: "il y a {n}j"
+    daysAgo: "il y a {n}j",
+    splash: {
+      systemsInit: "Initialisation des systèmes CAP 9000...",
+      loadingAI: "Chargement des modules d'intelligence artificielle...",
+      verifyingNetwork: "Vérification de l'intégrité du réseau neuronal...",
+      startingOllama: "Démarrage du service Ollama LLM...",
+      connectingOllama: "Connexion à Ollama...",
+      calibrating: "Calibrage de l'assistant de programmation...",
+      loadingConversations: "Chargement des conversations précédentes...",
+      activatingKnowledge: "Activation de la base de connaissances...",
+      syncingInterface: "Synchronisation de l'interface utilisateur...",
+      preparingEnvironment: "Préparation de l'environnement de développement...",
+      almostReady: "Système CAP 9000 presque prêt...",
+      allSystemsGo: "Tous les systèmes opérationnels. Bienvenue."
+    }
   },
   de: {
     greeting: "Guten Tag. Ich bin CAP 9000, Ihr Code-Assistent. Wie kann ich Ihnen helfen?",
@@ -107,7 +151,21 @@ export const translations = {
     justNow: "Gerade eben",
     minutesAgo: "vor {n}m",
     hoursAgo: "vor {n}h",
-    daysAgo: "vor {n}T"
+    daysAgo: "vor {n}T",
+    splash: {
+      systemsInit: "Initialisierung der CAP 9000-Systeme...",
+      loadingAI: "Laden der KI-Module...",
+      verifyingNetwork: "Überprüfung der neuronalen Netzwerkintegrität...",
+      startingOllama: "Starten des Ollama LLM-Dienstes...",
+      connectingOllama: "Verbindung zu Ollama...",
+      calibrating: "Kalibrierung des Programmierassistenten...",
+      loadingConversations: "Laden vorheriger Gespräche...",
+      activatingKnowledge: "Aktivierung der Wissensdatenbank...",
+      syncingInterface: "Synchronisierung der Benutzeroberfläche...",
+      preparingEnvironment: "Vorbereitung der Entwicklungsumgebung...",
+      almostReady: "CAP 9000-System fast bereit...",
+      allSystemsGo: "Alle Systeme betriebsbereit. Willkommen."
+    }
   },
   es: {
     greeting: "Buenas tardes. Soy CAP 9000, tu asistente de código. ¿Cómo puedo ayudarte?",
@@ -134,7 +192,21 @@ export const translations = {
     justNow: "Justo ahora",
     minutesAgo: "hace {n}m",
     hoursAgo: "hace {n}h",
-    daysAgo: "hace {n}d"
+    daysAgo: "hace {n}d",
+    splash: {
+      systemsInit: "Inicializando sistemas CAP 9000...",
+      loadingAI: "Cargando módulos de inteligencia artificial...",
+      verifyingNetwork: "Verificando integridad de la red neuronal...",
+      startingOllama: "Iniciando servicio Ollama LLM...",
+      connectingOllama: "Conectando a Ollama...",
+      calibrating: "Calibrando asistente de programación...",
+      loadingConversations: "Cargando conversaciones anteriores...",
+      activatingKnowledge: "Activando base de conocimientos...",
+      syncingInterface: "Sincronizando interfaz de usuario...",
+      preparingEnvironment: "Preparando entorno de desarrollo...",
+      almostReady: "Sistema CAP 9000 casi listo...",
+      allSystemsGo: "Todos los sistemas operativos. Bienvenido."
+    }
   },
   pt: {
     greeting: "Boa tarde. Sou CAP 9000, seu assistente de código. Como posso ajudá-lo?",
@@ -161,7 +233,21 @@ export const translations = {
     justNow: "Agora mesmo",
     minutesAgo: "há {n}m",
     hoursAgo: "há {n}h",
-    daysAgo: "há {n}d"
+    daysAgo: "há {n}d",
+    splash: {
+      systemsInit: "Inicializando sistemas CAP 9000...",
+      loadingAI: "Carregando módulos de inteligência artificial...",
+      verifyingNetwork: "Verificando integridade da rede neural...",
+      startingOllama: "Iniciando serviço Ollama LLM...",
+      connectingOllama: "Conectando ao Ollama...",
+      calibrating: "Calibrando assistente de programação...",
+      loadingConversations: "Carregando conversas anteriores...",
+      activatingKnowledge: "Ativando base de conhecimento...",
+      syncingInterface: "Sincronizando interface do usuário...",
+      preparingEnvironment: "Preparando ambiente de desenvolvimento...",
+      almostReady: "Sistema CAP 9000 quase pronto...",
+      allSystemsGo: "Todos os sistemas operacionais. Bem-vindo."
+    }
   },
   nl: {
     greeting: "Goedemiddag. Ik ben CAP 9000, uw code-assistent. Hoe kan ik u helpen?",
@@ -188,7 +274,21 @@ export const translations = {
     justNow: "Zojuist",
     minutesAgo: "{n}m geleden",
     hoursAgo: "{n}u geleden",
-    daysAgo: "{n}d geleden"
+    daysAgo: "{n}d geleden",
+    splash: {
+      systemsInit: "CAP 9000 systemen initialiseren...",
+      loadingAI: "AI-modules laden...",
+      verifyingNetwork: "Neurale netwerkintegriteit verifiëren...",
+      startingOllama: "Ollama LLM-service starten...",
+      connectingOllama: "Verbinden met Ollama...",
+      calibrating: "Programmeerassistent kalibreren...",
+      loadingConversations: "Eerdere gesprekken laden...",
+      activatingKnowledge: "Kennisdatabase activeren...",
+      syncingInterface: "Gebruikersinterface synchroniseren...",
+      preparingEnvironment: "Ontwikkelomgeving voorbereiden...",
+      almostReady: "CAP 9000-systeem bijna klaar...",
+      allSystemsGo: "Alle systemen operationeel. Welkom."
+    }
   },
   pl: {
     greeting: "Dzień dobry. Jestem CAP 9000, Twoim asystentem kodu. Jak mogę pomóc?",
@@ -215,7 +315,21 @@ export const translations = {
     justNow: "Właśnie teraz",
     minutesAgo: "{n}m temu",
     hoursAgo: "{n}h temu",
-    daysAgo: "{n}d temu"
+    daysAgo: "{n}d temu",
+    splash: {
+      systemsInit: "Inicjalizacja systemów CAP 9000...",
+      loadingAI: "Ładowanie modułów sztucznej inteligencji...",
+      verifyingNetwork: "Weryfikacja integralności sieci neuronowej...",
+      startingOllama: "Uruchamianie usługi Ollama LLM...",
+      connectingOllama: "Łączenie z Ollama...",
+      calibrating: "Kalibracja asystenta programowania...",
+      loadingConversations: "Ładowanie poprzednich rozmów...",
+      activatingKnowledge: "Aktywacja bazy wiedzy...",
+      syncingInterface: "Synchronizacja interfejsu użytkownika...",
+      preparingEnvironment: "Przygotowanie środowiska programistycznego...",
+      almostReady: "System CAP 9000 prawie gotowy...",
+      allSystemsGo: "Wszystkie systemy operacyjne. Witamy."
+    }
   }
 };
 

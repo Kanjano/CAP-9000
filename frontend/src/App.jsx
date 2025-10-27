@@ -262,7 +262,7 @@ function App() {
 
   // Mostra splash screen durante il caricamento
   if (isLoading) {
-    return <SplashScreen onComplete={() => setIsLoading(false)} />;
+    return <SplashScreen onComplete={() => setIsLoading(false)} translations={t} />;
   }
 
   return (

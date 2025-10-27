@@ -13,16 +13,9 @@ export default function ConversationSidebar({
   onClose,
   translations
 }) {
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
-
   const handleDelete = (id) => {
-    if (deleteConfirm === id) {
-      onDelete(id);
-      setDeleteConfirm(null);
-    } else {
-      setDeleteConfirm(id);
-      setTimeout(() => setDeleteConfirm(null), 3000);
-    }
+    // Eliminazione diretta con 1 click
+    onDelete(id);
   };
 
   const formatDate = (dateString) => {
@@ -125,12 +118,8 @@ export default function ConversationSidebar({
                         e.stopPropagation();
                         handleDelete(conv.id);
                       }}
-                      className={`p-1 rounded ${
-                        deleteConfirm === conv.id 
-                          ? 'bg-red-600 hover:bg-red-700' 
-                          : 'hover:bg-red-800'
-                      }`}
-                      title={deleteConfirm === conv.id ? translations.deleteConfirm : translations.deleteTooltip}
+                      className="p-1 rounded hover:bg-red-800"
+                      title={translations.deleteTooltip}
                     >
                       <Trash2 className="w-3 h-3 text-red-400" />
                     </button>

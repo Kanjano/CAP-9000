@@ -1,24 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Circle } from 'lucide-react';
 
-export default function SplashScreen({ onComplete }) {
+export default function SplashScreen({ onComplete, translations }) {
   const [currentPhrase, setCurrentPhrase] = useState(0);
   const [progress, setProgress] = useState(0);
 
-  // Frasi di avvio in stile CAP 9000
+  // Frasi di avvio tradotte in base alla lingua del sistema
+  const splash = translations?.splash || {};
   const bootPhrases = [
-    "Inizializzazione sistemi CAP 9000...",
-    "Caricamento moduli di intelligenza artificiale...",
-    "Verifica integrità neural network...",
-    "Avvio servizio Ollama LLM...",
-    "Connessione a Ollama in corso...",
-    "Calibrazione assistente di programmazione...",
-    "Caricamento conversazioni precedenti...",
-    "Attivazione knowledge base linguaggi...",
-    "Sincronizzazione interfaccia utente...",
-    "Preparazione ambiente di sviluppo...",
-    "Sistema CAP 9000 quasi pronto...",
-    "Tutti i sistemi operativi. Benvenuto."
+    splash.systemsInit || "Initializing CAP 9000 systems...",
+    splash.loadingAI || "Loading artificial intelligence modules...",
+    splash.verifyingNetwork || "Verifying neural network integrity...",
+    splash.startingOllama || "Starting Ollama LLM service...",
+    splash.connectingOllama || "Connecting to Ollama...",
+    splash.calibrating || "Calibrating programming assistant...",
+    splash.loadingConversations || "Loading previous conversations...",
+    splash.activatingKnowledge || "Activating language knowledge base...",
+    splash.syncingInterface || "Synchronizing user interface...",
+    splash.preparingEnvironment || "Preparing development environment...",
+    splash.almostReady || "CAP 9000 system almost ready...",
+    splash.allSystemsGo || "All systems operational. Welcome."
   ];
 
   useEffect(() => {
