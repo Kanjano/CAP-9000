@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Send, Circle, Menu } from 'lucide-react'
+import { Send, Circle, Menu, Upload } from 'lucide-react'
 import { translations, languageNames } from './i18n/translations'
 import MessageContent from './components/MessageContent'
 import ConversationSidebar from './components/ConversationSidebar'
@@ -18,8 +18,23 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const messagesEndRef = useRef(null)
 
-  // Lingua rilevata automaticamente dal backend
-  const t = translations['en']  // Fallback, la lingua vera viene rilevata dal backend
+  // Rileva lingua dal sistema operativo
+  const detectSystemLanguage = () => {
+    const browserLang = navigator.language || navigator.userLanguage;
+    const langCode = browserLang.split('-')[0]; // es: 'it-IT' -> 'it'
+    
+    // Verifica se la lingua è supportata
+    if (translations[langCode]) {
+      console.log(`System language detected: ${langCode} (${browserLang})`);
+      return langCode;
+    }
+    
+    console.log(`System language ${langCode} not supported, using English`);
+    return 'en';
+  };
+
+  const [systemLang] = useState(detectSystemLanguage());
+  const t = translations[systemLang];
 
   // Load conversations on mount - DOPO splash screen
   useEffect(() => {
@@ -58,7 +73,7 @@ function App() {
   }, [messages]);
 
   const createNewConversation = () => {
-    const newConv = conversationStorage.create('New Conversation', language, 'en');  // Default en, lingua rilevata automaticamente
+    const newConv = conversationStorage.create('New Conversation', language, systemLang);
     newConv.messages = [{ role: 'assistant', content: t.greeting }];
     conversationStorage.save(newConv);
     conversationStorage.setCurrentId(newConv.id);
@@ -90,7 +105,7 @@ function App() {
     if (conv) {
       conv.messages = messages;
       conv.language = language;
-      conv.uiLang = 'en';  // Default, lingua rilevata automaticamente
+      conv.uiLang = systemLang;  // Lingua sistema operativo
       
       // Auto-generate title from first user message
       if (conv.title === 'New Conversation' && messages.length >= 2) {
@@ -369,7 +384,23 @@ function App() {
         {/* Input Form */}
         <div className="flex-shrink-0 border-t border-red-900 p-4 bg-hal-panel">
           <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
-            <div className="flex gap-3">
+            <div className="flex gap-3 items-center">
+              {/* Import button */}
+              <label className="bg-red-900 hover:bg-red-800 text-white p-3 rounded-lg transition-colors cursor-pointer flex items-center justify-center" title="Import conversation">
+                <Upload className="w-5 h-5" />
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={(e) => {
+                    if (e.target.files[0]) {
+                      importConversation(e.target.files[0]);
+                      e.target.value = '';
+                    }
+                  }}
+                  className="hidden"
+                />
+              </label>
+              
               <input
                 type="text"
                 value={input}

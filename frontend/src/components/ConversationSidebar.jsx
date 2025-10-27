@@ -76,7 +76,7 @@ export default function ConversationSidebar({
         </div>
 
         {/* Conversations list - scrollable */}
-        <div className="flex-1 overflow-y-auto p-2 pb-20">
+        <div className="flex-1 overflow-y-auto p-2">
           {conversations.length === 0 ? (
             <div className="text-center text-red-400 opacity-60 py-8 px-4">
               {translations.noConversations}<br />
@@ -139,24 +139,6 @@ export default function ConversationSidebar({
               </div>
             ))
           )}
-        </div>
-
-        {/* Import button - Fixed bottom right */}
-        <div className="absolute bottom-4 right-4">
-          <label className="bg-red-900 hover:bg-red-800 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110 cursor-pointer block" title={translations.import}>
-            <Upload className="w-5 h-5" />
-            <input
-              type="file"
-              accept=".json"
-              onChange={(e) => {
-                if (e.target.files[0]) {
-                  onImport(e.target.files[0]);
-                  e.target.value = '';
-                }
-              }}
-              className="hidden"
-            />
-          </label>
         </div>
       </div>
     </>
