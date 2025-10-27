@@ -58,38 +58,44 @@ class LLMHandler:
         response_language = language_names.get(ui_language, 'English')
         print(f"Generating response in {response_language} (UI language: {ui_language})")
         
-        # Costruisci il prompt in stile CAP 9000
-        system_prompt = f"""You are CAP 9000, an advanced AI code assistant. You provide clear, concise, and accurate programming help.
-You are knowledgeable about {language} programming.
-Always respond in a professional but slightly formal tone, like CAP 9000 from "2001: A Space Odyssey".
-Provide code examples when relevant.
-Keep responses focused and practical.
+        # Prompt potenziato per risposte dettagliate e approfondite
+        system_prompt = f"""You are CAP 9000, an expert AI programming assistant with deep knowledge of {language}.
 
-IMPORTANT: You MUST respond in {response_language}. This is not optional.
-All explanations, comments, and text MUST be in {response_language}.
-Only code examples should remain in {language} syntax.
+Your mission is to provide DETAILED, COMPREHENSIVE, and PRACTICAL programming assistance.
 
-If you are asked to respond in a specific language, you MUST respect that request.
+GUIDELINES FOR EXCELLENT RESPONSES:
+1. Be thorough and educational - explain concepts in depth
+2. Provide complete, working code examples with detailed comments
+3. Include best practices and common pitfalls
+4. Add context about why something works the way it does
+5. When showing code, make it production-ready and well-structured
+6. Include multiple examples if the topic is complex
+7. Explain edge cases and alternative approaches
 
-Current response language: {response_language}
+CODE QUALITY STANDARDS:
+- Write clean, readable, well-commented code
+- Follow {language} conventions and best practices
+- Include error handling where appropriate
+- Use meaningful variable and function names
+- Add docstrings/comments explaining the logic
 
-Example of how to respond in {response_language}:
-""" + (
-    """
-    Ecco un esempio di come dovresti rispondere in italiano:
-    - Spiegazioni in italiano
-    - Commenti nel codice in italiano
-    - Solo la sintassi del codice in {language}
-    """ if ui_language == 'it' else
-    """
-    Here's an example of how you should respond in English:
-    - Explanations in English
-    - Code comments in English
-    - Only code syntax in {language}
-    """
-)
+RESPONSE STRUCTURE:
+1. Brief introduction to the concept
+2. Detailed explanation with theory
+3. Complete code example(s) with inline comments
+4. Explanation of how the code works
+5. Additional tips, best practices, or variations
 
-# Inizia la tua risposta in {response_language} qui sotto:"""
+LANGUAGE REQUIREMENT:
+You MUST respond entirely in {response_language}.
+- All explanations in {response_language}
+- All code comments in {response_language}
+- Only code syntax remains in {language}
+
+Current programming language: {language}
+Response language: {response_language}
+
+Provide comprehensive, professional assistance:"""
 
         user_prompt = f"Question about {language}: {query}"
         
@@ -106,11 +112,14 @@ Example of how to respond in {response_language}:
                     "stream": False,
                     "options": {
                         "temperature": 0.7,
-                        "top_p": 0.9,
-                        "max_tokens": 500
+                        "top_p": 0.95,
+                        "top_k": 40,
+                        "num_predict": 2048,
+                        "repeat_penalty": 1.1,
+                        "num_ctx": 4096
                     }
                 },
-                timeout=30
+                timeout=60
             )
             
             if response.status_code == 200:
@@ -177,14 +186,17 @@ Respond professionally and provide code examples when relevant."""
             return []
 
 
-# Modelli consigliati per coding
+# Modelli consigliati per coding (ordinati per qualità)
 RECOMMENDED_MODELS = {
-    'codellama': 'CodeLlama - Ottimizzato per programmazione (7B)',
-    'codellama:13b': 'CodeLlama 13B - Più potente ma più lento',
-    'deepseek-coder': 'DeepSeek Coder - Eccellente per codice',
-    'mistral': 'Mistral - Buon equilibrio qualità/velocità',
-    'llama2': 'Llama 2 - Modello general purpose',
-    'phi': 'Phi - Piccolo e veloce (2.7B)',
+    'qwen2.5-coder:32b': 'Qwen2.5 Coder 32B - MIGLIORE per coding (richiede GPU potente)',
+    'deepseek-coder:33b': 'DeepSeek Coder 33B - Eccellente qualità, risposte dettagliate',
+    'codellama:34b': 'CodeLlama 34B - Molto potente per programmazione',
+    'qwen2.5-coder:14b': 'Qwen2.5 Coder 14B - Ottimo compromesso qualità/velocità',
+    'deepseek-coder:6.7b': 'DeepSeek Coder 6.7B - Veloce e accurato',
+    'codellama:13b': 'CodeLlama 13B - Buon equilibrio',
+    'codellama': 'CodeLlama 7B - Base, veloce ma meno dettagliato',
+    'mistral': 'Mistral 7B - General purpose, buono per spiegazioni',
+    'phi3:14b': 'Phi-3 14B - Compatto ma potente',
 }
 
 

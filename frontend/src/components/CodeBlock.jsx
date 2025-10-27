@@ -68,28 +68,65 @@ export default function CodeBlock({ code, language = '' }) {
     }
   };
 
-  // ChatGPT-inspired dark theme
+  // Tema VS Code Dark+ autentico - colori IDE realistici
   const customVSCTheme = {
-    ...vscDarkPlus,
+    'code[class*="language-"]': {
+      color: '#d4d4d4',
+      background: '#1e1e1e',
+      fontFamily: '"Fira Code", "Cascadia Code", "JetBrains Mono", Consolas, "Courier New", monospace',
+      fontSize: '0.875rem',
+      textAlign: 'left',
+      whiteSpace: 'pre',
+      wordSpacing: 'normal',
+      wordBreak: 'normal',
+      lineHeight: '1.6',
+      tabSize: 4,
+    },
     'pre[class*="language-"]': {
-      ...vscDarkPlus['pre[class*="language-"]'],
-      background: '#0d0d0d',
-      borderRadius: 0,
-      padding: '0',
-      margin: '0',
+      color: '#d4d4d4',
+      background: '#1e1e1e',
+      padding: 0,
+      margin: 0,
       overflow: 'auto',
       fontSize: '0.875rem',
       lineHeight: '1.6',
     },
-    'code[class*="language-"]': {
-      ...vscDarkPlus['code[class*="language-"]'],
-      fontFamily: '"Söhne Mono", Monaco, "Andale Mono", "Ubuntu Mono", monospace',
-      background: '#0d0d0d',
-    },
+    'comment': { color: '#6a9955', fontStyle: 'italic' },
+    'prolog': { color: '#6a9955' },
+    'doctype': { color: '#6a9955' },
+    'cdata': { color: '#6a9955' },
+    'punctuation': { color: '#d4d4d4' },
+    'property': { color: '#9cdcfe' },
+    'tag': { color: '#569cd6' },
+    'boolean': { color: '#569cd6' },
+    'number': { color: '#b5cea8' },
+    'constant': { color: '#4fc1ff' },
+    'symbol': { color: '#4fc1ff' },
+    'deleted': { color: '#f44747' },
+    'selector': { color: '#d7ba7d' },
+    'attr-name': { color: '#9cdcfe' },
+    'string': { color: '#ce9178' },
+    'char': { color: '#ce9178' },
+    'builtin': { color: '#4ec9b0' },
+    'inserted': { color: '#b5cea8' },
+    'operator': { color: '#d4d4d4' },
+    'entity': { color: '#d7ba7d' },
+    'url': { color: '#3b8eea' },
+    'variable': { color: '#9cdcfe' },
+    'atrule': { color: '#c586c0' },
+    'attr-value': { color: '#ce9178' },
+    'function': { color: '#dcdcaa' },
+    'class-name': { color: '#4ec9b0' },
+    'keyword': { color: '#569cd6' },
+    'regex': { color: '#d16969' },
+    'important': { color: '#569cd6', fontWeight: 'bold' },
+    'bold': { fontWeight: 'bold' },
+    'italic': { fontStyle: 'italic' },
+    'namespace': { opacity: 0.7 },
   };
 
   return (
-    <div className="relative group my-4 rounded-lg overflow-hidden bg-[#0d0d0d] border border-gray-800/50">
+    <div className="relative group my-4 rounded-lg overflow-hidden bg-[#1e1e1e] border border-[#3e3e42]">
       {/* Language label and copy button container - ChatGPT style */}
       <div className="flex items-center justify-between bg-[#2f2f2f] px-4 py-2.5 border-b border-gray-800/50">
         <span className="text-xs text-gray-300 font-medium tracking-wide uppercase">
@@ -123,7 +160,7 @@ export default function CodeBlock({ code, language = '' }) {
           customStyle={{
             margin: 0,
             padding: '1.25rem 1.5rem',
-            background: '#0d0d0d',
+            background: '#1e1e1e',
             borderRadius: 0,
             fontSize: '0.875rem',
             lineHeight: '1.6',
@@ -132,12 +169,12 @@ export default function CodeBlock({ code, language = '' }) {
           wrapLines={true}
           wrapLongLines={false}
           lineNumberStyle={{
-            color: '#4a5568',
+            color: '#858585',
             paddingRight: '1.5em',
             userSelect: 'none',
             minWidth: '2.5em',
             textAlign: 'right',
-            borderRight: '1px solid #2d3748',
+            borderRight: '1px solid #3e3e42',
             marginRight: '1em',
           }}
         >
