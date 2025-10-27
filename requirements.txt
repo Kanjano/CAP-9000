@@ -8,6 +8,12 @@
 - flask==2.0.1
 - flask-cors==4.0.0
 - requests==2.31.0
+- beautifulsoup4==4.12.2
+- langdetect==1.0.9
 
 ## Additional Tools
 - Bazel for building the CLgen project
+
+## Optional: Download local documentation
+# Run once to download official docs for offline use:
+# python download_docs.py

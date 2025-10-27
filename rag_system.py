@@ -1,11 +1,13 @@
 """
 Sistema RAG (Retrieval-Augmented Generation) per CAP 9000
 Integra documentazioni ufficiali e best practices nei prompt di Ollama
+Supporta documentazioni locali scaricate + fallback hardcoded
 """
 
 import requests
 import json
 import os
+from pathlib import Path
 from typing import List, Dict, Optional
 
 class DocumentationRAG:
@@ -13,7 +15,61 @@ class DocumentationRAG:
     
     def __init__(self):
         self.docs_cache = {}
+        self.local_docs_dir = Path("local_docs")
+        self.local_docs_available = self.check_local_docs()
         self.load_documentation_sources()
+        
+        if self.local_docs_available:
+            print(f"✓ Local documentation found in {self.local_docs_dir}")
+            self.load_local_docs_index()
+        else:
+            print("⚠ No local docs found. Using hardcoded fallback.")
+            print(f"  Run 'python download_docs.py' to download docs for offline use.")
+    
+    def check_local_docs(self) -> bool:
+        """Verifica se esistono documentazioni locali"""
+        return self.local_docs_dir.exists() and (self.local_docs_dir / "index.json").exists()
+    
+    def load_local_docs_index(self):
+        """Carica l'indice delle documentazioni locali"""
+        try:
+            index_file = self.local_docs_dir / "index.json"
+            with open(index_file, 'r', encoding='utf-8') as f:
+                self.local_docs_index = json.load(f)
+                print(f"  → Loaded {len(self.local_docs_index.get('languages', {}))} language docs")
+        except Exception as e:
+            print(f"  ✗ Error loading local docs index: {e}")
+            self.local_docs_available = False
+    
+    def read_local_doc(self, language: str, doc_name: str) -> Optional[str]:
+        """Legge una documentazione locale"""
+        if not self.local_docs_available:
+            return None
+        
+        # Mappa nomi linguaggi
+        lang_map = {
+            'Python': 'python',
+            'Java': 'java',
+            'JavaScript': 'javascript',
+            'C': 'c',
+            'C++': 'cpp',
+            'Go': 'go'
+        }
+        
+        lang_dir = lang_map.get(language, language.lower())
+        doc_path = self.local_docs_dir / lang_dir / f"{doc_name}.txt"
+        
+        if doc_path.exists():
+            try:
+                # Leggi solo i primi 5000 caratteri per non sovraccaricare il prompt
+                with open(doc_path, 'r', encoding='utf-8') as f:
+                    content = f.read(5000)
+                return content
+            except Exception as e:
+                print(f"  ✗ Error reading {doc_path}: {e}")
+                return None
+        
+        return None
     
     def load_documentation_sources(self):
         """Carica le fonti di documentazione ufficiale per ogni linguaggio"""
@@ -156,6 +212,7 @@ class DocumentationRAG:
     def get_relevant_context(self, language: str, query: str) -> str:
         """
         Recupera contesto rilevante dalla documentazione per arricchire il prompt
+        Usa docs locali se disponibili, altrimenti fallback a hardcoded
         
         Args:
             language: Linguaggio di programmazione
@@ -170,12 +227,20 @@ class DocumentationRAG:
         docs = self.documentation_sources[language]
         context_parts = []
         
-        # Aggiungi best practices rilevanti
+        # PRIORITÀ 1: Documentazione locale (se disponibile)
+        if self.local_docs_available:
+            local_content = self.get_local_doc_snippet(language, query)
+            if local_content:
+                context_parts.append(f"\n=== OFFICIAL {language.upper()} DOCUMENTATION (LOCAL) ===")
+                context_parts.append(local_content)
+                context_parts.append("")  # Linea vuota
+        
+        # PRIORITÀ 2: Best practices (sempre disponibili - hardcoded)
         context_parts.append(f"\n=== BEST PRACTICES FOR {language.upper()} ===")
         for practice in docs['best_practices'][:5]:  # Prime 5 best practices
             context_parts.append(f"• {practice}")
         
-        # Aggiungi pattern comuni se rilevanti
+        # PRIORITÀ 3: Pattern comuni se rilevanti (hardcoded)
         query_lower = query.lower()
         relevant_patterns = []
         
@@ -187,11 +252,53 @@ class DocumentationRAG:
             context_parts.append("\n=== RELEVANT CODE PATTERNS ===")
             context_parts.extend(relevant_patterns[:3])  # Max 3 pattern
         
-        # Aggiungi riferimento alla documentazione ufficiale
-        context_parts.append(f"\n=== OFFICIAL DOCUMENTATION ===")
-        context_parts.append(f"Reference: {docs['official_docs']}")
+        # Riferimento documentazione
+        if not self.local_docs_available:
+            context_parts.append(f"\n=== OFFICIAL DOCUMENTATION ===")
+            context_parts.append(f"Reference: {docs['official_docs']}")
         
         return "\n".join(context_parts)
+    
+    def get_local_doc_snippet(self, language: str, query: str) -> Optional[str]:
+        """
+        Cerca snippet rilevante nelle docs locali basandosi sulla query
+        
+        Args:
+            language: Linguaggio di programmazione
+            query: Query dell'utente
+        
+        Returns:
+            Snippet di documentazione rilevante o None
+        """
+        if not self.local_docs_available:
+            return None
+        
+        # Determina quale doc leggere in base alla query
+        query_lower = query.lower()
+        
+        # Mappa keywords a docs
+        doc_map = {
+            'tutorial': ['tutorial', 'guide', 'learn', 'start', 'begin', 'intro'],
+            'reference': ['reference', 'api', 'function', 'method', 'class'],
+            'library': ['library', 'module', 'package', 'import'],
+            'pep8': ['style', 'format', 'convention', 'pep8'],
+            'effective_go': ['best', 'practice', 'effective', 'idiomatic'],
+        }
+        
+        # Trova doc più rilevante
+        selected_doc = 'tutorial'  # Default
+        for doc_name, keywords in doc_map.items():
+            if any(kw in query_lower for kw in keywords):
+                selected_doc = doc_name
+                break
+        
+        # Leggi doc locale
+        content = self.read_local_doc(language, selected_doc)
+        if content:
+            # Ritorna snippet (primi 2000 caratteri)
+            return content[:2000] + "\n..." if len(content) > 2000 else content
+        
+        return None
     
     def enrich_prompt(self, base_prompt: str, language: str, query: str) -> str:
         """
