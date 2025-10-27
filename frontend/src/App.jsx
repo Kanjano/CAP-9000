@@ -143,65 +143,82 @@ function App() {
     setIsTyping(true)
 
     try {
-      // Use Electron IPC if available, otherwise fallback to fetch
-      console.log('Checking electronAPI:', window.electronAPI);
-      if (window.electronAPI) {
-        console.log('Using Electron IPC');
+      // Usa streaming per risposte progressive
+      if (window.electronAPI && window.electronAPI.sendQueryStream) {
+        console.log('Using streaming query');
+        
+        // Aggiungi messaggio vuoto che verrà riempito progressivamente
+        const messageIndex = messages.length + 1;
+        setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+        setIsTyping(false); // Non mostra typing indicator, mostra direttamente il testo
+        
+        let accumulatedContent = '';
+        
+        const cleanup = window.electronAPI.sendQueryStream(
+          {
+            query: currentQuery,
+            language: language,
+            uiLanguage: uiLang
+          },
+          // onChunk - riceve ogni pezzo di testo
+          (chunk) => {
+            if (chunk.content && !chunk.done) {
+              accumulatedContent += chunk.content;
+              setMessages(prev => {
+                const newMessages = [...prev];
+                newMessages[messageIndex] = {
+                  role: 'assistant',
+                  content: accumulatedContent
+                };
+                return newMessages;
+              });
+            }
+          },
+          // onComplete
+          () => {
+            console.log('Streaming complete');
+            cleanup && cleanup();
+          },
+          // onError
+          (error) => {
+            console.error('Streaming error:', error);
+            setMessages(prev => {
+              const newMessages = [...prev];
+              newMessages[messageIndex] = {
+                role: 'assistant',
+                content: t.connectionError
+              };
+              return newMessages;
+            });
+            cleanup && cleanup();
+          }
+        );
+      } else {
+        // Fallback senza streaming
+        console.log('Using non-streaming query');
         const data = await window.electronAPI.sendQuery({
           query: currentQuery,
           language: language,
           uiLanguage: uiLang
-        })
-        console.log('Received response:', data);
-        console.log('Response content:', data.response);
-        console.log('Response type:', typeof data.response);
-        
-        const responseContent = data.response || t.processingError;
-        console.log('Adding message with content:', responseContent);
+        });
         
         setTimeout(() => {
-          setIsTyping(false)
-          setMessages(prev => {
-            const newMessages = [...prev, { 
-              role: 'assistant', 
-              content: responseContent
-            }];
-            console.log('New messages array length:', newMessages.length);
-            return newMessages;
-          })
-        }, 500)
-      } else {
-        console.log('Using fetch fallback');
-        const response = await fetch('/api/query', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            query: currentQuery,
-            language: language,
-            uiLanguage: uiLang
-          })
-        })
-
-        const data = await response.json()
-        
-        setTimeout(() => {
+          setIsTyping(false);
           setMessages(prev => [...prev, { 
             role: 'assistant', 
             content: data.response || t.processingError
-          }])
-          setIsTyping(false)
-        }, 500)
+          }]);
+        }, 500);
       }
     } catch (error) {
+      console.error('Query error:', error);
       setTimeout(() => {
         setMessages(prev => [...prev, { 
           role: 'assistant', 
           content: t.connectionError
-        }])
-        setIsTyping(false)
-      }, 500)
+        }]);
+        setIsTyping(false);
+      }, 500);
     }
   }
 

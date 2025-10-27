@@ -1,9 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response, stream_with_context
 from flask_cors import CORS
 from main import CodeAssistant
 from languages import languages
 from knowledge_base import find_answer
 from llm_handler import LLMHandler, get_fallback_response
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -75,6 +76,59 @@ def handle_query():
         'source': source
     })
 
+@app.route('/api/query/stream', methods=['POST'])
+def handle_query_stream():
+    """Endpoint per streaming delle risposte in tempo reale"""
+    data = request.json
+    query = data.get('query', '')
+    language = data.get('language', 'Python')
+    ui_language = data.get('uiLanguage', 'en')
+    
+    print(f"Streaming request - Query: '{query}', Language: '{language}'")
+    
+    def generate():
+        # Set the language
+        assistant.set_language(language)
+        
+        # Check if language is supported
+        if language not in languages:
+            yield f"data: {json.dumps({'error': True, 'content': f'Language {language} not supported'})}\n\n"
+            return
+        
+        # Try LLM streaming
+        if llm.available:
+            try:
+                for chunk in llm.generate_response_streaming(query, language, ui_language):
+                    if chunk:
+                        yield f"data: {json.dumps({'content': chunk, 'done': False})}\n\n"
+                
+                # Segnala fine stream
+                yield f"data: {json.dumps({'content': '', 'done': True})}\n\n"
+            except Exception as e:
+                print(f"Streaming error: {e}")
+                yield f"data: {json.dumps({'error': True, 'content': str(e)})}\n\n"
+        else:
+            # Fallback senza streaming
+            answer = find_answer(language, query)
+            if answer:
+                response = f"Here is what I know about {language}:\n\n{answer}"
+            else:
+                response = get_fallback_response(language, query)
+            
+            # Simula streaming per consistenza
+            for char in response:
+                yield f"data: {json.dumps({'content': char, 'done': False})}\n\n"
+            yield f"data: {json.dumps({'content': '', 'done': True})}\n\n"
+    
+    return Response(
+        stream_with_context(generate()),
+        mimetype='text/event-stream',
+        headers={
+            'Cache-Control': 'no-cache',
+            'X-Accel-Buffering': 'no'
+        }
+    )
+
 @app.route('/api/languages', methods=['GET'])
 def get_languages():
     return jsonify({
@@ -82,4 +136,4 @@ def get_languages():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5001, threaded=True)

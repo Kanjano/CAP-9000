@@ -97,6 +97,52 @@ ipcMain.handle('send-query', async (event, data) => {
   }
 });
 
+// Handle streaming query
+ipcMain.handle('send-query-stream', async (event, data) => {
+  try {
+    const fetch = (await import('node-fetch')).default;
+    const response = await fetch('http://127.0.0.1:5001/api/query/stream', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+    
+    const reader = response.body;
+    let buffer = '';
+    
+    reader.on('data', (chunk) => {
+      buffer += chunk.toString();
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(line.slice(6));
+            event.sender.send('query-stream-chunk', data);
+          } catch (e) {
+            console.error('Parse error:', e);
+          }
+        }
+      }
+    });
+    
+    return new Promise((resolve, reject) => {
+      reader.on('end', () => resolve({ done: true }));
+      reader.on('error', reject);
+    });
+    
+  } catch (error) {
+    console.error('Streaming query error:', error);
+    return {
+      error: true,
+      message: error.message
+    };
+  }
+});
+
 app.whenReady().then(async () => {
   await startFlaskServer();
   createWindow();

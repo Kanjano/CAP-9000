@@ -132,13 +132,14 @@ Provide comprehensive, professional assistance:"""
             print(f"Error calling Ollama: {e}")
             return None
     
-    def generate_response_streaming(self, query, language):
+    def generate_response_streaming(self, query, language, ui_language='en'):
         """
-        Genera una risposta in streaming (per future implementazioni)
+        Genera una risposta in streaming per visualizzazione progressiva
         
         Args:
             query: Domanda dell'utente
             language: Linguaggio di programmazione
+            ui_language: Lingua dell'interfaccia
         
         Yields:
             str: Chunks della risposta
@@ -146,26 +147,89 @@ Provide comprehensive, professional assistance:"""
         if not self.available:
             return
         
-        system_prompt = f"""You are CAP 9000, an advanced AI code assistant for {language} programming.
-Respond professionally and provide code examples when relevant."""
+        # Mappa delle lingue
+        language_names = {
+            'en': 'English',
+            'it': 'Italian',
+            'fr': 'French',
+            'de': 'German',
+            'es': 'Spanish',
+            'pt': 'Portuguese',
+            'nl': 'Dutch',
+            'pl': 'Polish'
+        }
+        
+        response_language = language_names.get(ui_language, 'English')
+        
+        # Usa lo stesso prompt potenziato della versione non-streaming
+        system_prompt = f"""You are CAP 9000, an expert AI programming assistant with deep knowledge of {language}.
+
+Your mission is to provide DETAILED, COMPREHENSIVE, and PRACTICAL programming assistance.
+
+GUIDELINES FOR EXCELLENT RESPONSES:
+1. Be thorough and educational - explain concepts in depth
+2. Provide complete, working code examples with detailed comments
+3. Include best practices and common pitfalls
+4. Add context about why something works the way it does
+5. When showing code, make it production-ready and well-structured
+6. Include multiple examples if the topic is complex
+7. Explain edge cases and alternative approaches
+
+CODE QUALITY STANDARDS:
+- Write clean, readable, well-commented code
+- Follow {language} conventions and best practices
+- Include error handling where appropriate
+- Use meaningful variable and function names
+- Add docstrings/comments explaining the logic
+
+RESPONSE STRUCTURE:
+1. Brief introduction to the concept
+2. Detailed explanation with theory
+3. Complete code example(s) with inline comments
+4. Explanation of how the code works
+5. Additional tips, best practices, or variations
+
+LANGUAGE REQUIREMENT:
+You MUST respond entirely in {response_language}.
+- All explanations in {response_language}
+- All code comments in {response_language}
+- Only code syntax remains in {language}
+
+Current programming language: {language}
+Response language: {response_language}
+
+Provide comprehensive, professional assistance:"""
+
+        user_prompt = f"Question about {language}: {query}"
 
         try:
             response = requests.post(
                 f"{self.ollama_url}/api/generate",
                 json={
                     "model": self.model,
-                    "prompt": f"{system_prompt}\n\nQuestion: {query}",
-                    "stream": True
+                    "prompt": f"{system_prompt}\n\n{user_prompt}",
+                    "stream": True,
+                    "options": {
+                        "temperature": 0.7,
+                        "top_p": 0.95,
+                        "top_k": 40,
+                        "num_predict": 2048,
+                        "repeat_penalty": 1.1,
+                        "num_ctx": 4096
+                    }
                 },
                 stream=True,
-                timeout=30
+                timeout=120
             )
             
             for line in response.iter_lines():
                 if line:
-                    chunk = json.loads(line)
-                    if 'response' in chunk:
-                        yield chunk['response']
+                    try:
+                        chunk = json.loads(line)
+                        if 'response' in chunk and chunk['response']:
+                            yield chunk['response']
+                    except json.JSONDecodeError:
+                        continue
                         
         except Exception as e:
             print(f"Error in streaming: {e}")
