@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAP 9000 Icon Generator - HAL 9000 Style</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            font-family: 'Courier New', monospace;
+            color: #ff0000;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+        }
+        .canvas-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .canvas-wrapper {
+            background: #1a0000;
+            padding: 20px;
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+        button {
+            background: #8b0000;
+            color: #fff;
+            border: 2px solid #ff0000;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+        }
+        .info {
+            background: #1a0000;
+            border: 1px solid #ff0000;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔴 CAP 9000 Icon Generator</h1>
+        
+        <div class="info">
+            <h3>📋 Instructions:</h3>
+            <p>1. Click "Generate All Icons" to create all required sizes</p>
+            <p>2. Right-click on each canvas and "Save Image As..."</p>
+            <p>3. Save with the exact filename shown below each canvas</p>
+            <p>4. Place files in build-resources/icons/ directory</p>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button onclick="generateAllIcons()">🎨 Generate All Icons</button>
+            <button onclick="downloadAllIcons()">💾 Download All Icons (ZIP)</button>
+        </div>
+
+        <div class="canvas-container" id="canvasContainer"></div>
+    </div>
+
+    <script>
+        const sizes = [
+            { size: 16, name: 'icon-16x16.png', desc: 'Taskbar' },
+            { size: 32, name: 'icon-32x32.png', desc: 'Small' },
+            { size: 48, name: 'icon-48x48.png', desc: 'Medium' },
+            { size: 64, name: 'icon-64x64.png', desc: 'Large' },
+            { size: 128, name: 'icon-128x128.png', desc: 'XLarge' },
+            { size: 256, name: 'icon-256x256.png', desc: 'macOS' },
+            { size: 512, name: 'icon-512x512.png', desc: 'macOS Retina' },
+            { size: 1024, name: 'icon-1024x1024.png', desc: 'App Store' }
+        ];
+
+        function drawHALEye(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const radius = size * 0.4;
+
+            // Clear canvas
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, size, size);
+
+            // Outer glow
+            const outerGlow = ctx.createRadialGradient(centerX, centerY, radius * 0.5, centerX, centerY, radius * 1.5);
+            outerGlow.addColorStop(0, 'rgba(255, 0, 0, 0.3)');
+            outerGlow.addColorStop(0.5, 'rgba(139, 0, 0, 0.2)');
+            outerGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = outerGlow;
+            ctx.fillRect(0, 0, size, size);
+
+            // Main red circle
+            const mainGradient = ctx.createRadialGradient(
+                centerX - radius * 0.2, centerY - radius * 0.2, radius * 0.1,
+                centerX, centerY, radius
+            );
+            mainGradient.addColorStop(0, '#ff6666');
+            mainGradient.addColorStop(0.3, '#ff0000');
+            mainGradient.addColorStop(0.7, '#cc0000');
+            mainGradient.addColorStop(1, '#8b0000');
+            
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fillStyle = mainGradient;
+            ctx.fill();
+
+            // Inner dark circle (pupil)
+            const pupilGradient = ctx.createRadialGradient(
+                centerX, centerY, 0,
+                centerX, centerY, radius * 0.3
+            );
+            pupilGradient.addColorStop(0, '#000000');
+            pupilGradient.addColorStop(0.8, '#330000');
+            pupilGradient.addColorStop(1, '#660000');
+            
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.3, 0, Math.PI * 2);
+            ctx.fillStyle = pupilGradient;
+            ctx.fill();
+
+            // Highlight
+            const highlightGradient = ctx.createRadialGradient(
+                centerX - radius * 0.3, centerY - radius * 0.3, 0,
+                centerX - radius * 0.3, centerY - radius * 0.3, radius * 0.4
+            );
+            highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+            highlightGradient.addColorStop(0.5, 'rgba(255, 100, 100, 0.3)');
+            highlightGradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+            
+            ctx.beginPath();
+            ctx.arc(centerX - radius * 0.3, centerY - radius * 0.3, radius * 0.4, 0, Math.PI * 2);
+            ctx.fillStyle = highlightGradient;
+            ctx.fill();
+
+            // Outer ring
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = '#ff0000';
+            ctx.lineWidth = size * 0.02;
+            ctx.stroke();
+
+            // Add "CAP" text for larger icons
+            if (size >= 128) {
+                ctx.font = `bold ${size * 0.12}px 'Courier New', monospace`;
+                ctx.fillStyle = '#ff0000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('CAP', centerX, centerY + radius * 1.3);
+                
+                ctx.font = `${size * 0.08}px 'Courier New', monospace`;
+                ctx.fillText('9000', centerX, centerY + radius * 1.5);
+            }
+        }
+
+        function generateAllIcons() {
+            const container = document.getElementById('canvasContainer');
+            container.innerHTML = '';
+
+            sizes.forEach(({ size, name, desc }) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'canvas-wrapper';
+
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                canvas.id = `canvas-${size}`;
+
+                drawHALEye(canvas, size);
+
+                const title = document.createElement('h3');
+                title.textContent = `${size}x${size}`;
+                
+                const description = document.createElement('p');
+                description.textContent = desc;
+                
+                const filename = document.createElement('p');
+                filename.style.color = '#00ff00';
+                filename.textContent = name;
+
+                const downloadBtn = document.createElement('button');
+                downloadBtn.textContent = '💾 Download';
+                downloadBtn.onclick = () => downloadCanvas(canvas, name);
+
+                wrapper.appendChild(title);
+                wrapper.appendChild(description);
+                wrapper.appendChild(canvas);
+                wrapper.appendChild(filename);
+                wrapper.appendChild(downloadBtn);
+                
+                container.appendChild(wrapper);
+            });
+        }
+
+        function downloadCanvas(canvas, filename) {
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function downloadAllIcons() {
+            alert('Download each icon individually using the Download buttons below each canvas.');
+        }
+
+        // Generate on load
+        window.onload = generateAllIcons;
+    </script>
+</body>
+</html>

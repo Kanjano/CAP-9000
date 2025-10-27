@@ -1,0 +1,145 @@
+{
+  "name": "cap9000",
+  "productName": "CAP 9000",
+  "version": "1.0.0",
+  "description": "Cognitive Assistance Program - AI-powered code assistant inspired by HAL 9000",
+  "main": "main.js",
+  "author": "Antonio Cangiano",
+  "license": "MIT",
+  "scripts": {
+    "start": "./run.sh",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux",
+    "build:all": "electron-builder -mwl",
+    "pack": "electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "electron": "^27.0.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.antoniocangiano.cap9000",
+    "productName": "CAP 9000",
+    "copyright": "Copyright © 2025 Antonio Cangiano",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build-resources"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "frontend/dist/**/*",
+      "app.py",
+      "*.py",
+      "local_docs/**/*",
+      "installer-scripts/**/*",
+      "requirements.txt",
+      "!**/*.pyc",
+      "!**/__pycache__"
+    ],
+    "extraResources": [
+      {
+        "from": "installer-scripts",
+        "to": "installer-scripts"
+      },
+      {
+        "from": "download_docs.py",
+        "to": "download_docs.py"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "build-resources/icons/icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "darkModeSupport": true,
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build-resources/entitlements.mac.plist",
+      "entitlementsInherit": "build-resources/entitlements.mac.plist"
+    },
+    "dmg": {
+      "title": "CAP 9000 Installer",
+      "icon": "build-resources/icons/icon.icns",
+      "background": "build-resources/dmg-background.png",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      }
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build-resources/icons/icon.ico",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "installerIcon": "build-resources/icons/icon.ico",
+      "uninstallerIcon": "build-resources/icons/icon.ico",
+      "installerHeaderIcon": "build-resources/icons/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "CAP 9000",
+      "include": "build-resources/installer.nsh",
+      "warningsAsErrors": false,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "license": "LICENSE",
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "displayLanguageSelector": true,
+      "installerLanguages": ["en_US", "it_IT", "fr_FR", "de_DE", "es_ES"],
+      "language": "1033"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm"
+      ],
+      "icon": "build-resources/icons",
+      "category": "Development",
+      "maintainer": "Antonio Cangiano <antonio.web2music@gmail.com>",
+      "vendor": "Antonio Cangiano",
+      "synopsis": "AI-powered code assistant",
+      "description": "CAP 9000 is an advanced AI-powered code assistant that provides comprehensive programming help with official documentation integration."
+    },
+    "publish": null
+  }
+}
