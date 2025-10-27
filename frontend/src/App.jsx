@@ -172,13 +172,13 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!input.trim()) return
+    if (!input.trim() || isTyping) return  // Blocca se già sta rispondendo
 
     const userMessage = { role: 'user', content: input }
     setMessages(prev => [...prev, userMessage])
     const currentQuery = input
     setInput('')
-    setIsTyping(true)
+    setIsTyping(true)  // Disabilita input durante risposta
 
     try {
       // Usa streaming per risposte progressive
@@ -188,7 +188,7 @@ function App() {
         // Aggiungi messaggio vuoto che verrà riempito progressivamente
         const messageIndex = messages.length + 1;
         setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-        setIsTyping(false); // Non mostra typing indicator, mostra direttamente il testo
+        // isTyping rimane true durante lo streaming per bloccare input
         
         let accumulatedContent = '';
         
@@ -215,6 +215,7 @@ function App() {
           // onComplete
           () => {
             console.log('Streaming complete');
+            setIsTyping(false);  // Riabilita input
             cleanup && cleanup();
           },
           // onError
@@ -228,6 +229,7 @@ function App() {
               };
               return newMessages;
             });
+            setIsTyping(false);  // Riabilita input anche in caso di errore
             cleanup && cleanup();
           }
         );
@@ -433,8 +435,9 @@ function App() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={t.inputPlaceholder}
-                className="flex-1 bg-black border border-gray-700 text-gray-200 px-4 py-3 rounded-lg focus:outline-none focus:border-red-700 transition-colors placeholder-gray-600"
+                placeholder={isTyping ? "CAP 9000 sta rispondendo..." : t.inputPlaceholder}
+                disabled={isTyping}
+                className="flex-1 bg-black border border-gray-700 text-gray-200 px-4 py-3 rounded-lg focus:outline-none focus:border-red-700 transition-colors placeholder-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
