@@ -1,0 +1,85 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from main import CodeAssistant
+from languages import languages
+from knowledge_base import find_answer
+from llm_handler import LLMHandler, get_fallback_response
+
+app = Flask(__name__)
+CORS(app)
+
+# Initialize the assistant
+assistant = CodeAssistant()
+
+# Initialize LLM handler (prova prima codellama, poi altri modelli)
+llm = LLMHandler(model="codellama")
+print(f"Ollama available: {llm.available}")
+if llm.available:
+    models = llm.list_available_models()
+    print(f"Available models: {models}")
+
+@app.route('/api/query', methods=['POST'])
+def handle_query():
+    data = request.json
+    query = data.get('query', '')
+    language = data.get('language', 'Python')
+    ui_language = data.get('uiLanguage', 'en')
+    print(f"Received request - Query: '{query}', Language: '{language}', UI Language: '{ui_language}'")
+    
+    # Set the language
+    assistant.set_language(language)
+    
+    # Check if language is supported
+    if language not in languages:
+        return jsonify({
+            'response': f"I'm afraid I cannot process {language}. Supported languages are: {', '.join(languages)}",
+            'error': True
+        })
+    
+    # Try LLM first (if available)
+    if llm.available:
+        print(f"Using LLM for query: '{query}' in language: '{language}' with UI language: '{ui_language}'")
+        llm_response = llm.generate_response(query, language, ui_language)
+        print(f"LLM response language: {llm_response[:100]}..." if llm_response else "No response from LLM")
+        
+        if llm_response:
+            response = llm_response
+            return jsonify({
+                'response': response,
+                'language': language,
+                'error': False,
+                'source': 'llm'
+            })
+    
+    # Fallback to knowledge base
+    print(f"Using knowledge base for query: {query}")
+    answer = find_answer(language, query)
+    
+    if answer:
+        # CAP found a specific answer in knowledge base
+        response = f"Here is what I know about {language}:\n\n{answer}\n\nThis information should address your query regarding: '{query}'"
+        source = 'knowledge_base'
+    else:
+        # Last resort: generic response
+        if not llm.available:
+            response = get_fallback_response(language, query)
+            source = 'fallback_ollama_offline'
+        else:
+            response = f"I have received your {language} query: '{query}'. While I have this in my database, I need more specific information to provide a detailed answer. Try asking about: variables, functions, loops, classes, or other specific programming concepts."
+            source = 'fallback_generic'
+    
+    return jsonify({
+        'response': response,
+        'language': language,
+        'error': False,
+        'source': source
+    })
+
+@app.route('/api/languages', methods=['GET'])
+def get_languages():
+    return jsonify({
+        'languages': languages
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5001)

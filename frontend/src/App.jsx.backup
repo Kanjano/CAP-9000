@@ -1,0 +1,215 @@
+import { useState, useEffect, useRef } from 'react'
+import { Send, Circle, Globe } from 'lucide-react'
+import { translations, languageNames } from './i18n/translations'
+
+function App() {
+  const [uiLang, setUiLang] = useState('en')
+  const [messages, setMessages] = useState([])
+  const [input, setInput] = useState('')
+  const [language, setLanguage] = useState('Python')
+  const [isTyping, setIsTyping] = useState(false)
+  const [languages, setLanguages] = useState(['Python', 'Java', 'JavaScript', 'C', 'C++', 'Go'])
+  const messagesEndRef = useRef(null)
+
+  const t = translations[uiLang]
+
+  useEffect(() => {
+    console.log('App mounted. electronAPI available:', !!window.electronAPI);
+    setMessages([{ role: 'assistant', content: t.greeting }])
+  }, [uiLang])
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!input.trim()) return
+
+    const userMessage = { role: 'user', content: input }
+    setMessages(prev => [...prev, userMessage])
+    const currentQuery = input
+    setInput('')
+    setIsTyping(true)
+
+    try {
+      // Use Electron IPC if available, otherwise fallback to fetch
+      console.log('Checking electronAPI:', window.electronAPI);
+      if (window.electronAPI) {
+        console.log('Using Electron IPC');
+        const data = await window.electronAPI.sendQuery({
+          query: currentQuery,
+          language: language
+        })
+        console.log('Received response:', data);
+        console.log('Response content:', data.response);
+        console.log('Response type:', typeof data.response);
+        
+        const responseContent = data.response || t.processingError;
+        console.log('Adding message with content:', responseContent);
+        
+        setTimeout(() => {
+          setIsTyping(false)
+          setMessages(prev => {
+            const newMessages = [...prev, { 
+              role: 'assistant', 
+              content: responseContent
+            }];
+            console.log('New messages array length:', newMessages.length);
+            return newMessages;
+          })
+        }, 500)
+      } else {
+        console.log('Using fetch fallback');
+        const response = await fetch('/api/query', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: currentQuery,
+            language: language
+          })
+        })
+
+        const data = await response.json()
+        
+        setTimeout(() => {
+          setMessages(prev => [...prev, { 
+            role: 'assistant', 
+            content: data.response || t.processingError
+          }])
+          setIsTyping(false)
+        }, 500)
+      }
+    } catch (error) {
+      setTimeout(() => {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: t.connectionError
+        }])
+        setIsTyping(false)
+      }, 500)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-hal-bg flex flex-col items-center justify-center p-4">
+      {/* HAL Eye */}
+      <div className="mb-8 flex flex-col items-center">
+        <div className="relative">
+          <div className="w-32 h-32 rounded-full bg-gradient-radial from-hal-red to-red-900 hal-eye-glow animate-pulse-slow flex items-center justify-center">
+            <Circle className="w-16 h-16 text-black fill-black opacity-30" />
+          </div>
+        </div>
+        <h1 className="mt-6 text-4xl font-bold hal-glow tracking-wider">HAL 9000</h1>
+        <p className="text-red-500 text-sm mt-2 opacity-70">{t.systemName}</p>
+      </div>
+
+      {/* UI Language Selector */}
+      <div className="mb-4 flex items-center gap-3">
+        <Globe className="w-4 h-4 text-red-500" />
+        <span className="text-red-500 text-sm">{t.uiLanguage}</span>
+        <select 
+          value={uiLang}
+          onChange={(e) => setUiLang(e.target.value)}
+          className="bg-hal-panel border border-red-900 text-red-500 px-3 py-1 rounded focus:outline-none focus:border-hal-red transition-colors text-sm"
+        >
+          {Object.entries(languageNames).map(([code, name]) => (
+            <option key={code} value={code}>{name}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Programming Language Selector */}
+      <div className="mb-4 flex items-center gap-3">
+        <span className="text-red-500 text-sm">{t.languageLabel}</span>
+        <select 
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="bg-hal-panel border border-red-900 text-red-500 px-4 py-2 rounded focus:outline-none focus:border-hal-red transition-colors"
+        >
+          {languages.map(lang => (
+            <option key={lang} value={lang}>{lang}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Chat Container */}
+      <div className="w-full max-w-4xl bg-hal-panel border border-red-900 rounded-lg shadow-2xl overflow-hidden">
+        {/* Messages */}
+        <div className="h-[500px] overflow-y-auto p-6 space-y-4">
+          {console.log('Rendering messages, count:', messages.length)}
+          {messages.map((message, index) => {
+            console.log(`Rendering message ${index}:`, message.role, message.content.substring(0, 50));
+            return (
+              <div
+                key={index}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] p-4 rounded-lg ${
+                    message.role === 'user'
+                      ? 'bg-red-900 border-2 border-red-700 text-white'
+                      : 'bg-red-950 border-2 border-red-600 text-red-100'
+                  }`}
+                >
+                  <div className="text-xs opacity-70 mb-1">
+                    {message.role === 'user' ? t.userLabel : t.halLabel}
+                  </div>
+                  <div className="whitespace-pre-wrap">{message.content}</div>
+                </div>
+              </div>
+            );
+          })}
+          
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="bg-black border border-red-800 text-red-400 p-4 rounded-lg">
+                <div className="text-xs opacity-60 mb-1">{t.halLabel}</div>
+                <div className="flex gap-1">
+                  <span className="animate-bounce">●</span>
+                  <span className="animate-bounce delay-100">●</span>
+                  <span className="animate-bounce delay-200">●</span>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Form */}
+        <form onSubmit={handleSubmit} className="border-t border-red-900 p-4 bg-black">
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={t.inputPlaceholder}
+              className="flex-1 bg-hal-panel border border-red-900 text-red-100 px-4 py-3 rounded focus:outline-none focus:border-hal-red transition-colors placeholder-red-900"
+            />
+            <button
+              type="submit"
+              disabled={!input.trim() || isTyping}
+              className="bg-hal-red hover:bg-red-700 disabled:bg-red-950 disabled:opacity-50 text-white px-6 py-3 rounded transition-colors flex items-center gap-2"
+            >
+              <Send className="w-5 h-5" />
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-6 text-center text-red-900 text-xs">
+        <p>{t.footer}</p>
+      </div>
+    </div>
+  )
+}
+
+export default App
