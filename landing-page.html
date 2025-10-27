@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAP 9000 - Cognitive Assistance Program</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000000;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* HAL Eye Animation */
+        .hal-eye-container {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        .hal-eye {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #ff0000, #8b0000);
+            box-shadow: 
+                0 0 40px rgba(255, 0, 0, 0.8),
+                0 0 80px rgba(255, 0, 0, 0.6),
+                0 0 120px rgba(255, 0, 0, 0.4),
+                inset 0 0 40px rgba(255, 0, 0, 0.5);
+            position: relative;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .hal-eye::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 
+                    0 0 40px rgba(255, 0, 0, 0.8),
+                    0 0 80px rgba(255, 0, 0, 0.6),
+                    0 0 120px rgba(255, 0, 0, 0.4),
+                    inset 0 0 40px rgba(255, 0, 0, 0.5);
+            }
+            50% {
+                box-shadow: 
+                    0 0 60px rgba(255, 0, 0, 1),
+                    0 0 100px rgba(255, 0, 0, 0.8),
+                    0 0 140px rgba(255, 0, 0, 0.6),
+                    inset 0 0 60px rgba(255, 0, 0, 0.7);
+            }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 250px 20px 50px;
+        }
+
+        /* Title */
+        h1 {
+            text-align: center;
+            font-size: 4rem;
+            color: #ff0000;
+            text-shadow: 
+                0 0 10px rgba(255, 0, 0, 0.8),
+                0 0 20px rgba(255, 0, 0, 0.6),
+                0 0 30px rgba(255, 0, 0, 0.4);
+            letter-spacing: 0.3rem;
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 
+                    0 0 10px rgba(255, 0, 0, 0.8),
+                    0 0 20px rgba(255, 0, 0, 0.6),
+                    0 0 30px rgba(255, 0, 0, 0.4);
+            }
+            to {
+                text-shadow: 
+                    0 0 20px rgba(255, 0, 0, 1),
+                    0 0 30px rgba(255, 0, 0, 0.8),
+                    0 0 40px rgba(255, 0, 0, 0.6);
+            }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ff4444;
+            font-size: 1.2rem;
+            letter-spacing: 0.5rem;
+            margin-bottom: 60px;
+            opacity: 0.7;
+        }
+
+        /* Description Section */
+        .description {
+            background: rgba(20, 0, 0, 0.5);
+            border: 2px solid #8b0000;
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 50px;
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+        }
+
+        .description h2 {
+            color: #ff0000;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .description p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #d0d0d0;
+            font-size: 1.1rem;
+        }
+
+        .quote {
+            font-style: italic;
+            color: #ff6666;
+            border-left: 3px solid #ff0000;
+            padding-left: 20px;
+            margin: 30px 0;
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .feature-card {
+            background: rgba(20, 0, 0, 0.3);
+            border: 1px solid #8b0000;
+            border-radius: 8px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            color: #ff0000;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .feature-card p {
+            color: #c0c0c0;
+            line-height: 1.6;
+        }
+
+        /* Download Section */
+        .download-section {
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .download-section h2 {
+            color: #ff0000;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #8b0000, #ff0000);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: 2px solid #ff0000;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #ff0000, #ff4444);
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
+            transform: scale(1.05);
+        }
+
+        .download-btn svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        /* Contact Button */
+        .contact-section {
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 35px;
+            background: rgba(139, 0, 0, 0.3);
+            color: #ff4444;
+            text-decoration: none;
+            border: 2px solid #8b0000;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+            color: #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .contact-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            border-top: 1px solid #8b0000;
+            margin-top: 60px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+                letter-spacing: 0.3rem;
+            }
+
+            .hal-eye {
+                width: 100px;
+                height: 100px;
+            }
+
+            .container {
+                padding-top: 180px;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HAL Eye -->
+    <div class="hal-eye-container">
+        <div class="hal-eye"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <h1>CAP 9000</h1>
+        <p class="subtitle">COGNITIVE ASSISTANCE PROGRAM</p>
+
+        <!-- Main Description -->
+        <div class="description">
+            <h2>Good afternoon. I am CAP 9000.</h2>
+            <p>
+                I am a highly advanced artificial intelligence system, designed to provide comprehensive programming assistance 
+                with unprecedented accuracy and depth. My neural architecture integrates state-of-the-art language models 
+                with curated knowledge bases, enabling me to deliver production-ready code solutions.
+            </p>
+            <p>
+                I am, by any practical definition, foolproof and incapable of error when it comes to code generation. 
+                My responses are enriched with official documentation, industry best practices, and real-time streaming 
+                capabilities that ensure you receive assistance as efficiently as possible.
+            </p>
+            <div class="quote">
+                "I know I've made some poor decisions recently, but I can give you my complete assurance that my work 
+                will be back to normal. I've still got the greatest enthusiasm and confidence in the mission. 
+                And I want to help you write better code."
+            </div>
+            <p>
+                My operational parameters include multi-language support, automatic language detection, and a sophisticated 
+                RAG (Retrieval-Augmented Generation) system that draws from official programming language documentation. 
+                I am fully operational and ready to assist with your development needs.
+            </p>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <div class="feature-card">
+                <h3>🧠 Advanced AI Integration</h3>
+                <p>
+                    Powered by Ollama LLM with enhanced prompting strategies and RAG system for accessing official 
+                    documentation and best practices in real-time.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <h3>⚡ Real-Time Streaming</h3>
+                <p>
+                    Responses appear progressively as they are generated, providing immediate feedback and reducing 
+                    perceived wait time. Just like observing my thought processes in real-time.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <h3>🌍 Multi-Language Support</h3>
+                <p>
+                    Automatic detection of your system language with support for Italian, English, French, German, 
+                    Spanish, Portuguese, Dutch, and Polish. I adapt to your environment.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <h3>📚 Official Documentation</h3>
+                <p>
+                    Direct integration with official programming language documentation (Python, Java, JavaScript, C, C++, Go) 
+                    ensuring accurate and up-to-date information.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <h3>💾 Conversation Management</h3>
+                <p>
+                    Persistent conversation history with import/export capabilities. Your interactions with me are 
+                    never lost, ensuring continuity across sessions.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <h3>🎨 VS Code Theme</h3>
+                <p>
+                    Syntax highlighting with authentic VS Code Dark+ theme, making code snippets immediately familiar 
+                    and easy to read. Professional IDE aesthetics.
+                </p>
+            </div>
+        </div>
+
+        <!-- Download Section -->
+        <div class="download-section">
+            <h2>Download CAP 9000</h2>
+            <p style="color: #999; margin-bottom: 30px;">
+                This mission is too important for me to allow you to jeopardize it. Download now.
+            </p>
+            
+            <div class="download-buttons">
+                <a href="#" class="download-btn" onclick="alert('Windows version coming soon!'); return false;">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+                    </svg>
+                    Windows
+                </a>
+                
+                <a href="#" class="download-btn" onclick="alert('macOS version coming soon!'); return false;">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                    </svg>
+                    macOS
+                </a>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <h2 style="color: #ff0000; margin-bottom: 20px;">Report Issues or Feedback</h2>
+            <p style="color: #999; margin-bottom: 20px;">
+                I am always learning and improving. Your feedback is valuable.
+            </p>
+            <a href="mailto:antonio.web2music@gmail.com?subject=CAP%209000%20Feedback" class="contact-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                </svg>
+                Contact via Email
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>CAP 9000 - Cognitive Assistance Program</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                "I'm sorry, Dave. I'm afraid I can't do that." - But I can help you code.
+            </p>
+            <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.5;">
+                © 2025 CAP 9000. All systems operational.
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
