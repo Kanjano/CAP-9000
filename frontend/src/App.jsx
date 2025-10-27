@@ -18,14 +18,24 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const messagesEndRef = useRef(null)
 
-  // Rileva lingua dal sistema operativo
+  // Rileva lingua dal sistema operativo (macOS, Windows, Linux)
   const detectSystemLanguage = () => {
-    const browserLang = navigator.language || navigator.userLanguage;
-    const langCode = browserLang.split('-')[0]; // es: 'it-IT' -> 'it'
+    // navigator.language: standard (Chrome, Firefox, Safari)
+    // navigator.userLanguage: IE/Edge legacy
+    // navigator.browserLanguage: IE legacy
+    // navigator.systemLanguage: Windows system language
+    const browserLang = navigator.language || 
+                       navigator.userLanguage || 
+                       navigator.browserLanguage || 
+                       navigator.systemLanguage || 
+                       'en';
+    
+    const langCode = browserLang.split('-')[0].toLowerCase(); // 'it-IT' -> 'it'
     
     // Verifica se la lingua è supportata
     if (translations[langCode]) {
-      console.log(`System language detected: ${langCode} (${browserLang})`);
+      const platform = navigator.platform || 'Unknown';
+      console.log(`System language detected: ${langCode} (${browserLang}) on ${platform}`);
       return langCode;
     }
     
@@ -257,19 +267,37 @@ function App() {
 
   return (
     <div className="min-h-screen bg-hal-bg flex">
-      {/* Conversation Sidebar */}
-      <ConversationSidebar
-        conversations={conversations}
-        currentId={currentConversationId}
-        onSelect={loadConversation}
-        onNew={createNewConversation}
-        onDelete={deleteConversation}
-        onExport={exportConversation}
-        onImport={importConversation}
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        translations={t}
-      />
+      {/* Sidebar wrapper con border completo */}
+      <div className="hidden lg:block border-r-2 border-red-900">
+        <ConversationSidebar
+          conversations={conversations}
+          currentId={currentConversationId}
+          onSelect={loadConversation}
+          onNew={createNewConversation}
+          onDelete={deleteConversation}
+          onExport={exportConversation}
+          onImport={importConversation}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          translations={t}
+        />
+      </div>
+
+      {/* Sidebar mobile (senza wrapper) */}
+      <div className="lg:hidden">
+        <ConversationSidebar
+          conversations={conversations}
+          currentId={currentConversationId}
+          onSelect={loadConversation}
+          onNew={createNewConversation}
+          onDelete={deleteConversation}
+          onExport={exportConversation}
+          onImport={importConversation}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          translations={t}
+        />
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
