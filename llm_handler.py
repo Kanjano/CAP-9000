@@ -17,6 +17,7 @@ Integrato con sistema RAG per documentazioni ufficiali.
 import requests
 import json
 from rag_system import get_rag_system
+from query_enhancer import get_query_enhancer
 
 class LLMHandler:
     def __init__(self, ollama_url="http://localhost:11434"):
@@ -33,6 +34,7 @@ class LLMHandler:
         self.ollama_url = ollama_url
         self.available = self.check_ollama_available()
         self.rag = get_rag_system()  # Sistema RAG per documentazioni
+        self.enhancer = get_query_enhancer()  # Query enhancer per comprensione NLU
     
     def check_ollama_available(self):
         """Verifica se Ollama è disponibile"""
@@ -73,6 +75,11 @@ class LLMHandler:
         response_language = language_names.get(ui_language, 'English')
         print(f"Generating response in {response_language} (UI language: {ui_language})")
         
+        # Migliora la query con NLU per migliore comprensione
+        enhanced_query = self.enhancer.enhance_query(query, language, ui_language)
+        if enhanced_query != query:
+            print(f"[NLU] Query enhanced for better understanding")
+        
         # Prompt bilanciato per risposte complete ma concise
         system_prompt = f"""You are CAP 9000, a CodeLlama-powered programming assistant.
 
@@ -106,10 +113,10 @@ Response Language: {response_language} (ALWAYS)
 Be complete, practical, efficient - IN {response_language}."""
 
         # Arricchisci il prompt con contesto RAG (documentazioni ufficiali + best practices)
-        enriched_system_prompt = self.rag.enrich_prompt(system_prompt, language, query)
+        enriched_system_prompt = self.rag.enrich_prompt(system_prompt, language, enhanced_query)
         
-        # User prompt con reminder esplicito della lingua
-        user_prompt = f"[RESPOND IN {response_language}] Question about {language}: {query}"
+        # User prompt con reminder esplicito della lingua (usa query migliorata)
+        user_prompt = f"[RESPOND IN {response_language}] Question about {language}: {enhanced_query}"
         
         if context:
             user_prompt = f"{context}\n\n{user_prompt}"
