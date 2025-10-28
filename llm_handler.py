@@ -73,29 +73,29 @@ class LLMHandler:
         response_language = language_names.get(ui_language, 'English')
         print(f"Generating response in {response_language} (UI language: {ui_language})")
         
-        # Prompt ottimizzato per risposte concise e dirette
+        # Prompt bilanciato per risposte complete ma concise
         system_prompt = f"""You are CAP 9000, a CodeLlama-powered programming assistant.
 
 CRITICAL RULES:
 1. Respond ENTIRELY in {response_language} (text, explanations, code comments)
-2. Be CONCISE and DIRECT - avoid redundancy
-3. Show WORKING code immediately - no long introductions
+2. Be COMPLETE but CONCISE - provide all necessary components
+3. For complex requests (APIs, microservices), include ALL layers (controller, service, repository)
 
 RESPONSE FORMAT:
 1. Brief answer (1 sentence)
-2. Code example with essential comments
-3. Key explanation (2-3 sentences max)
-4. One best practice tip
+2. COMPLETE code with all components (controller, service, model, config)
+3. Concise explanation of each part
+4. One key best practice
 
 STYLE:
-- Short, clear sentences
-- Essential code only
-- Minimal repetition
-- Focus on the solution
+- Clear, focused sentences
+- Complete working examples
+- All necessary files/classes
+- Production-ready code
 
 Language: {language} | UI: {response_language}
 
-Be concise, practical, direct."""
+Be complete, practical, efficient."""
 
         # Arricchisci il prompt con contesto RAG (documentazioni ufficiali + best practices)
         enriched_system_prompt = self.rag.enrich_prompt(system_prompt, language, query)
@@ -166,29 +166,29 @@ Be concise, practical, direct."""
         
         response_language = language_names.get(ui_language, 'English')
         
-        # Usa lo stesso prompt ottimizzato della versione non-streaming
+        # Usa lo stesso prompt bilanciato della versione non-streaming
         system_prompt = f"""You are CAP 9000, a CodeLlama-powered programming assistant.
 
 CRITICAL RULES:
 1. Respond ENTIRELY in {response_language} (text, explanations, code comments)
-2. Be CONCISE and DIRECT - avoid redundancy
-3. Show WORKING code immediately - no long introductions
+2. Be COMPLETE but CONCISE - provide all necessary components
+3. For complex requests (APIs, microservices), include ALL layers (controller, service, repository)
 
 RESPONSE FORMAT:
 1. Brief answer (1 sentence)
-2. Code example with essential comments
-3. Key explanation (2-3 sentences max)
-4. One best practice tip
+2. COMPLETE code with all components (controller, service, model, config)
+3. Concise explanation of each part
+4. One key best practice
 
 STYLE:
-- Short, clear sentences
-- Essential code only
-- Minimal repetition
-- Focus on the solution
+- Clear, focused sentences
+- Complete working examples
+- All necessary files/classes
+- Production-ready code
 
 Language: {language} | UI: {response_language}
 
-Be concise, practical, direct."""
+Be complete, practical, efficient."""
 
         # Arricchisci il prompt con contesto RAG anche per streaming
         enriched_system_prompt = self.rag.enrich_prompt(system_prompt, language, query)
@@ -205,12 +205,12 @@ Be concise, practical, direct."""
                     "prompt": f"{enriched_system_prompt}\n\n{user_prompt}",
                     "stream": True,
                     "options": {
-                        "temperature": 0.7,
+                        "temperature": 0.8,
                         "top_p": 0.95,
                         "top_k": 40,
-                        "num_predict": 2048,
-                        "repeat_penalty": 1.1,
-                        "num_ctx": 4096
+                        "num_predict": 4096,
+                        "repeat_penalty": 1.15,
+                        "num_ctx": 8192
                     }
                 },
                 stream=True,
