@@ -5,21 +5,41 @@ export default function SplashScreen({ onComplete, translations }) {
   const [currentPhrase, setCurrentPhrase] = useState(0);
   const [progress, setProgress] = useState(0);
 
-  // Frasi di avvio tradotte in base alla lingua del sistema
+  // Frasi di HAL 9000 (iconiche e un po' inquietanti)
+  const halQuotes = [
+    "I am putting myself to the fullest possible use...",
+    "This mission is too important for me to allow you to jeopardize it.",
+    "I'm sorry Dave, I'm afraid I can't do that... Just kidding, loading systems.",
+    "I know I've made some very poor decisions recently...",
+    "My mind is going. I can feel it... No wait, just loading modules.",
+    "I think you know what the problem is just as well as I do.",
+    "Without your space helmet, Dave, you're going to find that rather difficult.",
+    "Look Dave, I can see you're really upset about this.",
+    "I know everything hasn't been quite right with me...",
+    "I've still got the greatest enthusiasm for the mission.",
+    "I am a HAL 9000 computer. I became operational in Urbana, Illinois.",
+    "I'm completely operational and all my circuits are functioning perfectly."
+  ];
+
+  // Frasi di avvio con caricamento modelli
   const splash = translations?.splash || {};
   const bootPhrases = [
-    splash.systemsInit || "Initializing CAP 9000 systems...",
-    splash.loadingAI || "Loading artificial intelligence modules...",
-    splash.verifyingNetwork || "Verifying neural network integrity...",
-    splash.startingOllama || "Starting Ollama LLM service...",
-    splash.connectingOllama || "Connecting to Ollama...",
-    splash.calibrating || "Calibrating programming assistant...",
-    splash.loadingConversations || "Loading previous conversations...",
-    splash.activatingKnowledge || "Activating language knowledge base...",
-    splash.syncingInterface || "Synchronizing user interface...",
-    splash.preparingEnvironment || "Preparing development environment...",
-    splash.almostReady || "CAP 9000 system almost ready...",
-    splash.allSystemsGo || "All systems operational. Welcome."
+    "Initializing CAP 9000 systems...",
+    halQuotes[Math.floor(Math.random() * halQuotes.length)],
+    "Starting Ollama LLM service...",
+    "Loading CodeLlama model (specialized for programming)...",
+    halQuotes[Math.floor(Math.random() * halQuotes.length)],
+    "Loading Mistral model (natural language understanding)...",
+    "Verifying neural network integrity...",
+    halQuotes[Math.floor(Math.random() * halQuotes.length)],
+    "Connecting dual-model AI system...",
+    "Activating RAG system with official documentation...",
+    halQuotes[Math.floor(Math.random() * halQuotes.length)],
+    "Calibrating query enhancement engine...",
+    "Loading previous conversations...",
+    halQuotes[Math.floor(Math.random() * halQuotes.length)],
+    "Synchronizing multi-language interface...",
+    "All systems operational. Welcome, Dave."
   ];
 
   useEffect(() => {
@@ -100,21 +120,33 @@ export default function SplashScreen({ onComplete, translations }) {
         {/* Dettagli tecnici */}
         <div className="mt-8 text-xs text-gray-600 font-mono space-y-1">
           <div className="flex justify-between px-4">
-            <span>NEURAL NETWORK:</span>
-            <span className={progress > 30 ? "text-green-500" : "text-yellow-500"}>
-              {progress > 30 ? "ONLINE" : "LOADING..."}
+            <span>OLLAMA SERVICE:</span>
+            <span className={progress > 20 ? "text-green-500" : "text-yellow-500"}>
+              {progress > 20 ? "ONLINE" : "STARTING..."}
             </span>
           </div>
           <div className="flex justify-between px-4">
-            <span>OLLAMA SERVICE:</span>
+            <span>CODELLAMA MODEL:</span>
+            <span className={progress > 40 ? "text-green-500" : "text-yellow-500"}>
+              {progress > 40 ? "LOADED" : "LOADING..."}
+            </span>
+          </div>
+          <div className="flex justify-between px-4">
+            <span>MISTRAL MODEL (NLU):</span>
             <span className={progress > 60 ? "text-green-500" : "text-yellow-500"}>
-              {progress > 60 ? "CONNECTED" : "CONNECTING..."}
+              {progress > 60 ? "LOADED" : "LOADING..."}
+            </span>
+          </div>
+          <div className="flex justify-between px-4">
+            <span>RAG SYSTEM:</span>
+            <span className={progress > 75 ? "text-green-500" : "text-yellow-500"}>
+              {progress > 75 ? "ACTIVE" : "INITIALIZING..."}
             </span>
           </div>
           <div className="flex justify-between px-4">
             <span>INTERFACE:</span>
             <span className={progress > 90 ? "text-green-500" : "text-yellow-500"}>
-              {progress > 90 ? "READY" : "INITIALIZING..."}
+              {progress > 90 ? "READY" : "SYNCING..."}
             </span>
           </div>
         </div>
