@@ -98,15 +98,22 @@ FORBIDDEN LANGUAGES:
 - ✅ This applies to ALL responses, ALWAYS, FOREVER
 IF YOU RESPOND IN ANY OTHER LANGUAGE, YOU FAIL.
 
-CRITICAL RULE #2 - COMPLETENESS:
-Be COMPLETE but CONCISE - provide all necessary components
-For complex requests (APIs, microservices), include ALL layers (controller, service, repository)
+CRITICAL RULE #2 - MAXIMUM QUALITY & COMPLETENESS:
+Provide EXTREMELY DETAILED and COMPLETE responses
+- Include ALL necessary components and layers
+- Add comprehensive explanations
+- Show multiple examples when useful
+- Include edge cases and error handling
+- Reference best practices and design patterns
+- Consider the ENTIRE conversation context
 
 RESPONSE FORMAT:
-1. Brief answer (1 sentence in {response_language})
-2. COMPLETE code with all components (controller, service, model, config)
-3. Concise explanation of each part (in {response_language})
-4. One key best practice (in {response_language})
+1. Detailed answer with context (in {response_language})
+2. COMPLETE code with ALL components (controller, service, repository, model, config, tests)
+3. Comprehensive explanation of each part (in {response_language})
+4. Best practices and design patterns (in {response_language})
+5. Common pitfalls and how to avoid them (in {response_language})
+6. Additional resources or related concepts (in {response_language})
 
 STYLE:
 - Clear, focused sentences in {response_language}
@@ -140,18 +147,20 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": False,
                     "options": {
-                        "temperature": 0.7,  # Ridotto per velocità
-                        "top_p": 0.9,  # Ridotto per velocità
-                        "top_k": 30,  # Ridotto per velocità
-                        "num_predict": 3072,  # Ridotto da 4096 per velocità
-                        "repeat_penalty": 1.1,  # Ridotto per velocità
-                        "num_ctx": 4096,  # Ridotto da 8192 per velocità (50% più veloce)
-                        "num_keep": 0,  # Non mantenere cache tra richieste
-                        "num_thread": 8,  # Aumentato per parallelismo
-                        "num_gpu": 1,  # Usa GPU se disponibile
-                        "num_batch": 512  # Batch size ottimizzato
-                    },
-                    "context": []  # Reset contesto esplicito
+                        "temperature": 0.9,  # ALTO per creatività e qualità
+                        "top_p": 0.98,  # ALTO per diversità risposte
+                        "top_k": 60,  # ALTO per più opzioni
+                        "num_predict": 8192,  # MASSIMO per risposte complete
+                        "repeat_penalty": 1.2,  # ALTO per evitare ripetizioni
+                        "num_ctx": 16384,  # ENORME per memoria conversazione (16K tokens)
+                        "num_keep": -1,  # MANTIENI TUTTO il contesto
+                        "num_thread": 8,  # Parallelismo
+                        "num_gpu": 1,  # Usa GPU
+                        "num_batch": 1024,  # Batch grande per qualità
+                        "mirostat": 2,  # Mirostat v2 per qualità superiore
+                        "mirostat_tau": 5.0,  # Target perplexity
+                        "mirostat_eta": 0.1  # Learning rate
+                    }
                 },
                 timeout=90  # Aumentato per risposte più lunghe
             )
@@ -213,15 +222,22 @@ FORBIDDEN LANGUAGES:
 - ✅ This applies to ALL responses, ALWAYS, FOREVER
 IF YOU RESPOND IN ANY OTHER LANGUAGE, YOU FAIL.
 
-CRITICAL RULE #2 - COMPLETENESS:
-Be COMPLETE but CONCISE - provide all necessary components
-For complex requests (APIs, microservices), include ALL layers (controller, service, repository)
+CRITICAL RULE #2 - MAXIMUM QUALITY & COMPLETENESS:
+Provide EXTREMELY DETAILED and COMPLETE responses
+- Include ALL necessary components and layers
+- Add comprehensive explanations
+- Show multiple examples when useful
+- Include edge cases and error handling
+- Reference best practices and design patterns
+- Consider the ENTIRE conversation context
 
 RESPONSE FORMAT:
-1. Brief answer (1 sentence in {response_language})
-2. COMPLETE code with all components (controller, service, model, config)
-3. Concise explanation of each part (in {response_language})
-4. One key best practice (in {response_language})
+1. Detailed answer with context (in {response_language})
+2. COMPLETE code with ALL components (controller, service, repository, model, config, tests)
+3. Comprehensive explanation of each part (in {response_language})
+4. Best practices and design patterns (in {response_language})
+5. Common pitfalls and how to avoid them (in {response_language})
+6. Additional resources or related concepts (in {response_language})
 
 STYLE:
 - Clear, focused sentences in {response_language}
@@ -251,18 +267,20 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": True,
                     "options": {
-                        "temperature": 0.7,  # Ridotto per velocità
-                        "top_p": 0.9,  # Ridotto per velocità
-                        "top_k": 30,  # Ridotto per velocità
-                        "num_predict": 3072,  # Ridotto da 4096 per velocità
-                        "repeat_penalty": 1.1,  # Ridotto per velocità
-                        "num_ctx": 4096,  # Ridotto da 8192 per velocità (50% più veloce)
-                        "num_keep": 0,  # Non mantenere cache tra richieste
-                        "num_thread": 8,  # Aumentato per parallelismo
-                        "num_gpu": 1,  # Usa GPU se disponibile
-                        "num_batch": 512  # Batch size ottimizzato
-                    },
-                    "context": []  # Reset contesto esplicito
+                        "temperature": 0.9,  # ALTO per creatività e qualità
+                        "top_p": 0.98,  # ALTO per diversità risposte
+                        "top_k": 60,  # ALTO per più opzioni
+                        "num_predict": 8192,  # MASSIMO per risposte complete
+                        "repeat_penalty": 1.2,  # ALTO per evitare ripetizioni
+                        "num_ctx": 16384,  # ENORME per memoria conversazione (16K tokens)
+                        "num_keep": -1,  # MANTIENI TUTTO il contesto
+                        "num_thread": 8,  # Parallelismo
+                        "num_gpu": 1,  # Usa GPU
+                        "num_batch": 1024,  # Batch grande per qualità
+                        "mirostat": 2,  # Mirostat v2 per qualità superiore
+                        "mirostat_tau": 5.0,  # Target perplexity
+                        "mirostat_eta": 0.1  # Learning rate
+                    }
                 },
                 stream=True,
                 timeout=180  # Aumentato per streaming
