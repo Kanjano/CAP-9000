@@ -12,8 +12,9 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Directory progetto
-PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Directory progetto (parent di scripts/)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_DIR"
 
 # PID files
