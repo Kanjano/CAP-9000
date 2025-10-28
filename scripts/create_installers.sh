@@ -13,8 +13,9 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Directory
-PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Directory (parent di scripts/)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 DIST_DIR="$PROJECT_DIR/dist"
 DESKTOP_DIR="$HOME/Desktop"
 
@@ -22,7 +23,8 @@ DESKTOP_DIR="$HOME/Desktop"
 mkdir -p "$DIST_DIR"
 
 echo -e "${YELLOW}[1/6]${NC} Creating icon..."
-./create_icon.sh
+cd "$PROJECT_DIR"
+./scripts/create_icon.sh
 echo ""
 
 echo -e "${YELLOW}[2/6]${NC} Building frontend..."
