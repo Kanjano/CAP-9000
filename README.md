@@ -1,11 +1,15 @@
-# 🔴 HAL 9000 Code Assistant
+# 🔴 CAP 9000 - Cognitive Assistance Program
 
-Un assistente di programmazione desktop standalone ispirato a HAL 9000 di "2001: Odissea nello Spazio".
+> *"I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do."* - HAL 9000
+
+Un assistente di programmazione AI desktop standalone ispirato a HAL 9000 di "2001: Odissea nello Spazio".
 
 ![HAL 9000](https://img.shields.io/badge/HAL-9000-red?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge)
 ![Electron](https://img.shields.io/badge/Electron-Latest-47848F?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge)
+![CodeLlama](https://img.shields.io/badge/CodeLlama-7B-orange?style=for-the-badge)
+![Mistral](https://img.shields.io/badge/Mistral-NLU-purple?style=for-the-badge)
 
 ## ✨ Caratteristiche
 
@@ -15,10 +19,11 @@ Un assistente di programmazione desktop standalone ispirato a HAL 9000 di "2001:
 - Cross-platform (macOS, Windows, Linux)
 - Backend Flask integrato
 
-### 🤖 **Intelligenza Artificiale**
-- **LLM Locale** via Ollama (CodeLlama, DeepSeek Coder, ecc.)
-- **Knowledge Base** integrata come fallback
-- Risposte contestuali e intelligenti
+### 🤖 **Intelligenza Artificiale Dual-Model**
+- **CodeLlama 7B** - Specializzato per generazione codice
+- **Mistral** - Comprensione linguaggio naturale (NLU)
+- **Sistema RAG** - Documentazioni ufficiali integrate
+- **Query Enhancement** - Migliora comprensione domande
 - Privacy totale - tutto rimane sul tuo computer
 
 ### 🌍 **Multilingua**
@@ -79,7 +84,7 @@ npm run build
 
 **Metodo Semplice (Raccomandato):**
 ```bash
-./start_cap9000.sh
+./scripts/start_cap9000.sh
 ```
 
 Lo script unificato:
@@ -93,7 +98,7 @@ Lo script unificato:
 
 **Arresto:**
 ```bash
-./stop_cap9000.sh
+./scripts/stop_cap9000.sh
 # Oppure CTRL+C nello script di avvio
 ```
 
@@ -318,9 +323,74 @@ const response = await fetch('http://127.0.0.1:5002/api/query', {
 
 ## 📝 Documentazione
 
-- **[GUIDA_RAPIDA.md](GUIDA_RAPIDA.md)** - Guida rapida in italiano
-- **[SETUP_LLM.md](SETUP_LLM.md)** - Setup completo LLM locale
-- **[README_DESKTOP.md](README_DESKTOP.md)** - Documentazione app desktop
+Tutta la documentazione è organizzata nella cartella **[`docs/`](docs/)**:
+
+### 🚀 Guide Utente
+- **[Avvio Rapido](docs/guides/AVVIO_RAPIDO.md)** - Start qui!
+- **[Guida Completa](docs/guides/GUIDA_RAPIDA.md)** - Tutorial dettagliato
+- **[App Desktop](docs/guides/README_DESKTOP.md)** - Guida desktop
+- **[Tema HAL 9000](docs/guides/README_HAL9000.md)** - Design e citazioni
+
+### ⚙️ Setup
+- **[Configurazione Ollama](docs/setup/CONFIGURAZIONE_OLLAMA.md)** - Setup Ollama
+- **[Setup LLM](docs/setup/SETUP_LLM.md)** - Configurazione modelli
+- **[Info Modelli](docs/setup/LLM_INFO.md)** - CodeLlama & Mistral
+
+### 🚀 Deployment
+- **[Hosting Guide](docs/deployment/HOSTING_GUIDE.md)** - Deploy website
+- **[Netlify](docs/deployment/NETLIFY_DEPLOY.md)** - Deploy su Netlify
+- **[Installer](docs/deployment/INSTALLER_README.md)** - Creare installer
+
+### 🔧 Tecnica
+- **[Sistema RAG](docs/technical/RAG_DOCUMENTATION.md)** - Documentazione RAG
+- **[Architettura](docs/technical/README_COMPLETE.md)** - Doc completa
+
+## 📁 Struttura Progetto
+
+```
+CAP-9000/
+├── 📄 README.md                    # Questo file
+├── 📄 CHANGELOG.md                 # Storia modifiche
+├── 📄 LICENSE                      # Licenza MIT
+│
+├── 📂 docs/                        # 📚 Documentazione
+│   ├── guides/                     # Guide utente
+│   ├── setup/                      # Setup e configurazione
+│   ├── deployment/                 # Deploy e distribuzione
+│   └── technical/                  # Documentazione tecnica
+│
+├── 📂 scripts/                     # 🔧 Script utility
+│   ├── start_cap9000.sh           # Avvio applicazione
+│   ├── stop_cap9000.sh            # Stop applicazione
+│   ├── create_installers.sh       # Crea installer
+│   └── installer_wizard.sh        # Wizard installazione
+│
+├── 📂 frontend/                    # ⚛️ Frontend React + Electron
+│   ├── src/                       # Codice sorgente
+│   ├── electron/                  # Electron main process
+│   └── dist/                      # Build production
+│
+├── 📂 website/                     # 🌐 Landing page
+│   ├── index.html                 # Landing page
+│   ├── downloads/                 # Installer scaricabili
+│   └── netlify.toml              # Config Netlify
+│
+├── 📂 build-resources/            # 🎨 Risorse build
+│   └── icons/                     # Icone applicazione
+│
+├── 🐍 Backend Python
+│   ├── app.py                     # Flask server
+│   ├── llm_handler.py            # Gestione LLM
+│   ├── query_enhancer.py         # Query enhancement (NLU)
+│   ├── rag_system.py             # Sistema RAG
+│   ├── knowledge_base.py         # Knowledge base
+│   ├── language_detector.py      # Rilevamento lingua
+│   └── requirements.txt          # Dipendenze Python
+│
+└── 📦 Configurazione
+    ├── package.json              # Dipendenze Node.js
+    └── .gitignore               # Git ignore
+```
 
 ## 🎬 Citazioni HAL 9000
 
