@@ -76,8 +76,35 @@ npm run build
 ```
 
 ### 5. Avvia l'Applicazione
+
+**Metodo Semplice (Raccomandato):**
 ```bash
-npm run electron:dev
+./start_cap9000.sh
+```
+
+Lo script unificato:
+- ✅ Verifica tutti i prerequisiti (Python, Node.js, Ollama)
+- ✅ Installa dipendenze mancanti
+- ✅ Avvia Ollama se necessario
+- ✅ Scarica CodeLlama se non presente
+- ✅ Avvia backend Flask
+- ✅ Serve frontend
+- ✅ Apre browser automaticamente
+
+**Arresto:**
+```bash
+./stop_cap9000.sh
+# Oppure CTRL+C nello script di avvio
+```
+
+**Metodo Manuale (per sviluppatori):**
+```bash
+# Terminal 1: Backend
+python3 app.py
+
+# Terminal 2: Frontend dev (opzionale)
+cd frontend
+npm run dev
 ```
 
 ## 🤖 Setup LLM Locale (Consigliato)
