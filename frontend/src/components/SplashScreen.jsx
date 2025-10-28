@@ -43,7 +43,7 @@ export default function SplashScreen({ onComplete, translations }) {
   ];
 
   useEffect(() => {
-    // Cicla attraverso le frasi (rallentato per leggibilità)
+    // Cicla attraverso le frasi (RADDOPPIATO: 3 secondi per frase)
     const phraseInterval = setInterval(() => {
       setCurrentPhrase((prev) => {
         if (prev < bootPhrases.length - 1) {
@@ -51,9 +51,9 @@ export default function SplashScreen({ onComplete, translations }) {
         }
         return prev;
       });
-    }, 1500);  // 1.5 secondi per frase (leggibile)
+    }, 3000);  // 3 secondi per frase (molto leggibile)
 
-    // Incrementa la progress bar (rallentato)
+    // Incrementa la progress bar (DIMEZZATO: ~10 secondi totali)
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -62,7 +62,7 @@ export default function SplashScreen({ onComplete, translations }) {
           setTimeout(() => onComplete(), 500);
           return 100;
         }
-        return prev + 0.5;  // Molto più lento (~20 secondi totali)
+        return prev + 1;  // 1% ogni 100ms = 10 secondi totali
       });
     }, 100);
 
@@ -95,9 +95,9 @@ export default function SplashScreen({ onComplete, translations }) {
           COGNITIVE ASSISTANCE PROGRAM
         </p>
 
-        {/* Frase corrente - ALTEZZA FISSA per evitare resize */}
-        <div className="mb-6 h-16 flex items-center justify-center">
-          <p className="text-red-400 text-sm font-mono animate-pulse text-center px-4 max-w-2xl">
+        {/* Frase corrente - ALTEZZA FISSA MAGGIORE per evitare resize */}
+        <div className="mb-6 h-24 flex items-center justify-center">
+          <p className="text-red-400 text-sm font-mono animate-pulse text-center px-8 max-w-3xl leading-relaxed">
             {bootPhrases[currentPhrase]}
           </p>
         </div>

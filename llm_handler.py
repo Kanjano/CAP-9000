@@ -136,12 +136,13 @@ Be complete, practical, efficient - IN {response_language}."""
                     "prompt": f"{enriched_system_prompt}\n\n{user_prompt}",
                     "stream": False,
                     "options": {
-                        "temperature": 0.7,
+                        "temperature": 0.8,
                         "top_p": 0.95,
                         "top_k": 40,
-                        "num_predict": 2048,
-                        "repeat_penalty": 1.1,
-                        "num_ctx": 4096
+                        "num_predict": 4096,
+                        "repeat_penalty": 1.15,
+                        "num_ctx": 8192,
+                        "num_keep": 0  # Non mantenere cache tra richieste
                     }
                 },
                 timeout=60
@@ -243,7 +244,8 @@ Be complete, practical, efficient - IN {response_language}."""
                         "top_k": 40,
                         "num_predict": 4096,
                         "repeat_penalty": 1.15,
-                        "num_ctx": 8192
+                        "num_ctx": 8192,
+                        "num_keep": 0  # Non mantenere cache tra richieste
                     }
                 },
                 stream=True,

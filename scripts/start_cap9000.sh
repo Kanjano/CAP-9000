@@ -144,9 +144,14 @@ fi
 echo ""
 
 # ============================================
-# STEP 3: Avvia Ollama
+# STEP 3: Avvia Ollama e Pulisci Cache
 # ============================================
-echo -e "${YELLOW}[3/5] Avvio Ollama...${NC}"
+echo -e "${YELLOW}[3/5] Avvio Ollama e pulizia cache...${NC}"
+
+# Pulisci cache Ollama per evitare risposte in lingua sbagliata
+echo -e "${CYAN}Pulizia cache Ollama...${NC}"
+pkill -9 ollama 2>/dev/null || true
+sleep 1
 
 # Verifica se Ollama è già in esecuzione
 if pgrep -x "ollama" > /dev/null; then
