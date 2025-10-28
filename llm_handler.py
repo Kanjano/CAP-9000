@@ -134,6 +134,7 @@ Be complete, practical, efficient - IN {response_language}."""
                 json={
                     "model": self.model,
                     "prompt": f"{enriched_system_prompt}\n\n{user_prompt}",
+                    "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": False,
                     "options": {
                         "temperature": 0.8,
@@ -142,8 +143,10 @@ Be complete, practical, efficient - IN {response_language}."""
                         "num_predict": 4096,
                         "repeat_penalty": 1.15,
                         "num_ctx": 8192,
-                        "num_keep": 0  # Non mantenere cache tra richieste
-                    }
+                        "num_keep": 0,  # Non mantenere cache tra richieste
+                        "num_thread": 4  # Limita thread per evitare cache condivisa
+                    },
+                    "context": []  # Reset contesto esplicito
                 },
                 timeout=60
             )
@@ -237,6 +240,7 @@ Be complete, practical, efficient - IN {response_language}."""
                 json={
                     "model": self.model,
                     "prompt": f"{enriched_system_prompt}\n\n{user_prompt}",
+                    "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": True,
                     "options": {
                         "temperature": 0.8,
@@ -245,8 +249,10 @@ Be complete, practical, efficient - IN {response_language}."""
                         "num_predict": 4096,
                         "repeat_penalty": 1.15,
                         "num_ctx": 8192,
-                        "num_keep": 0  # Non mantenere cache tra richieste
-                    }
+                        "num_keep": 0,  # Non mantenere cache tra richieste
+                        "num_thread": 4  # Limita thread per evitare cache condivisa
+                    },
+                    "context": []  # Reset contesto esplicito
                 },
                 stream=True,
                 timeout=120
