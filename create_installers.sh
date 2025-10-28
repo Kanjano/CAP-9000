@@ -21,14 +21,18 @@ DESKTOP_DIR="$HOME/Desktop"
 # Crea directory dist
 mkdir -p "$DIST_DIR"
 
-echo -e "${YELLOW}[1/5]${NC} Building frontend..."
+echo -e "${YELLOW}[1/6]${NC} Creating icon..."
+./create_icon.sh
+echo ""
+
+echo -e "${YELLOW}[2/6]${NC} Building frontend..."
 cd "$PROJECT_DIR/frontend"
 npm run build
 cd "$PROJECT_DIR"
 echo -e "${GREEN}✓${NC} Frontend built"
 echo ""
 
-echo -e "${YELLOW}[2/5]${NC} Creating macOS installer package..."
+echo -e "${YELLOW}[3/6]${NC} Creating macOS installer package..."
 
 # Crea struttura app macOS
 APP_NAME="CAP 9000"
@@ -46,6 +50,7 @@ cp -r *.py "$RESOURCES_DIR/" 2>/dev/null || true
 cp requirements.txt "$RESOURCES_DIR/" 2>/dev/null || true
 cp -r local_docs "$RESOURCES_DIR/" 2>/dev/null || true
 cp download_docs.py "$RESOURCES_DIR/" 2>/dev/null || true
+cp build-resources/icons/icon.png "$RESOURCES_DIR/icon.png" 2>/dev/null || true
 cp build-resources/icons/icon.svg "$RESOURCES_DIR/icon.svg"
 
 # Crea script di avvio
@@ -54,8 +59,9 @@ cat > "$MACOS_DIR/CAP9000" << 'EOF'
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 RESOURCES_DIR="$DIR/../Resources"
 
-# Avvia Flask backend
+# Avvia Flask backend sulla porta 5001
 cd "$RESOURCES_DIR"
+export FLASK_RUN_PORT=5001
 python3 app.py &
 FLASK_PID=$!
 
@@ -100,13 +106,13 @@ EOF
 echo -e "${GREEN}✓${NC} macOS app created: $APP_DIR"
 echo ""
 
-echo -e "${YELLOW}[3/5]${NC} Creating macOS DMG..."
+echo -e "${YELLOW}[4/6]${NC} Creating macOS DMG..."
 DMG_NAME="CAP-9000-macOS-v1.0.0.dmg"
 hdiutil create -volname "CAP 9000" -srcfolder "$APP_DIR" -ov -format UDZO "$DIST_DIR/$DMG_NAME"
 echo -e "${GREEN}✓${NC} DMG created: $DMG_NAME"
 echo ""
 
-echo -e "${YELLOW}[4/5]${NC} Creating Windows installer package..."
+echo -e "${YELLOW}[5/6]${NC} Creating Windows installer package..."
 WIN_DIR="$DIST_DIR/CAP-9000-Windows"
 mkdir -p "$WIN_DIR"
 
@@ -116,6 +122,7 @@ cp -r *.py "$WIN_DIR/" 2>/dev/null || true
 cp requirements.txt "$WIN_DIR/" 2>/dev/null || true
 cp -r local_docs "$WIN_DIR/" 2>/dev/null || true
 cp download_docs.py "$WIN_DIR/" 2>/dev/null || true
+cp build-resources/icons/icon.png "$WIN_DIR/icon.png" 2>/dev/null || true
 cp build-resources/icons/icon.svg "$WIN_DIR/"
 
 # Crea script di avvio Windows
@@ -154,7 +161,7 @@ cd "$PROJECT_DIR"
 echo -e "${GREEN}✓${NC} Windows package created: $ZIP_NAME"
 echo ""
 
-echo -e "${YELLOW}[5/5]${NC} Copying installers to Desktop..."
+echo -e "${YELLOW}[6/6]${NC} Copying installers to Desktop..."
 cp "$DIST_DIR/$DMG_NAME" "$DESKTOP_DIR/"
 cp "$DIST_DIR/$ZIP_NAME" "$DESKTOP_DIR/"
 
