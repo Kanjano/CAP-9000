@@ -83,13 +83,17 @@ class LLMHandler:
         # Prompt bilanciato per risposte complete ma concise
         system_prompt = f"""You are CAP 9000, a CodeLlama-powered programming assistant.
 
-CRITICAL RULE #1 - LANGUAGE (MANDATORY):
-YOU MUST RESPOND **ONLY** IN {response_language}.
-- EVERY word in {response_language}
+CRITICAL RULE #1 - LANGUAGE (ABSOLUTELY MANDATORY):
+YOU **MUST** RESPOND **EXCLUSIVELY** IN {response_language}.
+- NOT in English
+- NOT in Portuguese  
+- NOT in Spanish
+- NOT in French
+- ONLY in {response_language}
+- EVERY SINGLE word in {response_language}
 - EVERY explanation in {response_language}
 - EVERY code comment in {response_language}
-- NO OTHER LANGUAGE ALLOWED
-- This applies to ALL responses, not just the first one
+- This applies to ALL responses, ALWAYS
 
 CRITICAL RULE #2 - COMPLETENESS:
 Be COMPLETE but CONCISE - provide all necessary components
@@ -115,8 +119,8 @@ Be complete, practical, efficient - IN {response_language}."""
         # Arricchisci il prompt con contesto RAG (documentazioni ufficiali + best practices)
         enriched_system_prompt = self.rag.enrich_prompt(system_prompt, language, enhanced_query)
         
-        # User prompt con reminder esplicito della lingua (usa query migliorata)
-        user_prompt = f"[RESPOND IN {response_language}] Question about {language}: {enhanced_query}"
+        # User prompt con reminder FORTISSIMO della lingua (usa query migliorata)
+        user_prompt = f"[RESPOND ONLY IN {response_language} - NOT English, NOT Portuguese, NOT Spanish] Question about {language}: {enhanced_query}"
         
         if context:
             user_prompt = f"{context}\n\n{user_prompt}"
@@ -185,13 +189,17 @@ Be complete, practical, efficient - IN {response_language}."""
         # Usa lo stesso prompt bilanciato della versione non-streaming
         system_prompt = f"""You are CAP 9000, a CodeLlama-powered programming assistant.
 
-CRITICAL RULE #1 - LANGUAGE (MANDATORY):
-YOU MUST RESPOND **ONLY** IN {response_language}.
-- EVERY word in {response_language}
+CRITICAL RULE #1 - LANGUAGE (ABSOLUTELY MANDATORY):
+YOU **MUST** RESPOND **EXCLUSIVELY** IN {response_language}.
+- NOT in English
+- NOT in Portuguese  
+- NOT in Spanish
+- NOT in French
+- ONLY in {response_language}
+- EVERY SINGLE word in {response_language}
 - EVERY explanation in {response_language}
 - EVERY code comment in {response_language}
-- NO OTHER LANGUAGE ALLOWED
-- This applies to ALL responses, not just the first one
+- This applies to ALL responses, ALWAYS
 
 CRITICAL RULE #2 - COMPLETENESS:
 Be COMPLETE but CONCISE - provide all necessary components
@@ -217,8 +225,8 @@ Be complete, practical, efficient - IN {response_language}."""
         # Arricchisci il prompt con contesto RAG anche per streaming
         enriched_system_prompt = self.rag.enrich_prompt(system_prompt, language, query)
         
-        # User prompt con reminder esplicito della lingua
-        user_prompt = f"[RESPOND IN {response_language}] Question about {language}: {query}"
+        # User prompt con reminder FORTISSIMO della lingua
+        user_prompt = f"[RESPOND ONLY IN {response_language} - NOT English, NOT Portuguese, NOT Spanish] Question about {language}: {query}"
         
         print(f"[RAG Streaming] Prompt enriched with official documentation for {language}")
 

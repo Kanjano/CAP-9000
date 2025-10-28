@@ -43,7 +43,7 @@ export default function SplashScreen({ onComplete, translations }) {
   ];
 
   useEffect(() => {
-    // Cicla attraverso le frasi
+    // Cicla attraverso le frasi (rallentato per leggibilità)
     const phraseInterval = setInterval(() => {
       setCurrentPhrase((prev) => {
         if (prev < bootPhrases.length - 1) {
@@ -51,9 +51,9 @@ export default function SplashScreen({ onComplete, translations }) {
         }
         return prev;
       });
-    }, 600);  // Rallentato per dare tempo a Ollama
+    }, 1500);  // 1.5 secondi per frase (leggibile)
 
-    // Incrementa la progress bar
+    // Incrementa la progress bar (rallentato)
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -62,7 +62,7 @@ export default function SplashScreen({ onComplete, translations }) {
           setTimeout(() => onComplete(), 500);
           return 100;
         }
-        return prev + 1.5;  // Rallentato per ~6-7 secondi totali
+        return prev + 0.5;  // Molto più lento (~20 secondi totali)
       });
     }, 100);
 
@@ -95,9 +95,9 @@ export default function SplashScreen({ onComplete, translations }) {
           COGNITIVE ASSISTANCE PROGRAM
         </p>
 
-        {/* Frase corrente */}
-        <div className="mb-6 h-6">
-          <p className="text-red-400 text-sm font-mono animate-pulse">
+        {/* Frase corrente - ALTEZZA FISSA per evitare resize */}
+        <div className="mb-6 h-16 flex items-center justify-center">
+          <p className="text-red-400 text-sm font-mono animate-pulse text-center px-4 max-w-2xl">
             {bootPhrases[currentPhrase]}
           </p>
         </div>
