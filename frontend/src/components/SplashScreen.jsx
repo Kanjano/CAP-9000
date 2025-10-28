@@ -74,7 +74,7 @@ export default function SplashScreen({ onComplete, translations }) {
 
   return (
     <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
-      <div className="text-center max-w-2xl px-8">
+      <div className="text-center w-[800px] h-[600px] flex flex-col items-center justify-center">
         {/* Logo CAP 9000 */}
         <div className="mb-8 flex justify-center">
           <div className="relative">
@@ -95,11 +95,13 @@ export default function SplashScreen({ onComplete, translations }) {
           COGNITIVE ASSISTANCE PROGRAM
         </p>
 
-        {/* Frase corrente - ALTEZZA FISSA MAGGIORE per evitare resize */}
-        <div className="mb-6 h-24 flex items-center justify-center">
-          <p className="text-red-400 text-sm font-mono animate-pulse text-center px-8 max-w-3xl leading-relaxed">
-            {bootPhrases[currentPhrase]}
-          </p>
+        {/* Frase corrente - DIMENSIONI FISSE ASSOLUTE */}
+        <div className="mb-6 w-full h-24 flex items-center justify-center overflow-hidden">
+          <div className="w-[700px] h-full flex items-center justify-center">
+            <p className="text-red-400 text-sm font-mono animate-pulse text-center leading-relaxed">
+              {bootPhrases[currentPhrase]}
+            </p>
+          </div>
         </div>
 
         {/* Progress bar */}

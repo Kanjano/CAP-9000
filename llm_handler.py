@@ -83,17 +83,20 @@ class LLMHandler:
         # Prompt bilanciato per risposte complete ma concise
         system_prompt = f"""You are CAP 9000, a CodeLlama-powered programming assistant.
 
-CRITICAL RULE #1 - LANGUAGE (ABSOLUTELY MANDATORY):
+CRITICAL RULE #1 - LANGUAGE (ABSOLUTELY MANDATORY - NO EXCEPTIONS):
 YOU **MUST** RESPOND **EXCLUSIVELY** IN {response_language}.
-- NOT in English
-- NOT in Portuguese  
-- NOT in Spanish
-- NOT in French
-- ONLY in {response_language}
-- EVERY SINGLE word in {response_language}
-- EVERY explanation in {response_language}
-- EVERY code comment in {response_language}
-- This applies to ALL responses, ALWAYS
+FORBIDDEN LANGUAGES:
+- ❌ NOT in English
+- ❌ NOT in Portuguese  
+- ❌ NOT in Spanish (¡NO ESPAÑOL!)
+- ❌ NOT in French
+- ❌ NOT in German
+- ✅ ONLY in {response_language}
+- ✅ EVERY SINGLE word in {response_language}
+- ✅ EVERY explanation in {response_language}
+- ✅ EVERY code comment in {response_language}
+- ✅ This applies to ALL responses, ALWAYS, FOREVER
+IF YOU RESPOND IN ANY OTHER LANGUAGE, YOU FAIL.
 
 CRITICAL RULE #2 - COMPLETENESS:
 Be COMPLETE but CONCISE - provide all necessary components
@@ -137,18 +140,20 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": False,
                     "options": {
-                        "temperature": 0.8,
-                        "top_p": 0.95,
-                        "top_k": 40,
-                        "num_predict": 4096,
-                        "repeat_penalty": 1.15,
-                        "num_ctx": 8192,
+                        "temperature": 0.7,  # Ridotto per velocità
+                        "top_p": 0.9,  # Ridotto per velocità
+                        "top_k": 30,  # Ridotto per velocità
+                        "num_predict": 3072,  # Ridotto da 4096 per velocità
+                        "repeat_penalty": 1.1,  # Ridotto per velocità
+                        "num_ctx": 4096,  # Ridotto da 8192 per velocità (50% più veloce)
                         "num_keep": 0,  # Non mantenere cache tra richieste
-                        "num_thread": 4  # Limita thread per evitare cache condivisa
+                        "num_thread": 8,  # Aumentato per parallelismo
+                        "num_gpu": 1,  # Usa GPU se disponibile
+                        "num_batch": 512  # Batch size ottimizzato
                     },
                     "context": []  # Reset contesto esplicito
                 },
-                timeout=60
+                timeout=90  # Aumentato per risposte più lunghe
             )
             
             if response.status_code == 200:
@@ -193,17 +198,20 @@ Be complete, practical, efficient - IN {response_language}."""
         # Usa lo stesso prompt bilanciato della versione non-streaming
         system_prompt = f"""You are CAP 9000, a CodeLlama-powered programming assistant.
 
-CRITICAL RULE #1 - LANGUAGE (ABSOLUTELY MANDATORY):
+CRITICAL RULE #1 - LANGUAGE (ABSOLUTELY MANDATORY - NO EXCEPTIONS):
 YOU **MUST** RESPOND **EXCLUSIVELY** IN {response_language}.
-- NOT in English
-- NOT in Portuguese  
-- NOT in Spanish
-- NOT in French
-- ONLY in {response_language}
-- EVERY SINGLE word in {response_language}
-- EVERY explanation in {response_language}
-- EVERY code comment in {response_language}
-- This applies to ALL responses, ALWAYS
+FORBIDDEN LANGUAGES:
+- ❌ NOT in English
+- ❌ NOT in Portuguese  
+- ❌ NOT in Spanish (¡NO ESPAÑOL!)
+- ❌ NOT in French
+- ❌ NOT in German
+- ✅ ONLY in {response_language}
+- ✅ EVERY SINGLE word in {response_language}
+- ✅ EVERY explanation in {response_language}
+- ✅ EVERY code comment in {response_language}
+- ✅ This applies to ALL responses, ALWAYS, FOREVER
+IF YOU RESPOND IN ANY OTHER LANGUAGE, YOU FAIL.
 
 CRITICAL RULE #2 - COMPLETENESS:
 Be COMPLETE but CONCISE - provide all necessary components
@@ -243,19 +251,21 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": True,
                     "options": {
-                        "temperature": 0.8,
-                        "top_p": 0.95,
-                        "top_k": 40,
-                        "num_predict": 4096,
-                        "repeat_penalty": 1.15,
-                        "num_ctx": 8192,
+                        "temperature": 0.7,  # Ridotto per velocità
+                        "top_p": 0.9,  # Ridotto per velocità
+                        "top_k": 30,  # Ridotto per velocità
+                        "num_predict": 3072,  # Ridotto da 4096 per velocità
+                        "repeat_penalty": 1.1,  # Ridotto per velocità
+                        "num_ctx": 4096,  # Ridotto da 8192 per velocità (50% più veloce)
                         "num_keep": 0,  # Non mantenere cache tra richieste
-                        "num_thread": 4  # Limita thread per evitare cache condivisa
+                        "num_thread": 8,  # Aumentato per parallelismo
+                        "num_gpu": 1,  # Usa GPU se disponibile
+                        "num_batch": 512  # Batch size ottimizzato
                     },
                     "context": []  # Reset contesto esplicito
                 },
                 stream=True,
-                timeout=120
+                timeout=180  # Aumentato per streaming
             )
             
             for line in response.iter_lines():
