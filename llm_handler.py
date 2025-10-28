@@ -147,19 +147,16 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": False,
                     "options": {
-                        "temperature": 0.9,  # ALTO per creatività e qualità
-                        "top_p": 0.98,  # ALTO per diversità risposte
-                        "top_k": 60,  # ALTO per più opzioni
-                        "num_predict": 8192,  # MASSIMO per risposte complete
-                        "repeat_penalty": 1.2,  # ALTO per evitare ripetizioni
-                        "num_ctx": 16384,  # ENORME per memoria conversazione (16K tokens)
-                        "num_keep": -1,  # MANTIENI TUTTO il contesto
-                        "num_thread": 8,  # Parallelismo
-                        "num_gpu": 1,  # Usa GPU
-                        "num_batch": 1024,  # Batch grande per qualità
-                        "mirostat": 2,  # Mirostat v2 per qualità superiore
-                        "mirostat_tau": 5.0,  # Target perplexity
-                        "mirostat_eta": 0.1  # Learning rate
+                        "temperature": 0.65,  # Ridotto 30% (0.9 → 0.65) per velocità
+                        "top_p": 0.70,  # Ridotto 30% (0.98 → 0.70) per velocità
+                        "top_k": 42,  # Ridotto 30% (60 → 42) per velocità
+                        "num_predict": 5734,  # Ridotto 30% (8192 → 5734) per velocità
+                        "repeat_penalty": 1.2,  # MANTENUTO ALTO per qualità
+                        "num_ctx": 16384,  # MANTENUTO per memoria conversazione completa
+                        "num_keep": -1,  # MANTENUTO per ricordare tutto
+                        "num_thread": 8,  # MANTENUTO per parallelismo
+                        "num_gpu": 1,  # MANTENUTO per GPU
+                        "num_batch": 1024  # MANTENUTO per risorse hardware
                     }
                 },
                 timeout=90  # Aumentato per risposte più lunghe
@@ -267,19 +264,16 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": True,
                     "options": {
-                        "temperature": 0.9,  # ALTO per creatività e qualità
-                        "top_p": 0.98,  # ALTO per diversità risposte
-                        "top_k": 60,  # ALTO per più opzioni
-                        "num_predict": 8192,  # MASSIMO per risposte complete
-                        "repeat_penalty": 1.2,  # ALTO per evitare ripetizioni
-                        "num_ctx": 16384,  # ENORME per memoria conversazione (16K tokens)
-                        "num_keep": -1,  # MANTIENI TUTTO il contesto
-                        "num_thread": 8,  # Parallelismo
-                        "num_gpu": 1,  # Usa GPU
-                        "num_batch": 1024,  # Batch grande per qualità
-                        "mirostat": 2,  # Mirostat v2 per qualità superiore
-                        "mirostat_tau": 5.0,  # Target perplexity
-                        "mirostat_eta": 0.1  # Learning rate
+                        "temperature": 0.65,  # Ridotto 30% (0.9 → 0.65) per velocità
+                        "top_p": 0.70,  # Ridotto 30% (0.98 → 0.70) per velocità
+                        "top_k": 42,  # Ridotto 30% (60 → 42) per velocità
+                        "num_predict": 5734,  # Ridotto 30% (8192 → 5734) per velocità
+                        "repeat_penalty": 1.2,  # MANTENUTO ALTO per qualità
+                        "num_ctx": 16384,  # MANTENUTO per memoria conversazione completa
+                        "num_keep": -1,  # MANTENUTO per ricordare tutto
+                        "num_thread": 8,  # MANTENUTO per parallelismo
+                        "num_gpu": 1,  # MANTENUTO per GPU
+                        "num_batch": 1024  # MANTENUTO per risorse hardware
                     }
                 },
                 stream=True,
