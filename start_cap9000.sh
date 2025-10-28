@@ -187,77 +187,41 @@ fi
 echo ""
 
 # ============================================
-# STEP 4: Avvia Backend Flask
+# STEP 4: Build Frontend
 # ============================================
-echo -e "${YELLOW}[4/5] Avvio backend Flask...${NC}"
+echo -e "${YELLOW}[4/5] Build frontend Electron...${NC}"
 
-# Verifica se backend è già in esecuzione
-if lsof -i:5001 > /dev/null 2>&1; then
-    echo -e "${YELLOW}⚠ Porta 5001 già in uso, arresto processo...${NC}"
-    pkill -f "python.*app.py" || true
-    sleep 2
-fi
-
-# Avvia backend
-echo -e "${CYAN}Avvio Flask su porta 5001...${NC}"
-nohup python3 app.py > /tmp/cap9000_backend.log 2>&1 &
-BACKEND_PID=$!
-echo $BACKEND_PID > "$BACKEND_PID_FILE"
-
-# Attendi che Flask sia pronto
-echo -e "${CYAN}Attesa avvio Flask...${NC}"
-for i in {1..15}; do
-    if curl -s http://localhost:5001/api/languages > /dev/null 2>&1; then
-        echo -e "${GREEN}✓${NC} Backend Flask avviato (PID: $BACKEND_PID)"
-        break
-    fi
-    sleep 1
-done
-
-# Verifica finale
-if ! curl -s http://localhost:5001/api/languages > /dev/null 2>&1; then
-    echo -e "${RED}✗ Backend non risponde${NC}"
-    echo -e "${YELLOW}Controlla log: tail -f /tmp/cap9000_backend.log${NC}"
+if [ ! -d "frontend" ]; then
+    echo -e "${RED}✗ Directory frontend non trovata${NC}"
     exit 1
 fi
 
-echo ""
+cd frontend
 
-# ============================================
-# STEP 5: Avvia Frontend (se in dev mode)
-# ============================================
-echo -e "${YELLOW}[5/5] Verifica frontend...${NC}"
-
-if [ -d "frontend/dist" ]; then
-    echo -e "${GREEN}✓${NC} Frontend già buildato (dist/ presente)"
-    echo -e "${CYAN}Frontend servito da Flask su http://localhost:5001${NC}"
-else
-    echo -e "${YELLOW}⚠ Frontend non buildato${NC}"
-    if [ -d "frontend" ]; then
-        echo -e "${CYAN}Build frontend...${NC}"
-        cd frontend
-        
-        # Installa dipendenze se necessario
-        if [ ! -d "node_modules" ]; then
-            echo -e "${CYAN}Installazione dipendenze npm...${NC}"
-            npm install
-        fi
-        
-        # Build
-        npm run build
-        cd ..
-        echo -e "${GREEN}✓${NC} Frontend buildato"
-    else
-        echo -e "${RED}✗ Directory frontend non trovata${NC}"
-        exit 1
-    fi
+# Installa dipendenze se necessario
+if [ ! -d "node_modules" ]; then
+    echo -e "${CYAN}Installazione dipendenze npm...${NC}"
+    npm install
+    echo -e "${GREEN}✓${NC} Dipendenze npm installate"
 fi
 
+# Build frontend se necessario
+if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
+    echo -e "${CYAN}Build frontend...${NC}"
+    npm run build
+    echo -e "${GREEN}✓${NC} Frontend buildato"
+else
+    echo -e "${GREEN}✓${NC} Frontend già buildato"
+fi
+
+cd ..
 echo ""
 
 # ============================================
-# Riepilogo e Apertura Browser
+# STEP 5: Avvia Applicazione Electron
 # ============================================
+echo -e "${YELLOW}[5/5] Avvio applicazione Electron...${NC}"
+
 echo -e "${GREEN}╔═══════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║                                       ║${NC}"
 echo -e "${GREEN}║   ✓ CAP 9000 AVVIATO CON SUCCESSO!   ║${NC}"
@@ -266,36 +230,30 @@ echo -e "${GREEN}╚════════════════════
 echo ""
 echo -e "${CYAN}Servizi attivi:${NC}"
 echo -e "  ${GREEN}✓${NC} Ollama        → http://localhost:11434"
-echo -e "  ${GREEN}✓${NC} Backend Flask → http://localhost:5001"
-echo -e "  ${GREEN}✓${NC} Frontend      → http://localhost:5001"
+echo -e "  ${GREEN}✓${NC} Backend Flask → Avviato da Electron"
+echo -e "  ${GREEN}✓${NC} Frontend      → Applicazione Desktop"
 echo ""
 echo -e "${CYAN}Modello AI:${NC}"
 echo -e "  ${GREEN}✓${NC} CodeLlama (specializzato programmazione)"
 echo ""
+echo -e "${CYAN}Tipo Applicazione:${NC}"
+echo -e "  ${GREEN}✓${NC} Desktop Standalone (Electron)"
+echo -e "  ${GREEN}✓${NC} Nessun browser richiesto"
+echo ""
 echo -e "${CYAN}Log files:${NC}"
 echo -e "  • Ollama:  /tmp/cap9000_ollama.log"
-echo -e "  • Backend: /tmp/cap9000_backend.log"
-echo ""
-echo -e "${YELLOW}Apertura browser...${NC}"
-
-# Apri browser
-sleep 2
-if command -v open &> /dev/null; then
-    open http://localhost:5001
-elif command -v xdg-open &> /dev/null; then
-    xdg-open http://localhost:5001
-else
-    echo -e "${CYAN}Apri manualmente: http://localhost:5001${NC}"
-fi
-
 echo ""
 echo -e "${RED}\"I am putting myself to the fullest possible use.\"${NC}"
 echo -e "${RED}                                        - HAL 9000${NC}"
 echo ""
-echo -e "${YELLOW}Premi CTRL+C per arrestare CAP 9000${NC}"
+echo -e "${YELLOW}Avvio applicazione desktop...${NC}"
 echo ""
 
-# Mantieni script in esecuzione
-while true; do
-    sleep 1
-done
+# Avvia Electron (blocca fino a chiusura app)
+cd frontend
+npm start
+
+# Cleanup quando Electron si chiude
+echo ""
+echo -e "${CYAN}Applicazione chiusa dall'utente${NC}"
+cleanup

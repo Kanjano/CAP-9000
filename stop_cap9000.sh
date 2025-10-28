@@ -25,12 +25,17 @@ if [ -f "$FRONTEND_PID_FILE" ]; then
     rm -f "$FRONTEND_PID_FILE"
 fi
 
-# Stop backend
+# Stop Electron app
+if pgrep -f "electron" > /dev/null; then
+    pkill -f "electron" 2>/dev/null || true
+    echo -e "${GREEN}✓${NC} Applicazione Electron arrestata"
+fi
+
+# Stop backend (gestito da Electron, ma cleanup per sicurezza)
 if [ -f "$BACKEND_PID_FILE" ]; then
     BACKEND_PID=$(cat "$BACKEND_PID_FILE")
     if ps -p $BACKEND_PID > /dev/null 2>&1; then
         kill $BACKEND_PID 2>/dev/null || true
-        echo -e "${GREEN}✓${NC} Backend arrestato"
     fi
     rm -f "$BACKEND_PID_FILE"
 fi
@@ -42,9 +47,8 @@ pkill -f "python.*app.py" 2>/dev/null || true
 if lsof -i:5001 > /dev/null 2>&1; then
     echo -e "${YELLOW}⚠ Porta 5001 ancora occupata, forzatura...${NC}"
     lsof -ti:5001 | xargs kill -9 2>/dev/null || true
+    echo -e "${GREEN}✓${NC} Porta 5001 liberata"
 fi
-
-echo -e "${GREEN}✓${NC} Porta 5001 liberata"
 
 # Note: Non arrestiamo Ollama perché potrebbe essere usato da altre app
 # Se vuoi arrestare anche Ollama, decommenta:
