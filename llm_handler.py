@@ -1,6 +1,17 @@
 """
 LLM Handler per CAP 9000 Code Assistant
-Supporta Ollama per modelli locali con RAG per documentazioni ufficiali
+
+CAP 9000 usa esclusivamente CodeLlama, un modello AI specializzato
+per programmazione sviluppato da Meta AI.
+
+CodeLlama è ottimizzato per:
+- Generazione di codice di alta qualità
+- Debugging e analisi codice
+- Spiegazioni tecniche dettagliate
+- Best practices e pattern
+- Supporto multi-linguaggio
+
+Integrato con sistema RAG per documentazioni ufficiali.
 """
 
 import requests
@@ -8,15 +19,17 @@ import json
 from rag_system import get_rag_system
 
 class LLMHandler:
-    def __init__(self, model="codellama", ollama_url="http://localhost:11434"):
+    def __init__(self, ollama_url="http://localhost:11434"):
         """
-        Inizializza l'handler LLM
+        Inizializza l'handler LLM con CodeLlama
+        
+        CAP 9000 usa esclusivamente CodeLlama, un modello specializzato
+        per programmazione sviluppato da Meta AI.
         
         Args:
-            model: Nome del modello Ollama (codellama, llama2, mistral, ecc.)
             ollama_url: URL del server Ollama
         """
-        self.model = model
+        self.model = "codellama"  # Unico modello supportato
         self.ollama_url = ollama_url
         self.available = self.check_ollama_available()
         self.rag = get_rag_system()  # Sistema RAG per documentazioni
@@ -247,33 +260,22 @@ Provide comprehensive, professional assistance:"""
             print(f"Error in streaming: {e}")
             return
 
-    def list_available_models(self):
-        """Lista i modelli disponibili in Ollama"""
-        if not self.available:
-            return []
-        
-        try:
-            response = requests.get(f"{self.ollama_url}/api/tags")
-            if response.status_code == 200:
-                data = response.json()
-                return [model['name'] for model in data.get('models', [])]
-            return []
-        except:
-            return []
-
-
-# Modelli consigliati per coding (ordinati per qualità)
-RECOMMENDED_MODELS = {
-    'qwen2.5-coder:32b': 'Qwen2.5 Coder 32B - MIGLIORE per coding (richiede GPU potente)',
-    'deepseek-coder:33b': 'DeepSeek Coder 33B - Eccellente qualità, risposte dettagliate',
-    'codellama:34b': 'CodeLlama 34B - Molto potente per programmazione',
-    'qwen2.5-coder:14b': 'Qwen2.5 Coder 14B - Ottimo compromesso qualità/velocità',
-    'deepseek-coder:6.7b': 'DeepSeek Coder 6.7B - Veloce e accurato',
-    'codellama:13b': 'CodeLlama 13B - Buon equilibrio',
-    'codellama': 'CodeLlama 7B - Base, veloce ma meno dettagliato',
-    'mistral': 'Mistral 7B - General purpose, buono per spiegazioni',
-    'phi3:14b': 'Phi-3 14B - Compatto ma potente',
-}
+    def get_model_info(self):
+        """Restituisce informazioni sul modello CodeLlama"""
+        return {
+            'name': 'CodeLlama',
+            'version': '7B',
+            'description': 'Modello specializzato per programmazione sviluppato da Meta AI',
+            'size': '3.8 GB',
+            'languages': ['Python', 'Java', 'JavaScript', 'C', 'C++', 'Go', 'e altri'],
+            'features': [
+                'Generazione codice',
+                'Debugging',
+                'Spiegazioni tecniche',
+                'Best practices',
+                'Refactoring'
+            ]
+        }
 
 
 def get_fallback_response(language, query):

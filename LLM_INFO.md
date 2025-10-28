@@ -1,10 +1,10 @@
-# 🤖 CAP 9000 - Informazioni LLM
+# 🤖 CAP 9000 - Modello AI: CodeLlama
 
-## 📊 Architettura Attuale
+## 📊 Architettura
 
-### **Ollama vs CodeLlama: Chiarimento**
+### **CAP 9000 usa esclusivamente CodeLlama**
 
-**IMPORTANTE:** Non c'è confusione! L'architettura è corretta:
+**IMPORTANTE:** CAP 9000 è specializzato per programmazione e usa solo CodeLlama:
 
 ```
 ┌─────────────────────────────────────┐
@@ -90,58 +90,54 @@ llm = LLMHandler(model="codellama")
 # CAP 9000 riceve risposta
 ```
 
-## 🎯 Modelli Disponibili
+## 🎯 Modello Utilizzato
 
-### **Modelli Coding (Raccomandati)**
+### **CodeLlama 7B - Specializzato per Programmazione**
 
-| Modello | Dimensione | Qualità | Velocità | Uso RAM |
-|---------|------------|---------|----------|---------|
-| **codellama** | 3.8 GB | ⭐⭐⭐⭐ | ⚡⚡⚡⚡ | 8 GB |
-| codellama:13b | 7.0 GB | ⭐⭐⭐⭐⭐ | ⚡⚡⚡ | 16 GB |
-| codellama:34b | 19 GB | ⭐⭐⭐⭐⭐ | ⚡⚡ | 32 GB |
-| qwen2.5-coder:7b | 4.5 GB | ⭐⭐⭐⭐⭐ | ⚡⚡⚡⭐ | 10 GB |
-| deepseek-coder:6.7b | 3.8 GB | ⭐⭐⭐⭐ | ⚡⚡⚡⚡ | 8 GB |
+| Caratteristica | Dettaglio |
+|----------------|-----------|
+| **Nome** | CodeLlama |
+| **Versione** | 7B (7 miliardi parametri) |
+| **Dimensione** | 3.8 GB |
+| **Sviluppatore** | Meta AI |
+| **Specializzazione** | Programmazione |
+| **Qualità** | ⭐⭐⭐⭐ |
+| **Velocità** | ⚡⚡⚡⚡ |
+| **RAM Richiesta** | 8 GB |
+| **Lingue Supportate** | Python, Java, JavaScript, C, C++, Go, e altri |
 
-### **Modelli General Purpose**
+### **Perché Solo CodeLlama?**
 
-| Modello | Dimensione | Qualità | Velocità |
-|---------|------------|---------|----------|
-| llama2 | 3.8 GB | ⭐⭐⭐ | ⚡⚡⚡⚡ |
-| mistral | 4.1 GB | ⭐⭐⭐⭐ | ⚡⚡⚡ |
-| phi3 | 2.3 GB | ⭐⭐⭐ | ⚡⚡⚡⚡⚡ |
+✅ **Specializzato per coding** - Addestrato specificamente su codice  
+✅ **Ottimo equilibrio** - Qualità/velocità/dimensione  
+✅ **Affidabile** - Sviluppato da Meta AI  
+✅ **Efficiente** - Funziona bene su hardware consumer  
+✅ **Completo** - Supporta tutti i linguaggi principali  
+✅ **Consistente** - Risposte uniformi e prevedibili
 
-## 🔄 Cambiare Modello
+## ⚙️ Configurazione
 
-### **Metodo 1: Modifica Codice**
+### **CAP 9000 è pre-configurato con CodeLlama**
 
-```python
-# app.py linea 17
-llm = LLMHandler(model="qwen2.5-coder:7b")  # Cambia qui
-```
+Non è necessario configurare il modello. CAP 9000 usa automaticamente CodeLlama.
 
-### **Metodo 2: Variabile Ambiente**
+**Installazione CodeLlama:**
 
 ```bash
-export CAP9000_MODEL="qwen2.5-coder:7b"
+# Scarica il modello (una volta sola)
+ollama pull codellama
+
+# Verifica installazione
+ollama list
 ```
+
+**Configurazione avanzata (opzionale):**
 
 ```python
-# app.py
-import os
-model = os.getenv('CAP9000_MODEL', 'codellama')
-llm = LLMHandler(model=model)
-```
-
-### **Metodo 3: Config File**
-
-```json
-// config.json
-{
-  "llm": {
-    "model": "qwen2.5-coder:7b",
-    "ollama_url": "http://localhost:11434"
-  }
-}
+# llm_handler.py - Modifica URL Ollama se necessario
+def __init__(self, ollama_url="http://localhost:11434"):
+    # Cambia porta se Ollama usa porta diversa
+    pass
 ```
 
 ## 🧪 Test Modello Attuale
@@ -167,69 +163,37 @@ ollama run codellama "Write a Python hello world"
 # Apri app e chiedi: "Write a Python hello world"
 ```
 
-## 📊 Performance Comparison
+## 📊 Performance CodeLlama
 
-### **CodeLlama 7B (Attuale)**
+### **Prestazioni Tipiche**
 
-```
-✅ Pros:
-- Ottimizzato per coding
-- Veloce (4-8 token/sec)
-- RAM moderata (8 GB)
-- Buona qualità risposte
+| Metrica | Valore |
+|---------|--------|
+| **Velocità** | 4-8 token/sec |
+| **Latenza Prima Risposta** | 1-2 secondi |
+| **RAM Utilizzata** | 6-8 GB |
+| **Qualità Codice** | ⭐⭐⭐⭐ |
+| **Accuratezza** | 85-90% |
+| **Lingue Supportate** | 15+ linguaggi |
 
-⚠️ Cons:
-- Meno generale di GPT
-- Limitato a coding tasks
-```
+### **Punti di Forza**
 
-### **Qwen2.5-Coder 7B (Alternativa)**
+✅ **Generazione Codice** - Produce codice pulito e funzionante  
+✅ **Debugging** - Identifica e corregge errori efficacemente  
+✅ **Spiegazioni** - Spiega concetti in modo chiaro  
+✅ **Best Practices** - Suggerisce pattern e convenzioni  
+✅ **Multi-lingua** - Supporta tutti i linguaggi principali  
+✅ **Velocità** - Risposte rapide anche su hardware consumer
 
-```
-✅ Pros:
-- Migliore qualità coding
-- Più aggiornato
-- Supporta più linguaggi
-- Veloce
+### **Ottimizzazioni CAP 9000**
 
-⚠️ Cons:
-- Dimensione maggiore (4.5 GB)
-- RAM maggiore (10 GB)
-```
+CAP 9000 migliora CodeLlama con:
 
-## 🎯 Raccomandazioni
-
-### **Per Sviluppo Normale:**
-```
-✅ CodeLlama 7B (attuale)
-- Perfetto equilibrio
-- Veloce e accurato
-- RAM accessibile
-```
-
-### **Per Qualità Massima:**
-```
-⭐ Qwen2.5-Coder 7B
-- Migliori risposte
-- Più aggiornato
-- Vale la RAM extra
-```
-
-### **Per Hardware Limitato:**
-```
-💡 Phi-3 3.8B
-- Solo 2.3 GB
-- Velocissimo
-- Qualità accettabile
-```
-
-### **Per Professionisti:**
-```
-🚀 CodeLlama 34B
-- Qualità eccezionale
-- Richiede 32 GB RAM
-- Più lento
-```
+- 🔍 **RAG System** - Documentazioni ufficiali integrate
+- 📚 **Best Practices** - Database pattern hardcoded
+- 🌍 **Multi-lingua** - Risposte in 8 lingue
+- 💾 **Caching** - Ottimizzazione memoria
+- ⚡ **Streaming** - Output progressivo real-time
 
 ## 🔧 Troubleshooting
 

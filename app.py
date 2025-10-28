@@ -13,12 +13,13 @@ CORS(app)
 # Initialize the assistant
 assistant = CodeAssistant()
 
-# Initialize LLM handler (prova prima codellama, poi altri modelli)
-llm = LLMHandler(model="codellama")
-print(f"Ollama available: {llm.available}")
+# Initialize LLM handler con CodeLlama
+llm = LLMHandler()
+print(f"CodeLlama (via Ollama) available: {llm.available}")
 if llm.available:
-    models = llm.list_available_models()
-    print(f"Available models: {models}")
+    model_info = llm.get_model_info()
+    print(f"Model: {model_info['name']} {model_info['version']}")
+    print(f"Specialized for: {', '.join(model_info['features'])}")
 
 # Initialize language detector
 lang_detector = get_language_detector()
