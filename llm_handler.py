@@ -147,14 +147,14 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": False,
                     "options": {
-                        "temperature": 0.65,  # Ridotto 30% (0.9 → 0.65) per velocità
-                        "top_p": 0.70,  # Ridotto 30% (0.98 → 0.70) per velocità
-                        "top_k": 42,  # Ridotto 30% (60 → 42) per velocità
-                        "num_predict": 5734,  # Ridotto 30% (8192 → 5734) per velocità
+                        "temperature": 0.58,  # Ridotto ulteriore 10% (0.65 → 0.58) per velocità
+                        "top_p": 0.63,  # Ridotto ulteriore 10% (0.70 → 0.63) per velocità
+                        "top_k": 38,  # Ridotto ulteriore 10% (42 → 38) per velocità
+                        "num_predict": 5160,  # Ridotto ulteriore 10% (5734 → 5160) per velocità
                         "repeat_penalty": 1.2,  # MANTENUTO ALTO per qualità
-                        "num_ctx": 16384,  # MANTENUTO per memoria conversazione completa
-                        "num_keep": -1,  # MANTENUTO per ricordare tutto
-                        "num_thread": 8,  # MANTENUTO per parallelismo
+                        "num_ctx": 11468,  # Ridotto a 70% (16384 → 11468) per velocità
+                        "num_keep": 8028,  # 70% del context (11468 * 0.7) per memoria parziale
+                        "num_thread": 12,  # AUMENTATO (8 → 12) per parallelismo
                         "num_gpu": 1,  # MANTENUTO per GPU
                         "num_batch": 1024  # MANTENUTO per risorse hardware
                     }
@@ -264,14 +264,14 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": True,
                     "options": {
-                        "temperature": 0.65,  # Ridotto 30% (0.9 → 0.65) per velocità
-                        "top_p": 0.70,  # Ridotto 30% (0.98 → 0.70) per velocità
-                        "top_k": 42,  # Ridotto 30% (60 → 42) per velocità
-                        "num_predict": 5734,  # Ridotto 30% (8192 → 5734) per velocità
+                        "temperature": 0.58,  # Ridotto ulteriore 10% (0.65 → 0.58) per velocità
+                        "top_p": 0.63,  # Ridotto ulteriore 10% (0.70 → 0.63) per velocità
+                        "top_k": 38,  # Ridotto ulteriore 10% (42 → 38) per velocità
+                        "num_predict": 5160,  # Ridotto ulteriore 10% (5734 → 5160) per velocità
                         "repeat_penalty": 1.2,  # MANTENUTO ALTO per qualità
-                        "num_ctx": 16384,  # MANTENUTO per memoria conversazione completa
-                        "num_keep": -1,  # MANTENUTO per ricordare tutto
-                        "num_thread": 8,  # MANTENUTO per parallelismo
+                        "num_ctx": 11468,  # Ridotto a 70% (16384 → 11468) per velocità
+                        "num_keep": 8028,  # 70% del context (11468 * 0.7) per memoria parziale
+                        "num_thread": 12,  # AUMENTATO (8 → 12) per parallelismo
                         "num_gpu": 1,  # MANTENUTO per GPU
                         "num_batch": 1024  # MANTENUTO per risorse hardware
                     }
