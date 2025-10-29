@@ -75,10 +75,11 @@ class LLMHandler:
         response_language = language_names.get(ui_language, 'English')
         print(f"Generating response in {response_language} (UI language: {ui_language})")
         
-        # Migliora la query con NLU per migliore comprensione
-        enhanced_query = self.enhancer.enhance_query(query, language, ui_language)
-        if enhanced_query != query:
-            print(f"[NLU] Query enhanced for better understanding")
+        # Query enhancer DISABILITATO per velocità (causava latenza)
+        # enhanced_query = self.enhancer.enhance_query(query, language, ui_language)
+        enhanced_query = query  # Usa query originale per velocità
+        # if enhanced_query != query:
+        #     print(f"[NLU] Query enhanced for better understanding")
         
         # Prompt bilanciato per risposte complete ma concise
         system_prompt = f"""You are CAP 9000, a CodeLlama-powered programming assistant.
@@ -147,16 +148,17 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": False,
                     "options": {
-                        "temperature": 0.58,  # Ridotto ulteriore 10% (0.65 → 0.58) per velocità
-                        "top_p": 0.63,  # Ridotto ulteriore 10% (0.70 → 0.63) per velocità
-                        "top_k": 38,  # Ridotto ulteriore 10% (42 → 38) per velocità
-                        "num_predict": 5160,  # Ridotto ulteriore 10% (5734 → 5160) per velocità
-                        "repeat_penalty": 1.2,  # MANTENUTO ALTO per qualità
-                        "num_ctx": 11468,  # Ridotto a 70% (16384 → 11468) per velocità
-                        "num_keep": 8028,  # 70% del context (11468 * 0.7) per memoria parziale
-                        "num_thread": 12,  # AUMENTATO (8 → 12) per parallelismo
-                        "num_gpu": 1,  # MANTENUTO per GPU
-                        "num_batch": 1024  # MANTENUTO per risorse hardware
+                        "temperature": 0.5,  # RIDOTTO per velocità massima
+                        "top_p": 0.5,  # RIDOTTO per velocità massima
+                        "top_k": 20,  # RIDOTTO drasticamente per velocità
+                        "num_predict": 2048,  # RIDOTTO drasticamente (5160 → 2048)
+                        "repeat_penalty": 1.1,  # Ridotto per velocità
+                        "num_ctx": 4096,  # RIDOTTO drasticamente (11468 → 4096) - CRITICO
+                        "num_keep": 0,  # DISABILITATO - no memoria per velocità
+                        "num_thread": 16,  # MASSIMO parallelismo
+                        "num_gpu": 1,  # GPU
+                        "num_batch": 256,  # Ridotto per velocità
+                        "low_vram": True  # Modalità low VRAM per velocità
                     }
                 },
                 timeout=90  # Aumentato per risposte più lunghe
@@ -264,16 +266,17 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": True,
                     "options": {
-                        "temperature": 0.58,  # Ridotto ulteriore 10% (0.65 → 0.58) per velocità
-                        "top_p": 0.63,  # Ridotto ulteriore 10% (0.70 → 0.63) per velocità
-                        "top_k": 38,  # Ridotto ulteriore 10% (42 → 38) per velocità
-                        "num_predict": 5160,  # Ridotto ulteriore 10% (5734 → 5160) per velocità
-                        "repeat_penalty": 1.2,  # MANTENUTO ALTO per qualità
-                        "num_ctx": 11468,  # Ridotto a 70% (16384 → 11468) per velocità
-                        "num_keep": 8028,  # 70% del context (11468 * 0.7) per memoria parziale
-                        "num_thread": 12,  # AUMENTATO (8 → 12) per parallelismo
-                        "num_gpu": 1,  # MANTENUTO per GPU
-                        "num_batch": 1024  # MANTENUTO per risorse hardware
+                        "temperature": 0.5,  # RIDOTTO per velocità massima
+                        "top_p": 0.5,  # RIDOTTO per velocità massima
+                        "top_k": 20,  # RIDOTTO drasticamente per velocità
+                        "num_predict": 2048,  # RIDOTTO drasticamente (5160 → 2048)
+                        "repeat_penalty": 1.1,  # Ridotto per velocità
+                        "num_ctx": 4096,  # RIDOTTO drasticamente (11468 → 4096) - CRITICO
+                        "num_keep": 0,  # DISABILITATO - no memoria per velocità
+                        "num_thread": 16,  # MASSIMO parallelismo
+                        "num_gpu": 1,  # GPU
+                        "num_batch": 256,  # Ridotto per velocità
+                        "low_vram": True  # Modalità low VRAM per velocità
                     }
                 },
                 stream=True,
