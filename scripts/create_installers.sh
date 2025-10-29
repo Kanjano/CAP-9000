@@ -109,7 +109,7 @@ echo -e "${GREEN}✓${NC} macOS app created: $APP_DIR"
 echo ""
 
 echo -e "${YELLOW}[4/6]${NC} Creating macOS DMG..."
-DMG_NAME="CAP-9000-macOS-v1.0.0.dmg"
+DMG_NAME="CAP-9000-macOS-v1.1.0.dmg"
 hdiutil create -volname "CAP 9000" -srcfolder "$APP_DIR" -ov -format UDZO "$DIST_DIR/$DMG_NAME"
 echo -e "${GREEN}✓${NC} DMG created: $DMG_NAME"
 echo ""
@@ -155,7 +155,7 @@ EOF
 
 # Crea ZIP per Windows
 cd "$DIST_DIR"
-ZIP_NAME="CAP-9000-Windows-v1.0.0.zip"
+ZIP_NAME="CAP-9000-Windows-v1.1.0.zip"
 zip -r "$ZIP_NAME" "CAP-9000-Windows"
 rm -rf "CAP-9000-Windows"
 cd "$PROJECT_DIR"
