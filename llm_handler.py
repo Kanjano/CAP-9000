@@ -16,6 +16,7 @@ Integrato con sistema RAG per documentazioni ufficiali.
 
 import requests
 import json
+import time
 from rag_system import get_rag_system
 from query_enhancer import get_query_enhancer
 
@@ -75,11 +76,14 @@ class LLMHandler:
         response_language = language_names.get(ui_language, 'English')
         print(f"Generating response in {response_language} (UI language: {ui_language})")
         
-        # Query enhancer DISABILITATO per velocità (causava latenza)
-        # enhanced_query = self.enhancer.enhance_query(query, language, ui_language)
-        enhanced_query = query  # Usa query originale per velocità
-        # if enhanced_query != query:
-        #     print(f"[NLU] Query enhanced for better understanding")
+        # Migliora la query con NLU per migliore comprensione
+        print(f"[TIMING] Starting query enhancement...")
+        start_enhance = time.time()
+        enhanced_query = self.enhancer.enhance_query(query, language, ui_language)
+        enhance_time = time.time() - start_enhance
+        print(f"[TIMING] Query enhancement took: {enhance_time:.2f}s")
+        if enhanced_query != query:
+            print(f"[NLU] Query enhanced for better understanding")
         
         # Prompt bilanciato per risposte complete ma concise
         system_prompt = f"""You are CAP 9000, a CodeLlama-powered programming assistant.
@@ -138,8 +142,15 @@ Be complete, practical, efficient - IN {response_language}."""
         
         print(f"[RAG] Prompt enriched with official documentation and best practices for {language}")
         
+        print(f"[TIMING] Starting RAG retrieval...")
+        start_rag = time.time()
+        
         try:
             # Chiamata API Ollama con prompt arricchito
+            print(f"[TIMING] RAG retrieval took: {time.time() - start_rag:.2f}s")
+            print(f"[TIMING] Starting Ollama API call (non-streaming)...")
+            start_ollama = time.time()
+            
             response = requests.post(
                 f"{self.ollama_url}/api/generate",
                 json={
@@ -148,26 +159,31 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": False,
                     "options": {
-                        "temperature": 0.5,  # RIDOTTO per velocità massima
-                        "top_p": 0.5,  # RIDOTTO per velocità massima
-                        "top_k": 20,  # RIDOTTO drasticamente per velocità
-                        "num_predict": 2048,  # RIDOTTO drasticamente (5160 → 2048)
-                        "repeat_penalty": 1.1,  # Ridotto per velocità
-                        "num_ctx": 4096,  # RIDOTTO drasticamente (11468 → 4096) - CRITICO
-                        "num_keep": 0,  # DISABILITATO - no memoria per velocità
-                        "num_thread": 16,  # MASSIMO parallelismo
+                        "temperature": 0.58,  # Bilanciato
+                        "top_p": 0.63,  # Bilanciato
+                        "top_k": 38,  # Bilanciato
+                        "num_predict": 5160,  # Bilanciato
+                        "repeat_penalty": 1.2,  # ALTO per qualità
+                        "num_ctx": 11468,  # 70% memoria conversazione
+                        "num_keep": 8028,  # 70% del context
+                        "num_thread": 12,  # Parallelismo
                         "num_gpu": 1,  # GPU
-                        "num_batch": 256,  # Ridotto per velocità
-                        "low_vram": True  # Modalità low VRAM per velocità
+                        "num_batch": 1024  # Batch grande
                     }
                 },
                 timeout=90  # Aumentato per risposte più lunghe
             )
             
+            ollama_time = time.time() - start_ollama
+            print(f"[TIMING] Ollama API call took: {ollama_time:.2f}s")
+            
             if response.status_code == 200:
                 result = response.json()
+                total_time = time.time() - start_enhance
+                print(f"[TIMING] ===== TOTAL TIME: {total_time:.2f}s =====")
                 return result.get('response', '').strip()
             else:
+                print(f"[ERROR] Ollama returned status code: {response.status_code}")
                 return None
                 
         except Exception as e:
@@ -257,6 +273,10 @@ Be complete, practical, efficient - IN {response_language}."""
         
         print(f"[RAG Streaming] Prompt enriched with official documentation for {language}")
 
+        print(f"[TIMING] Starting Ollama API call (streaming)...")
+        start_ollama = time.time()
+        first_token_time = None
+        
         try:
             response = requests.post(
                 f"{self.ollama_url}/api/generate",
@@ -266,17 +286,16 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": True,
                     "options": {
-                        "temperature": 0.5,  # RIDOTTO per velocità massima
-                        "top_p": 0.5,  # RIDOTTO per velocità massima
-                        "top_k": 20,  # RIDOTTO drasticamente per velocità
-                        "num_predict": 2048,  # RIDOTTO drasticamente (5160 → 2048)
-                        "repeat_penalty": 1.1,  # Ridotto per velocità
-                        "num_ctx": 4096,  # RIDOTTO drasticamente (11468 → 4096) - CRITICO
-                        "num_keep": 0,  # DISABILITATO - no memoria per velocità
-                        "num_thread": 16,  # MASSIMO parallelismo
+                        "temperature": 0.58,  # Bilanciato
+                        "top_p": 0.63,  # Bilanciato
+                        "top_k": 38,  # Bilanciato
+                        "num_predict": 5160,  # Bilanciato
+                        "repeat_penalty": 1.2,  # ALTO per qualità
+                        "num_ctx": 11468,  # 70% memoria conversazione
+                        "num_keep": 8028,  # 70% del context
+                        "num_thread": 12,  # Parallelismo
                         "num_gpu": 1,  # GPU
-                        "num_batch": 256,  # Ridotto per velocità
-                        "low_vram": True  # Modalità low VRAM per velocità
+                        "num_batch": 1024  # Batch grande
                     }
                 },
                 stream=True,
@@ -288,6 +307,9 @@ Be complete, practical, efficient - IN {response_language}."""
                     try:
                         chunk = json.loads(line)
                         if 'response' in chunk and chunk['response']:
+                            if first_token_time is None:
+                                first_token_time = time.time() - start_ollama
+                                print(f"[TIMING] First token received after: {first_token_time:.2f}s")
                             yield chunk['response']
                     except json.JSONDecodeError:
                         continue
