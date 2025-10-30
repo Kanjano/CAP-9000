@@ -77,11 +77,11 @@ class LLMHandler:
         print(f"Generating response in {response_language} (UI language: {ui_language})")
         
         # Migliora la query con NLU per migliore comprensione
-        print(f"[TIMING] Starting query enhancement...")
+        print(f"[TIMING] Starting query enhancement...", flush=True)
         start_enhance = time.time()
         enhanced_query = self.enhancer.enhance_query(query, language, ui_language)
         enhance_time = time.time() - start_enhance
-        print(f"[TIMING] Query enhancement took: {enhance_time:.2f}s")
+        print(f"[TIMING] Query enhancement took: {enhance_time:.2f}s", flush=True)
         if enhanced_query != query:
             print(f"[NLU] Query enhanced for better understanding")
         
@@ -142,13 +142,13 @@ Be complete, practical, efficient - IN {response_language}."""
         
         print(f"[RAG] Prompt enriched with official documentation and best practices for {language}")
         
-        print(f"[TIMING] Starting RAG retrieval...")
+        print(f"[TIMING] Starting RAG retrieval...", flush=True)
         start_rag = time.time()
         
         try:
             # Chiamata API Ollama con prompt arricchito
-            print(f"[TIMING] RAG retrieval took: {time.time() - start_rag:.2f}s")
-            print(f"[TIMING] Starting Ollama API call (non-streaming)...")
+            print(f"[TIMING] RAG retrieval took: {time.time() - start_rag:.2f}s", flush=True)
+            print(f"[TIMING] Starting Ollama API call (non-streaming)...", flush=True)
             start_ollama = time.time()
             
             response = requests.post(
@@ -175,12 +175,12 @@ Be complete, practical, efficient - IN {response_language}."""
             )
             
             ollama_time = time.time() - start_ollama
-            print(f"[TIMING] Ollama API call took: {ollama_time:.2f}s")
+            print(f"[TIMING] Ollama API call took: {ollama_time:.2f}s", flush=True)
             
             if response.status_code == 200:
                 result = response.json()
                 total_time = time.time() - start_enhance
-                print(f"[TIMING] ===== TOTAL TIME: {total_time:.2f}s =====")
+                print(f"[TIMING] ===== TOTAL TIME: {total_time:.2f}s =====", flush=True)
                 return result.get('response', '').strip()
             else:
                 print(f"[ERROR] Ollama returned status code: {response.status_code}")
@@ -273,7 +273,7 @@ Be complete, practical, efficient - IN {response_language}."""
         
         print(f"[RAG Streaming] Prompt enriched with official documentation for {language}")
 
-        print(f"[TIMING] Starting Ollama API call (streaming)...")
+        print(f"[TIMING] Starting Ollama API call (streaming)...", flush=True)
         start_ollama = time.time()
         first_token_time = None
         
@@ -309,7 +309,7 @@ Be complete, practical, efficient - IN {response_language}."""
                         if 'response' in chunk and chunk['response']:
                             if first_token_time is None:
                                 first_token_time = time.time() - start_ollama
-                                print(f"[TIMING] First token received after: {first_token_time:.2f}s")
+                                print(f"[TIMING] First token received after: {first_token_time:.2f}s", flush=True)
                             yield chunk['response']
                     except json.JSONDecodeError:
                         continue

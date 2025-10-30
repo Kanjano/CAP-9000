@@ -47,9 +47,11 @@ def handle_query():
     
     # Try LLM first (if available)
     if llm.available:
-        print(f"Using LLM for query: '{query}' in language: '{language}' with UI language: '{ui_language}'")
+        print(f"Using LLM for query: '{query}' in language: '{language}' with UI language: '{ui_language}'", flush=True)
+        print(f"[DEBUG] About to call llm.generate_response()...", flush=True)
         llm_response = llm.generate_response(query, language, ui_language)
-        print(f"LLM response language: {llm_response[:100]}..." if llm_response else "No response from LLM")
+        print(f"[DEBUG] llm.generate_response() returned", flush=True)
+        print(f"LLM response language: {llm_response[:100]}..." if llm_response else "No response from LLM", flush=True)
         
         if llm_response:
             response = llm_response
