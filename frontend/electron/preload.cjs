@@ -9,6 +9,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     console.log('Sending query via IPC:', data);
     return ipcRenderer.invoke('send-query', data);
   },
+  onQueryChunk: (callback) => {
+    ipcRenderer.on('query-chunk', (event, chunk) => callback(chunk));
+  },
   sendQueryStream: (data, onChunk, onComplete, onError) => {
     console.log('Sending streaming query via IPC:', data);
     ipcRenderer.invoke('send-query-stream', data).then(onComplete).catch(onError);

@@ -55,7 +55,11 @@ function createWindow() {
 // Handle IPC from renderer - Direct Python Bridge (no HTTP)
 ipcMain.handle('send-query', async (event, data) => {
   try {
-    return await pythonBridge.query(data);
+    // Streaming con callback per aggiornamenti progressivi
+    return await pythonBridge.query(data, (chunk) => {
+      // Invia chunk al renderer
+      event.sender.send('query-chunk', chunk);
+    });
   } catch (error) {
     console.error('Query error:', error);
     return {

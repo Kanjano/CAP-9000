@@ -16,6 +16,7 @@ function App() {
   const [conversations, setConversations] = useState([])
   const [currentConversationId, setCurrentConversationId] = useState(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [streamingMessageIndex, setStreamingMessageIndex] = useState(null)
   const messagesEndRef = useRef(null)
 
   // Rileva lingua dal sistema operativo (macOS, Windows, Linux)
@@ -45,6 +46,32 @@ function App() {
 
   const [systemLang] = useState(detectSystemLanguage());
   const t = translations[systemLang];
+
+  // Setup streaming listener
+  useEffect(() => {
+    if (!window.electronAPI) return;
+    
+    const handleChunk = (chunk) => {
+      if (streamingMessageIndex !== null) {
+        setMessages(prev => {
+          const newMessages = [...prev];
+          if (newMessages[streamingMessageIndex]) {
+            newMessages[streamingMessageIndex] = {
+              ...newMessages[streamingMessageIndex],
+              content: newMessages[streamingMessageIndex].content + chunk
+            };
+          }
+          return newMessages;
+        });
+      }
+    };
+    
+    window.electronAPI.onQueryChunk(handleChunk);
+    
+    return () => {
+      // Cleanup listener
+    };
+  }, [streamingMessageIndex]);
 
   // Load conversations on mount - DOPO splash screen
   useEffect(() => {
@@ -181,84 +208,45 @@ function App() {
     setIsTyping(true)  // Disabilita input durante risposta
 
     try {
-      // Streaming temporaneamente disabilitato - usa query diretta
-      if (false && window.electronAPI && window.electronAPI.sendQueryStream) {
-        console.log('Using streaming query');
-        
-        // Aggiungi messaggio vuoto che verrà riempito progressivamente
-        const messageIndex = messages.length + 1;
-        setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-        // isTyping rimane true durante lo streaming per bloccare input
-        
-        let accumulatedContent = '';
-        
-        const cleanup = window.electronAPI.sendQueryStream(
-          {
-            query: currentQuery,
-            language: language
-            // uiLanguage rimosso: rilevato automaticamente dal backend
-          },
-          // onChunk - riceve ogni pezzo di testo
-          (chunk) => {
-            if (chunk.content && !chunk.done) {
-              accumulatedContent += chunk.content;
-              setMessages(prev => {
-                const newMessages = [...prev];
-                newMessages[messageIndex] = {
-                  role: 'assistant',
-                  content: accumulatedContent
-                };
-                return newMessages;
-              });
-            }
-          },
-          // onComplete
-          () => {
-            console.log('Streaming complete');
-            setIsTyping(false);  // Riabilita input
-            cleanup && cleanup();
-          },
-          // onError
-          (error) => {
-            console.error('Streaming error:', error);
-            setMessages(prev => {
-              const newMessages = [...prev];
-              newMessages[messageIndex] = {
-                role: 'assistant',
-                content: t.connectionError
-              };
-              return newMessages;
-            });
-            setIsTyping(false);  // Riabilita input anche in caso di errore
-            cleanup && cleanup();
-          }
-        );
-      } else {
-        // Fallback senza streaming
-        console.log('Using non-streaming query');
+      // Usa streaming progressivo (come ChatGPT)
+      console.log('Using streaming query');
+      
+      // Aggiungi messaggio vuoto che verrà riempito progressivamente
+      const messageIndex = messages.length + 1;
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+      setStreamingMessageIndex(messageIndex);
+      
+      try {
         const data = await window.electronAPI.sendQuery({
           query: currentQuery,
           language: language
-          // uiLanguage rimosso: rilevato automaticamente dal backend
         });
         
-        setTimeout(() => {
-          setIsTyping(false);
-          setMessages(prev => [...prev, { 
-            role: 'assistant', 
-            content: data.response || t.processingError
-          }]);
-        }, 500);
+        // Streaming completato, aggiorna con risposta finale se necessario
+        setStreamingMessageIndex(null);
+        setIsTyping(false);
+        
+      } catch (error) {
+        console.error('Streaming error:', error);
+        setMessages(prev => {
+          const newMessages = [...prev];
+          newMessages[messageIndex] = {
+            role: 'assistant',
+            content: t.connectionError
+          };
+          return newMessages;
+        });
+        setStreamingMessageIndex(null);
+        setIsTyping(false);
       }
     } catch (error) {
       console.error('Query error:', error);
-      setTimeout(() => {
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: t.connectionError
-        }]);
-        setIsTyping(false);
-      }, 500);
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: t.connectionError
+      }]);
+      setStreamingMessageIndex(null);
+      setIsTyping(false);
     }
   }
 

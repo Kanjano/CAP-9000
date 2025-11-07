@@ -29,37 +29,77 @@ llm = get_hybrid_handler(
 detector = LanguageDetector()
 print("Python Bridge ready", file=sys.stderr, flush=True)
 
-def process_query(request_id, data):
-    """Processa una query e ritorna risposta"""
+def process_query(request_id, data, streaming=False):
+    """Processa una query e ritorna risposta (con supporto streaming)"""
     try:
         query = data.get('query', '')
         language = data.get('language', 'Python')
         ui_language = data.get('ui_language', 'en')
         
-        print(f"Processing query: {query[:50]}...", file=sys.stderr, flush=True)
+        print(f"Processing query: {query[:50]}... (streaming={streaming})", file=sys.stderr, flush=True)
         
         # Auto-detect UI language se non specificato
         if not ui_language or ui_language == 'auto':
             ui_language = detector.detect_language(query)
         
-        # Genera risposta
-        response = llm.generate_response(query, language, ui_language)
-        
-        # Determina se reasoning è stato usato
-        stats = llm.get_stats()
-        reasoning_used = stats.get('queries', {}).get('reasoning', 0) > 0
-        
-        # Ritorna risultato
-        return {
-            'id': request_id,
-            'data': {
-                'response': response if response else "I apologize, but I cannot process this request at the moment.",
-                'language': language,
-                'error': False if response else True,
-                'source': 'hybrid_llm',
-                'reasoning_used': reasoning_used
+        if streaming:
+            # Streaming mode - invia chunks progressivamente
+            try:
+                for chunk in llm.generate_response_streaming(query, language, ui_language):
+                    chunk_response = {
+                        'id': request_id,
+                        'type': 'chunk',
+                        'data': {
+                            'content': chunk,
+                            'done': False
+                        }
+                    }
+                    print(json.dumps(chunk_response), file=_original_stdout, flush=True)
+                
+                # Segnala completamento
+                final_response = {
+                    'id': request_id,
+                    'type': 'chunk',
+                    'data': {
+                        'content': '',
+                        'done': True,
+                        'language': language,
+                        'source': 'hybrid_llm'
+                    }
+                }
+                print(json.dumps(final_response), file=_original_stdout, flush=True)
+                return None  # Non ritornare nulla, già inviato via streaming
+                
+            except Exception as e:
+                print(f"Streaming error: {e}", file=sys.stderr, flush=True)
+                traceback.print_exc(file=sys.stderr)
+                return {
+                    'id': request_id,
+                    'data': {
+                        'response': f"I apologize, but an error occurred: {str(e)}",
+                        'error': True,
+                        'source': 'error'
+                    }
+                }
+        else:
+            # Non-streaming mode - risposta completa
+            response = llm.generate_response(query, language, ui_language)
+            
+            # Determina se reasoning è stato usato
+            stats = llm.get_stats()
+            reasoning_used = stats.get('queries', {}).get('reasoning', 0) > 0
+            
+            # Ritorna risultato
+            return {
+                'id': request_id,
+                'data': {
+                    'response': response if response else "I apologize, but I cannot process this request at the moment.",
+                    'language': language,
+                    'error': False if response else True,
+                    'source': 'hybrid_llm',
+                    'reasoning_used': reasoning_used
+                }
             }
-        }
     except Exception as e:
         print(f"Error processing query: {e}", file=sys.stderr, flush=True)
         traceback.print_exc(file=sys.stderr)
@@ -107,8 +147,10 @@ def main():
                 request_data = request.get('data', {})
                 
                 if request_type == 'query':
-                    result = process_query(request_id, request_data)
-                    print(json.dumps(result), file=_original_stdout, flush=True)
+                    streaming = request_data.get('streaming', False)
+                    result = process_query(request_id, request_data, streaming=streaming)
+                    if result:  # Solo se non streaming (streaming invia chunks direttamente)
+                        print(json.dumps(result), file=_original_stdout, flush=True)
                 elif request_type == 'stats':
                     result = process_stats(request_id)
                     print(json.dumps(result), file=_original_stdout, flush=True)

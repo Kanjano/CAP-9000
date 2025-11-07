@@ -162,13 +162,12 @@ Be complete, practical, efficient - IN {response_language}."""
                         "temperature": 0.7,
                         "top_p": 0.9,
                         "top_k": 40,
-                        "num_predict": 2048,  # Ridotto per velocità
-                        "repeat_penalty": 1.1,
-                        "num_ctx": 4096,  # Ridotto per evitare timeout
+                        "num_predict": 1024,  # Ridotto per velocità massima
+                        "num_ctx": 2048,  # Ridotto per velocità
                         "num_thread": 8
                     }
                 },
-                timeout=90  # Aumentato per risposte più lunghe
+                timeout=60  # Ridotto per risposte più veloci
             )
             
             ollama_time = time.time() - start_ollama
@@ -286,14 +285,13 @@ Be complete, practical, efficient - IN {response_language}."""
                         "temperature": 0.7,
                         "top_p": 0.9,
                         "top_k": 40,
-                        "num_predict": 2048,  # Ridotto per velocità
-                        "repeat_penalty": 1.1,
-                        "num_ctx": 4096,  # Ridotto per evitare timeout
+                        "num_predict": 1024,  # Ridotto per velocità massima
+                        "num_ctx": 2048,  # Ridotto per velocità
                         "num_thread": 8
                     }
                 },
                 stream=True,
-                timeout=90  # Aumentato per risposte più lunghe
+                timeout=60  # Ridotto per risposte più veloci
             )
             
             for line in response.iter_lines():

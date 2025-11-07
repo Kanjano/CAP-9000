@@ -80,7 +80,7 @@ class PythonBridge {
     });
   }
 
-  async query(data) {
+  async query(data, onChunk = null) {
     if (!this.isReady) {
       throw new Error('Python Bridge not ready');
     }
@@ -88,9 +88,14 @@ class PythonBridge {
     return new Promise((resolve, reject) => {
       const requestId = Date.now() + Math.random();
       
+      const streaming = !!onChunk;
+      let accumulatedContent = '';
+      
       this.responseHandlers[requestId] = {
         resolve,
         reject,
+        onChunk,
+        accumulatedContent: '',
         timeout: setTimeout(() => {
           if (this.responseHandlers[requestId]) {
             delete this.responseHandlers[requestId];
@@ -102,7 +107,10 @@ class PythonBridge {
       const request = {
         id: requestId,
         type: 'query',
-        data: data
+        data: {
+          ...data,
+          streaming: streaming
+        }
       };
 
       try {
@@ -152,7 +160,29 @@ class PythonBridge {
 
   handleResponse(response) {
     const handler = this.responseHandlers[response.id];
-    if (handler) {
+    if (!handler) return;
+    
+    // Check if it's a streaming chunk
+    if (response.type === 'chunk') {
+      const chunkData = response.data;
+      
+      if (chunkData.done) {
+        // Streaming completato
+        clearTimeout(handler.timeout);
+        handler.resolve({
+          response: handler.accumulatedContent,
+          language: chunkData.language,
+          source: chunkData.source,
+          error: false
+        });
+        delete this.responseHandlers[response.id];
+      } else if (chunkData.content && handler.onChunk) {
+        // Chunk intermedio
+        handler.accumulatedContent += chunkData.content;
+        handler.onChunk(chunkData.content);
+      }
+    } else {
+      // Risposta non-streaming completa
       clearTimeout(handler.timeout);
       handler.resolve(response.data);
       delete this.responseHandlers[response.id];
