@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Circle } from 'lucide-react';
+import { Circle, AlertTriangle } from 'lucide-react';
 
 export default function SplashScreen({ onComplete, translations }) {
   const [currentPhrase, setCurrentPhrase] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [ollamaStatus, setOllamaStatus] = useState('checking');
+  const [error, setError] = useState(null);
+  const [canProceed, setCanProceed] = useState(false);
 
   // Frasi di HAL 9000 (iconiche e un po' inquietanti)
   const halQuotes = [
@@ -24,26 +27,61 @@ export default function SplashScreen({ onComplete, translations }) {
   // Frasi di avvio con caricamento modelli
   const splash = translations?.splash || {};
   const bootPhrases = [
-    "Initializing CAP 9000 systems...",
+    "Initializing CAP 9000 Hybrid System...",
     halQuotes[Math.floor(Math.random() * halQuotes.length)],
-    "Starting Ollama LLM service...",
-    "Loading CodeLlama model (specialized for programming)...",
+    "Verifying Ollama LLM service...",
+    "Loading CodeLlama model (code generation)...",
     halQuotes[Math.floor(Math.random() * halQuotes.length)],
-    "Loading Mistral model (natural language understanding)...",
-    "Verifying neural network integrity...",
+    "Loading Recursive Reasoning Module (5.2M parameters)...",
+    "Initializing Hybrid LLM Handler...",
     halQuotes[Math.floor(Math.random() * halQuotes.length)],
-    "Connecting dual-model AI system...",
-    "Activating RAG system with official documentation...",
+    "Activating Auto-Detection System...",
+    "Enabling Intelligent Caching...",
     halQuotes[Math.floor(Math.random() * halQuotes.length)],
-    "Calibrating query enhancement engine...",
+    "Connecting RAG system with official documentation...",
     "Loading previous conversations...",
     halQuotes[Math.floor(Math.random() * halQuotes.length)],
     "Synchronizing multi-language interface...",
     "All systems operational. Welcome, Dave."
   ];
 
+  // Verifica Ollama all'avvio
   useEffect(() => {
-    // Cicla attraverso le frasi (RADDOPPIATO: 3 secondi per frase)
+    const checkOllama = async () => {
+      try {
+        const response = await fetch('http://localhost:11434/api/tags', {
+          method: 'GET',
+          signal: AbortSignal.timeout(3000)
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const hasCodeLlama = data.models?.some(m => m.name.includes('codellama'));
+          
+          if (hasCodeLlama) {
+            setOllamaStatus('online');
+            setCanProceed(true);
+          } else {
+            setOllamaStatus('no-model');
+            setError('CodeLlama model not found. Please run: ollama pull codellama');
+          }
+        } else {
+          setOllamaStatus('offline');
+          setError('Ollama service is not responding. Please start Ollama.');
+        }
+      } catch (err) {
+        setOllamaStatus('offline');
+        setError('Ollama service is offline. Please run: ollama serve');
+      }
+    };
+
+    checkOllama();
+  }, []);
+
+  useEffect(() => {
+    if (!canProceed) return;
+
+    // Cicla attraverso le frasi (3 secondi per frase)
     const phraseInterval = setInterval(() => {
       setCurrentPhrase((prev) => {
         if (prev < bootPhrases.length - 1) {
@@ -51,9 +89,9 @@ export default function SplashScreen({ onComplete, translations }) {
         }
         return prev;
       });
-    }, 3000);  // 3 secondi per frase (molto leggibile)
+    }, 3000);
 
-    // Incrementa la progress bar (DIMEZZATO: ~10 secondi totali)
+    // Incrementa la progress bar (~10 secondi totali)
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -62,7 +100,7 @@ export default function SplashScreen({ onComplete, translations }) {
           setTimeout(() => onComplete(), 500);
           return 100;
         }
-        return prev + 1;  // 1% ogni 100ms = 10 secondi totali
+        return prev + 1;
       });
     }, 100);
 
@@ -70,7 +108,7 @@ export default function SplashScreen({ onComplete, translations }) {
       clearInterval(phraseInterval);
       clearInterval(progressInterval);
     };
-  }, [onComplete]);
+  }, [canProceed, onComplete]);
 
   return (
     <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
@@ -95,12 +133,32 @@ export default function SplashScreen({ onComplete, translations }) {
           COGNITIVE ASSISTANCE PROGRAM
         </p>
 
-        {/* Frase corrente - DIMENSIONI FISSE ASSOLUTE */}
+        {/* Frase corrente o errore */}
         <div className="mb-6 w-full h-24 flex items-center justify-center overflow-hidden">
           <div className="w-[700px] h-full flex items-center justify-center">
-            <p className="text-red-400 text-sm font-mono animate-pulse text-center leading-relaxed">
-              {bootPhrases[currentPhrase]}
-            </p>
+            {error ? (
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                  <p className="text-yellow-500 text-sm font-mono font-bold">
+                    SYSTEM CHECK FAILED
+                  </p>
+                </div>
+                <p className="text-red-400 text-xs font-mono text-center leading-relaxed">
+                  {error}
+                </p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="mt-4 px-4 py-2 bg-red-900/50 hover:bg-red-900 text-red-400 rounded border border-red-700 text-xs font-mono transition-colors"
+                >
+                  RETRY
+                </button>
+              </div>
+            ) : (
+              <p className="text-red-400 text-sm font-mono animate-pulse text-center leading-relaxed">
+                {ollamaStatus === 'checking' ? 'Checking system requirements...' : bootPhrases[currentPhrase]}
+              </p>
+            )}
           </div>
         </div>
 
@@ -123,32 +181,42 @@ export default function SplashScreen({ onComplete, translations }) {
         <div className="mt-8 text-xs text-gray-600 font-mono space-y-1">
           <div className="flex justify-between px-4">
             <span>OLLAMA SERVICE:</span>
-            <span className={progress > 20 ? "text-green-500" : "text-yellow-500"}>
-              {progress > 20 ? "ONLINE" : "STARTING..."}
+            <span className={
+              ollamaStatus === 'online' ? "text-green-500" : 
+              ollamaStatus === 'checking' ? "text-yellow-500" : "text-red-500"
+            }>
+              {ollamaStatus === 'online' ? "ONLINE" : 
+               ollamaStatus === 'checking' ? "CHECKING..." : "OFFLINE"}
             </span>
           </div>
           <div className="flex justify-between px-4">
             <span>CODELLAMA MODEL:</span>
-            <span className={progress > 40 ? "text-green-500" : "text-yellow-500"}>
-              {progress > 40 ? "LOADED" : "LOADING..."}
+            <span className={canProceed && progress > 30 ? "text-green-500" : "text-yellow-500"}>
+              {canProceed && progress > 30 ? "LOADED" : "LOADING..."}
             </span>
           </div>
           <div className="flex justify-between px-4">
-            <span>MISTRAL MODEL (NLU):</span>
-            <span className={progress > 60 ? "text-green-500" : "text-yellow-500"}>
-              {progress > 60 ? "LOADED" : "LOADING..."}
+            <span>RECURSIVE REASONING:</span>
+            <span className={canProceed && progress > 50 ? "text-green-500" : "text-yellow-500"}>
+              {canProceed && progress > 50 ? "ACTIVE (5.2M params)" : "INITIALIZING..."}
+            </span>
+          </div>
+          <div className="flex justify-between px-4">
+            <span>HYBRID HANDLER:</span>
+            <span className={canProceed && progress > 65 ? "text-green-500" : "text-yellow-500"}>
+              {canProceed && progress > 65 ? "ENABLED" : "LOADING..."}
             </span>
           </div>
           <div className="flex justify-between px-4">
             <span>RAG SYSTEM:</span>
-            <span className={progress > 75 ? "text-green-500" : "text-yellow-500"}>
-              {progress > 75 ? "ACTIVE" : "INITIALIZING..."}
+            <span className={canProceed && progress > 80 ? "text-green-500" : "text-yellow-500"}>
+              {canProceed && progress > 80 ? "ACTIVE" : "INITIALIZING..."}
             </span>
           </div>
           <div className="flex justify-between px-4">
             <span>INTERFACE:</span>
-            <span className={progress > 90 ? "text-green-500" : "text-yellow-500"}>
-              {progress > 90 ? "READY" : "SYNCING..."}
+            <span className={canProceed && progress > 95 ? "text-green-500" : "text-yellow-500"}>
+              {canProceed && progress > 95 ? "READY" : "SYNCING..."}
             </span>
           </div>
         </div>
