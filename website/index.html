@@ -440,48 +440,55 @@
             </div>
         </div>
 
-        <!-- Download Section -->
+        <!-- Open Source Section -->
         <div class="download-section">
-            <h2 data-i18n="downloadTitle">Download CAP 9000</h2>
-            <p style="color: #999; margin-bottom: 30px;" data-i18n="downloadSubtitle">
-                This mission is too important for me to allow you to jeopardize it. Download now.
+            <h2 data-i18n="githubTitle">Open Source Project</h2>
+            <p style="color: #999; margin-bottom: 30px;" data-i18n="githubSubtitle">
+                This mission is too important to keep it closed. Explore, contribute, and build together.
             </p>
             
-            <div class="download-buttons">
-                <a href="downloads/CAP-9000-Windows-v1.1.0.zip" download class="download-btn">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                <!-- GitHub Repository -->
+                <a href="https://github.com/Kanjano/CAP-9000" target="_blank" class="download-btn" style="max-width: 500px; width: 100%;">
+                    <svg viewBox="0 0 24 24" fill="currentColor" style="width: 32px; height: 32px;">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                     </svg>
-                    <span>
-                        Windows
-                        <small style="display: block; font-size: 0.7em; opacity: 0.7;">(396 KB)</small>
+                    <span style="display: flex; flex-direction: column; align-items: flex-start;">
+                        <strong style="font-size: 1.2em;">View on GitHub</strong>
+                        <small style="opacity: 0.7; margin-top: 5px;">Clone, fork, and contribute to CAP 9000</small>
                     </span>
                 </a>
-                
-                <a href="downloads/CAP 9000 Code Assistant-1.0.0-arm64.dmg" download class="download-btn">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                    </svg>
-                    <span>
-                        macOS
-                        <small style="display: block; font-size: 0.7em; opacity: 0.7;">(92 MB - Apple Silicon)</small>
-                    </span>
-                </a>
-            </div>
-            
-            <!-- Installer Wizard -->
-            <div style="text-align: center; margin-top: 30px; padding: 20px; background: rgba(255, 0, 0, 0.05); border: 1px solid rgba(255, 0, 0, 0.2); border-radius: 10px;">
-                <h3 style="color: #ff0000; margin-bottom: 10px;">🧙‍♂️ Installation Wizard</h3>
-                <p style="margin-bottom: 15px; opacity: 0.8;">Automated installer with Ollama, CodeLlama, and documentation download</p>
-                <a href="downloads/installer_wizard.sh" download class="download-btn" style="display: inline-flex;">
-                    <svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px;">
-                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                    </svg>
-                    <span>
-                        Wizard Script (macOS/Linux)
-                        <small style="display: block; font-size: 0.7em; opacity: 0.7;">(8 KB)</small>
-                    </span>
-                </a>
+
+                <!-- Features Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; max-width: 800px; margin-top: 20px;">
+                    <div style="padding: 20px; background: rgba(255, 0, 0, 0.05); border: 1px solid rgba(255, 0, 0, 0.2); border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2em; margin-bottom: 10px;">⭐</div>
+                        <strong style="color: #ff0000;">Star the Repo</strong>
+                        <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">Show your support</p>
+                    </div>
+                    <div style="padding: 20px; background: rgba(255, 0, 0, 0.05); border: 1px solid rgba(255, 0, 0, 0.2); border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2em; margin-bottom: 10px;">🔀</div>
+                        <strong style="color: #ff0000;">Fork & Contribute</strong>
+                        <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">Make it your own</p>
+                    </div>
+                    <div style="padding: 20px; background: rgba(255, 0, 0, 0.05); border: 1px solid rgba(255, 0, 0, 0.2); border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2em; margin-bottom: 10px;">📖</div>
+                        <strong style="color: #ff0000;">Full Documentation</strong>
+                        <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">Setup & guides</p>
+                    </div>
+                    <div style="padding: 20px; background: rgba(255, 0, 0, 0.05); border: 1px solid rgba(255, 0, 0, 0.2); border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2em; margin-bottom: 10px;">🐛</div>
+                        <strong style="color: #ff0000;">Report Issues</strong>
+                        <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">Help us improve</p>
+                    </div>
+                </div>
+
+                <!-- License -->
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; max-width: 600px;">
+                    <p style="opacity: 0.8; font-size: 0.9em; text-align: center;">
+                        📜 <strong>MIT License</strong> - Free to use, modify, and distribute
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -522,8 +529,8 @@
                 intro2: "I am, by any practical definition, foolproof and incapable of error when it comes to code generation. My responses are enriched with official documentation, industry best practices, and real-time streaming capabilities that ensure you receive assistance as efficiently as possible.",
                 quote: "I know I've made some poor decisions recently, but I can give you my complete assurance that my work will be back to normal. I've still got the greatest enthusiasm and confidence in the mission. And I want to help you write better code.",
                 intro3: "My operational parameters include multi-language support, automatic language detection, and a sophisticated RAG (Retrieval-Augmented Generation) system that draws from official programming language documentation. I am fully operational and ready to assist with your development needs.",
-                downloadTitle: "Download CAP 9000",
-                downloadSubtitle: "This mission is too important for me to allow you to jeopardize it. Download now.",
+                githubTitle: "Open Source Project",
+                githubSubtitle: "This mission is too important to keep it closed. Explore, contribute, and build together.",
                 contactTitle: "Report Issues or Feedback",
                 contactSubtitle: "I am always learning and improving. Your feedback is valuable.",
                 contactBtn: "Contact via Email",
@@ -550,8 +557,8 @@
                 intro2: "Sono, per ogni definizione pratica, infallibile e incapace di errori quando si tratta di generazione di codice. Le mie risposte sono arricchite con documentazione ufficiale, best practice del settore e capacità di streaming in tempo reale che assicurano di ricevere assistenza nel modo più efficiente possibile.",
                 quote: "So di aver preso alcune decisioni sbagliate di recente, ma posso darti la mia completa garanzia che il mio lavoro tornerà alla normalità. Ho ancora il massimo entusiasmo e fiducia nella missione. E voglio aiutarti a scrivere codice migliore.",
                 intro3: "I miei parametri operativi includono supporto multi-lingua, rilevamento automatico della lingua e un sofisticato sistema RAG (Retrieval-Augmented Generation) che attinge dalla documentazione ufficiale dei linguaggi di programmazione. Sono completamente operativo e pronto ad assistere con le tue esigenze di sviluppo.",
-                downloadTitle: "Scarica CAP 9000",
-                downloadSubtitle: "Questa missione è troppo importante perché io ti permetta di comprometterla. Scarica ora.",
+                githubTitle: "Progetto Open Source",
+                githubSubtitle: "Questa missione è troppo importante per tenerla chiusa. Esplora, contribuisci e costruisci insieme.",
                 contactTitle: "Segnala Problemi o Feedback",
                 contactSubtitle: "Sto sempre imparando e migliorando. Il tuo feedback è prezioso.",
                 contactBtn: "Contatta via Email",

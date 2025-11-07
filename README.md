@@ -55,7 +55,41 @@ Interfaccia disponibile in 8 lingue europee:
 
 ## 🚀 Installazione Rapida
 
-### Prerequisiti
+### 📦 Installer Pre-compilati (Raccomandato)
+
+Scarica l'installer per il tuo sistema operativo:
+
+**macOS (Apple Silicon):**
+- [CAP 9000 Code Assistant-1.0.0-arm64.dmg](https://kanjano.github.io/CAP-9000/downloads/CAP%209000%20Code%20Assistant-1.0.0-arm64.dmg) (92 MB)
+
+#### ⚠️ Avviso Sicurezza macOS
+
+Al primo avvio, macOS potrebbe bloccare l'app con l'errore:
+```
+"CAP 9000 Code Assistant" è danneggiato e non può essere aperto.
+```
+
+Questo è normale per app non distribuite tramite App Store. **Soluzione rapida:**
+
+```bash
+# Metodo 1: Script automatico
+./scripts/fix_macos_security.sh
+
+# Metodo 2: Comando manuale
+xattr -cr "/Applications/CAP 9000 Code Assistant.app"
+```
+
+**Oppure:**
+1. Tasto destro sull'app → **"Apri"**
+2. Conferma **"Apri"** nel dialog di sicurezza
+
+📖 [Guida completa Code Signing](docs/CODE_SIGNING.md)
+
+---
+
+### 🛠️ Installazione da Sorgente
+
+#### Prerequisiti
 - **Python 3.9+**
 - **Node.js 16+**
 - **Ollama** (opzionale, per LLM locale)

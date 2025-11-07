@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAP 9000 - Instagram Stories</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        .story {
+            width: 1080px;
+            height: 1920px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #333;
+        }
+
+        /* Story 1: Intro - HAL Eye */
+        #story1 {
+            background: radial-gradient(circle at center, #000000, #0a0000);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hal-eye {
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #ff0000, #8b0000, #000);
+            box-shadow: 0 0 200px #ff0000, inset 0 0 100px #000;
+            animation: pulse 2s infinite;
+            margin-bottom: 80px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 200px #ff0000, inset 0 0 100px #000; }
+            50% { box-shadow: 0 0 300px #ff0000, inset 0 0 150px #000; }
+        }
+
+        .story-title {
+            font-size: 120px;
+            font-weight: bold;
+            color: #ff0000;
+            text-align: center;
+            text-shadow: 0 0 40px #ff0000;
+            margin-bottom: 30px;
+        }
+
+        .story-subtitle {
+            font-size: 60px;
+            color: #fff;
+            text-align: center;
+            opacity: 0.9;
+            letter-spacing: 8px;
+        }
+
+        /* Story 2: Problem */
+        #story2 {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            padding: 100px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .problem-header {
+            font-size: 90px;
+            color: #ff0000;
+            font-weight: bold;
+            margin-bottom: 60px;
+            text-shadow: 0 0 30px #ff0000;
+        }
+
+        .problem-list {
+            list-style: none;
+            font-size: 55px;
+            color: #fff;
+            line-height: 1.8;
+        }
+
+        .problem-list li {
+            margin-bottom: 50px;
+            padding-left: 80px;
+            position: relative;
+        }
+
+        .problem-list li:before {
+            content: "❌";
+            position: absolute;
+            left: 0;
+            font-size: 60px;
+        }
+
+        /* Story 3: Solution */
+        #story3 {
+            background: linear-gradient(135deg, #0a0000 0%, #1a0000 100%);
+            padding: 100px 80px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .solution-header {
+            font-size: 90px;
+            color: #00ff00;
+            font-weight: bold;
+            margin-bottom: 60px;
+            text-shadow: 0 0 30px #00ff00;
+        }
+
+        .solution-box {
+            background: rgba(255, 0, 0, 0.1);
+            border: 3px solid #ff0000;
+            border-radius: 30px;
+            padding: 60px;
+            margin-bottom: 50px;
+        }
+
+        .solution-title {
+            font-size: 70px;
+            color: #ff0000;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .solution-desc {
+            font-size: 48px;
+            color: #fff;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* Story 4: Tech Stack */
+        #story4 {
+            background: #000;
+            padding: 100px 80px;
+        }
+
+        .tech-header {
+            font-size: 90px;
+            color: #ff0000;
+            font-weight: bold;
+            margin-bottom: 80px;
+            text-align: center;
+            text-shadow: 0 0 30px #ff0000;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .tech-card {
+            background: rgba(255, 0, 0, 0.05);
+            border: 2px solid #ff0000;
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .tech-icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+        }
+
+        .tech-name {
+            font-size: 55px;
+            color: #ff0000;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .tech-desc {
+            font-size: 40px;
+            color: #fff;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        /* Story 5: Features */
+        #story5 {
+            background: linear-gradient(180deg, #000000 0%, #1a0000 100%);
+            padding: 100px 80px;
+        }
+
+        .features-header {
+            font-size: 90px;
+            color: #ff0000;
+            font-weight: bold;
+            margin-bottom: 80px;
+            text-align: center;
+            text-shadow: 0 0 30px #ff0000;
+        }
+
+        .feature-item {
+            background: rgba(255, 0, 0, 0.08);
+            border-left: 8px solid #ff0000;
+            padding: 50px;
+            margin-bottom: 40px;
+            border-radius: 15px;
+        }
+
+        .feature-title {
+            font-size: 60px;
+            color: #ff0000;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .feature-desc {
+            font-size: 45px;
+            color: #fff;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Story 6: CTA */
+        #story6 {
+            background: radial-gradient(circle at center, #1a0000, #000000);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 80px;
+            text-align: center;
+        }
+
+        .cta-eye {
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #ff0000, #8b0000, #000);
+            box-shadow: 0 0 150px #ff0000;
+            margin-bottom: 80px;
+        }
+
+        .cta-title {
+            font-size: 100px;
+            color: #ff0000;
+            font-weight: bold;
+            margin-bottom: 50px;
+            text-shadow: 0 0 40px #ff0000;
+        }
+
+        .cta-subtitle {
+            font-size: 55px;
+            color: #fff;
+            margin-bottom: 80px;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background: #ff0000;
+            color: #fff;
+            font-size: 65px;
+            font-weight: bold;
+            padding: 50px 100px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 0 50px #ff0000;
+            margin-bottom: 60px;
+        }
+
+        .cta-github {
+            font-size: 50px;
+            color: #999;
+            font-family: 'Courier New', monospace;
+        }
+
+        .page-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
+        }
+
+        .page-controls button {
+            background: #ff0000;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .page-controls button:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Story 1: Intro -->
+    <div class="story" id="story1">
+        <div class="hal-eye"></div>
+        <div class="story-title">CAP 9000</div>
+        <div class="story-subtitle">COGNITIVE ASSISTANCE PROGRAM</div>
+    </div>
+
+    <!-- Story 2: Problem -->
+    <div class="story" id="story2">
+        <div class="problem-header">Il Problema 🤔</div>
+        <ul class="problem-list">
+            <li>AI assistants troppo generici</li>
+            <li>Codice incompleto e snippet</li>
+            <li>Nessuna privacy (cloud)</li>
+            <li>Risposte lente e costose</li>
+            <li>Senza contesto conversazionale</li>
+        </ul>
+    </div>
+
+    <!-- Story 3: Solution -->
+    <div class="story" id="story3">
+        <div class="solution-header">La Soluzione ✨</div>
+        
+        <div class="solution-box">
+            <div class="solution-title">🧠 AI Ibrido</div>
+            <div class="solution-desc">CodeLlama 7B + Reasoning Module per codice production-ready</div>
+        </div>
+
+        <div class="solution-box">
+            <div class="solution-title">⚡ Veloce</div>
+            <div class="solution-desc">Streaming ChatGPT-style, risposte in ~2s, 40-50% più veloce</div>
+        </div>
+
+        <div class="solution-box">
+            <div class="solution-title">🔒 Privato</div>
+            <div class="solution-desc">100% locale, nessun dato inviato al cloud</div>
+        </div>
+    </div>
+
+    <!-- Story 4: Tech Stack -->
+    <div class="story" id="story4">
+        <div class="tech-header">🔧 Tech Stack</div>
+        
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-icon">🧠</div>
+                <div class="tech-name">AI Core</div>
+                <div class="tech-desc">CodeLlama 7B<br>PyTorch 2.x<br>Ollama</div>
+            </div>
+
+            <div class="tech-card">
+                <div class="tech-icon">⚡</div>
+                <div class="tech-name">Backend</div>
+                <div class="tech-desc">Python 3.9+<br>RAG System<br>Smart Cache</div>
+            </div>
+
+            <div class="tech-card">
+                <div class="tech-icon">🖥️</div>
+                <div class="tech-name">Frontend</div>
+                <div class="tech-desc">Electron 27<br>React 18<br>Vite 4</div>
+            </div>
+
+            <div class="tech-card">
+                <div class="tech-icon">🎨</div>
+                <div class="tech-name">UI/UX</div>
+                <div class="tech-desc">VS Code Theme<br>Real-time<br>Streaming</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story 5: Features -->
+    <div class="story" id="story5">
+        <div class="features-header">✨ Features</div>
+        
+        <div class="feature-item">
+            <div class="feature-title">📝 Codice Completo</div>
+            <div class="feature-desc">Non snippet, ma soluzioni production-ready con tutti i file necessari</div>
+        </div>
+
+        <div class="feature-item">
+            <div class="feature-title">🧠 Memoria Conversazionale</div>
+            <div class="feature-desc">Ricorda gli ultimi 10 messaggi per continuità</div>
+        </div>
+
+        <div class="feature-item">
+            <div class="feature-title">🌍 Multi-Lingua</div>
+            <div class="feature-desc">8 lingue europee + 6 linguaggi di programmazione</div>
+        </div>
+
+        <div class="feature-item">
+            <div class="feature-title">📚 RAG System</div>
+            <div class="feature-desc">Documentazione ufficiale integrata per risposte accurate</div>
+        </div>
+    </div>
+
+    <!-- Story 6: CTA -->
+    <div class="story" id="story6">
+        <div class="cta-eye"></div>
+        <div class="cta-title">Open Source!</div>
+        <div class="cta-subtitle">Esplora, contribuisci,<br>costruisci insieme</div>
+        <a href="https://github.com/Kanjano/CAP-9000" class="cta-button">⭐ Star su GitHub</a>
+        <div class="cta-github">github.com/Kanjano/CAP-9000</div>
+    </div>
+
+    <div class="page-controls">
+        <button onclick="downloadStory(1)">Download Story 1</button>
+        <button onclick="downloadStory(2)">Download Story 2</button>
+        <button onclick="downloadStory(3)">Download Story 3</button>
+        <button onclick="downloadStory(4)">Download Story 4</button>
+        <button onclick="downloadStory(5)">Download Story 5</button>
+        <button onclick="downloadStory(6)">Download Story 6</button>
+        <button onclick="downloadAll()">Download All</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        async function downloadStory(num) {
+            const story = document.getElementById(`story${num}`);
+            const canvas = await html2canvas(story, {
+                width: 1080,
+                height: 1920,
+                scale: 1,
+                backgroundColor: '#000000'
+            });
+            
+            const link = document.createElement('a');
+            link.download = `CAP9000_Story_${num}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        async function downloadAll() {
+            for (let i = 1; i <= 6; i++) {
+                await downloadStory(i);
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+    </script>
+</body>
+</html>
