@@ -181,8 +181,8 @@ function App() {
     setIsTyping(true)  // Disabilita input durante risposta
 
     try {
-      // Usa streaming per risposte progressive
-      if (window.electronAPI && window.electronAPI.sendQueryStream) {
+      // Streaming temporaneamente disabilitato - usa query diretta
+      if (false && window.electronAPI && window.electronAPI.sendQueryStream) {
         console.log('Using streaming query');
         
         // Aggiungi messaggio vuoto che verrà riempito progressivamente

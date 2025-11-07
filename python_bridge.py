@@ -8,6 +8,13 @@ Elimina overhead HTTP Flask
 import sys
 import json
 import traceback
+import io
+
+# CRITICAL: Redirect all print() to stderr to avoid polluting stdout (used for JSON)
+# Save original stdout for JSON responses
+_original_stdout = sys.stdout
+sys.stdout = sys.stderr
+
 from hybrid_llm_handler import get_hybrid_handler
 from language_detector import LanguageDetector
 
@@ -84,8 +91,8 @@ def process_stats(request_id):
 
 def main():
     """Main loop - legge da stdin, scrive su stdout"""
-    # Segnala ready
-    print(json.dumps({'status': 'ready'}), flush=True)
+    # Segnala ready (usa original stdout per JSON)
+    print(json.dumps({'status': 'ready'}), file=_original_stdout, flush=True)
     
     try:
         for line in sys.stdin:
@@ -101,12 +108,12 @@ def main():
                 
                 if request_type == 'query':
                     result = process_query(request_id, request_data)
-                    print(json.dumps(result), flush=True)
+                    print(json.dumps(result), file=_original_stdout, flush=True)
                 elif request_type == 'stats':
                     result = process_stats(request_id)
-                    print(json.dumps(result), flush=True)
+                    print(json.dumps(result), file=_original_stdout, flush=True)
                 elif request_type == 'exit':
-                    print(json.dumps({'id': request_id, 'data': {'status': 'exiting'}}), flush=True)
+                    print(json.dumps({'id': request_id, 'data': {'status': 'exiting'}}), file=_original_stdout, flush=True)
                     break
                     
             except json.JSONDecodeError as e:
@@ -118,7 +125,7 @@ def main():
                         'message': f'Invalid JSON: {str(e)}'
                     }
                 }
-                print(json.dumps(error_response), flush=True)
+                print(json.dumps(error_response), file=_original_stdout, flush=True)
             except Exception as e:
                 print(f"Error processing request: {e}", file=sys.stderr, flush=True)
                 traceback.print_exc(file=sys.stderr)
@@ -129,7 +136,7 @@ def main():
                         'message': str(e)
                     }
                 }
-                print(json.dumps(error_response), flush=True)
+                print(json.dumps(error_response), file=_original_stdout, flush=True)
     except KeyboardInterrupt:
         print("Python Bridge interrupted", file=sys.stderr, flush=True)
     except Exception as e:
