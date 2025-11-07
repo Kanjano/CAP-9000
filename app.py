@@ -3,7 +3,8 @@ from flask_cors import CORS
 from main import CodeAssistant
 from languages import languages
 from knowledge_base import find_answer
-from llm_handler import LLMHandler, get_fallback_response
+from llm_handler import get_fallback_response
+from hybrid_llm_handler import get_hybrid_handler
 from language_detector import get_language_detector
 import json
 
@@ -13,13 +14,18 @@ CORS(app)
 # Initialize the assistant
 assistant = CodeAssistant()
 
-# Initialize LLM handler con CodeLlama
-llm = LLMHandler()
-print(f"CodeLlama (via Ollama) available: {llm.available}")
-if llm.available:
+# Initialize Hybrid LLM handler (CodeLlama + Recursive Reasoning)
+llm = get_hybrid_handler(
+    enable_reasoning=True,  # Abilita recursive reasoning
+    enable_cache=True,      # Abilita caching
+    num_recursions=3        # 3 cicli di reasoning (raccomandato)
+)
+print(f"CodeLlama (via Ollama) available: {llm.codellama.available}")
+if llm.codellama.available:
     model_info = llm.get_model_info()
     print(f"Model: {model_info['name']} {model_info['version']}")
-    print(f"Specialized for: {', '.join(model_info['features'])}")
+    print(f"Hybrid Mode: {'Enabled' if model_info['hybrid_mode'] else 'Disabled'}")
+    print(f"Reasoning Recursions: {model_info['reasoning_recursions']}")
 
 # Initialize language detector
 lang_detector = get_language_detector()
@@ -45,21 +51,26 @@ def handle_query():
             'error': True
         })
     
-    # Try LLM first (if available)
-    if llm.available:
-        print(f"Using LLM for query: '{query}' in language: '{language}' with UI language: '{ui_language}'", flush=True)
+    # Try Hybrid LLM first (if available)
+    if llm.codellama.available:
+        # Determina se usare reasoning
+        use_reasoning = data.get('use_reasoning', None)  # None = auto-detect
+        
+        print(f"Using Hybrid LLM for query: '{query}' in language: '{language}' with UI language: '{ui_language}'", flush=True)
         print(f"[DEBUG] About to call llm.generate_response()...", flush=True)
-        llm_response = llm.generate_response(query, language, ui_language)
+        llm_response = llm.generate_response(query, language, ui_language, use_reasoning=use_reasoning)
         print(f"[DEBUG] llm.generate_response() returned", flush=True)
         print(f"LLM response language: {llm_response[:100]}..." if llm_response else "No response from LLM", flush=True)
         
         if llm_response:
             response = llm_response
+            reasoning_used = llm.should_use_reasoning(query) if use_reasoning is None else use_reasoning
             return jsonify({
                 'response': response,
                 'language': language,
                 'error': False,
-                'source': 'llm'
+                'source': 'hybrid_llm',
+                'reasoning_used': reasoning_used
             })
     
     # Fallback to knowledge base
@@ -72,7 +83,7 @@ def handle_query():
         source = 'knowledge_base'
     else:
         # Last resort: generic response
-        if not llm.available:
+        if not llm.codellama.available:
             response = get_fallback_response(language, query)
             source = 'fallback_ollama_offline'
         else:
@@ -106,8 +117,8 @@ def handle_query_stream():
             yield f"data: {json.dumps({'error': True, 'content': f'Language {language} not supported'})}\n\n"
             return
         
-        # Try LLM streaming
-        if llm.available:
+        # Try Hybrid LLM streaming
+        if llm.codellama.available:
             try:
                 for chunk in llm.generate_response_streaming(query, language, ui_language):
                     if chunk:
@@ -144,6 +155,39 @@ def handle_query_stream():
 def get_languages():
     return jsonify({
         'languages': languages
+    })
+
+@app.route('/api/stats', methods=['GET'])
+def get_stats():
+    """Get hybrid handler statistics"""
+    try:
+        stats = llm.get_stats()
+        return jsonify(stats)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/reasoning/toggle', methods=['POST'])
+def toggle_reasoning():
+    """Toggle reasoning mode on/off"""
+    try:
+        data = request.json
+        enable = data.get('enable', True)
+        llm.enable_reasoning = enable
+        return jsonify({
+            'success': True,
+            'reasoning_enabled': llm.enable_reasoning,
+            'message': f"Reasoning mode {'enabled' if enable else 'disabled'}"
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/reasoning/status', methods=['GET'])
+def reasoning_status():
+    """Get current reasoning status"""
+    return jsonify({
+        'reasoning_enabled': llm.enable_reasoning,
+        'num_recursions': llm.num_recursions,
+        'cache_enabled': llm.cache is not None
     })
 
 if __name__ == '__main__':

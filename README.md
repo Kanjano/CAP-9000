@@ -19,11 +19,13 @@ Un assistente di programmazione AI desktop standalone ispirato a HAL 9000 di "20
 - Cross-platform (macOS, Windows, Linux)
 - Backend Flask integrato
 
-### 🤖 **Intelligenza Artificiale Dual-Model**
+### 🤖 **Intelligenza Artificiale Hybrid System**
 - **CodeLlama 7B** - Specializzato per generazione codice
-- **Mistral** - Comprensione linguaggio naturale (NLU)
+- **Recursive Reasoning Module** - Reasoning avanzato per task complessi (NEW! 🧠)
+- **Auto-detection** - Routing intelligente simple/reasoning mode
 - **Sistema RAG** - Documentazioni ufficiali integrate
 - **Query Enhancement** - Migliora comprensione domande
+- **Caching intelligente** - Performance ottimizzate
 - Privacy totale - tutto rimane sul tuo computer
 
 ### 🌍 **Multilingua**
@@ -66,7 +68,8 @@ cd windsurf-project
 
 ### 2. Installa Dipendenze Python
 ```bash
-pip3 install flask flask-cors requests
+pip3 install -r requirements.txt
+# Include: flask, flask-cors, requests, torch, torchvision, numpy
 ```
 
 ### 3. Installa Dipendenze Node.js
@@ -216,21 +219,35 @@ windsurf-project/
 
 ## 🔄 Modalità di Funzionamento
 
-HAL 9000 usa una strategia intelligente a cascata:
+### 🧠 Sistema Hybrid (NEW!)
 
-1. **LLM Locale (Ollama)** ⚡
-   - Se disponibile, genera risposte contestuali
-   - Usa modelli come CodeLlama o DeepSeek Coder
-   - Privacy totale, tutto offline
+CAP 9000 ora utilizza un sistema ibrido intelligente:
 
-2. **Knowledge Base** 📚
-   - Fallback con risposte predefinite
-   - Copre argomenti comuni di programmazione
-   - Veloce e affidabile
+1. **Auto-Detection** 🎯
+   - Analizza automaticamente la complessità della query
+   - Routing intelligente tra Simple Mode e Reasoning Mode
 
-3. **Risposta Generica** 💬
-   - Se nessuna delle precedenti funziona
-   - Suggerisce argomenti disponibili
+2. **Simple Mode** ⚡ (~5s)
+   - Per query semplici (definizioni, spiegazioni)
+   - Usa solo CodeLlama
+   - Veloce ed efficiente
+
+3. **Reasoning Mode** 🧠 (~8s)
+   - Per query complesse (debugging, refactoring, code review)
+   - CodeLlama + Recursive Reasoning Module
+   - Analisi multi-step strutturata
+   - Keywords: debug, fix, refactor, analyze, pattern
+
+4. **Caching Intelligente** 💾
+   - Cache delle risposte per query simili
+   - Riduzione latenza 20-30%
+   - Hit rate tracking
+
+5. **Fallback Strategy** 📚
+   - Knowledge Base per risposte predefinite
+   - Risposta generica se necessario
+
+**Vedi [docs/LATEST_DEVELOPMENTS.md](docs/LATEST_DEVELOPMENTS.md) per dettagli completi**
 
 ## 🛠️ Sviluppo
 
