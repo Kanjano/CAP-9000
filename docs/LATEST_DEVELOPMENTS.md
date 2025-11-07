@@ -288,11 +288,21 @@ python3 test_hybrid_system.py
 
 ## 🚀 Come Utilizzare
 
-### 1. Avvio Server
+### 1. Avvio Applicazione Desktop
 
 ```bash
 cd /Users/antoniocangiano/Desktop/CascadeProjects/windsurf-project
+./scripts/start_cap9000.sh
+```
+
+**Oppure avvio manuale**:
+```bash
+# Terminal 1: Backend
 python3 app.py
+
+# Terminal 2: Frontend Electron
+cd frontend
+npm run electron:dev
 ```
 
 **Output atteso**:
@@ -309,36 +319,36 @@ python3 app.py
  * Running on http://127.0.0.1:5001
 ```
 
-### 2. Test Query Semplice
+L'applicazione desktop si aprirà automaticamente.
+
+### 2. Utilizzo Interfaccia Desktop
+
+1. **Seleziona linguaggio programmazione** dal menu a tendina
+2. **Seleziona lingua interfaccia** (icona 🌍)
+3. **Fai una domanda** nella chat
+
+**Query Semplice** (Simple Mode ~5s):
+- "What is a variable in Python?"
+- "Explain functions in JavaScript"
+
+**Query Complessa** (Reasoning Mode ~8s):
+- "Debug this code and refactor it following SOLID principles"
+- "Analyze this code for performance issues"
+- "Review this code and suggest improvements"
+
+### 3. Test API (Opzionale - per sviluppatori)
 
 ```bash
+# Statistiche
+curl http://localhost:5001/api/stats
+
+# Query test
 curl -X POST http://localhost:5001/api/query \
   -H "Content-Type: application/json" \
   -d '{
     "query": "What is a variable in Python?",
     "language": "Python"
   }'
-```
-
-**Risultato**: Simple Mode (~5s)
-
-### 3. Test Query Complessa
-
-```bash
-curl -X POST http://localhost:5001/api/query \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Debug this code and refactor it following SOLID principles",
-    "language": "Python"
-  }'
-```
-
-**Risultato**: Reasoning Mode (~8s)
-
-### 4. Visualizza Statistiche
-
-```bash
-curl http://localhost:5001/api/stats
 ```
 
 ---

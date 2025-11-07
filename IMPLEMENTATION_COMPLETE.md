@@ -101,11 +101,21 @@
 
 ## 🚀 Come Usare il Sistema
 
-### 1. Avvia il Server
+### 1. Avvia l'Applicazione Desktop
 
 ```bash
 cd /Users/antoniocangiano/Desktop/CascadeProjects/windsurf-project
+./scripts/start_cap9000.sh
+```
+
+**Oppure avvio manuale**:
+```bash
+# Terminal 1: Backend
 python3 app.py
+
+# Terminal 2: Frontend Electron
+cd frontend
+npm run electron:dev
 ```
 
 **Output atteso**:
@@ -122,36 +132,28 @@ python3 app.py
  * Running on http://127.0.0.1:5001
 ```
 
-### 2. Testa con Query
+L'applicazione desktop si aprirà automaticamente.
 
-#### Query Semplice (Simple Mode)
-```bash
-curl -X POST http://localhost:5001/api/query \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "What is a variable in Python?",
-    "language": "Python"
-  }'
-```
+### 2. Utilizzo Interfaccia Desktop
 
-**Risultato**: Usa solo CodeLlama (~5s)
+**Query Semplice** (Simple Mode ~5s):
+- Digita: "What is a variable in Python?"
+- Il sistema usa solo CodeLlama
 
-#### Query Complessa (Reasoning Mode)
-```bash
-curl -X POST http://localhost:5001/api/query \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Debug this code and refactor it following SOLID principles",
-    "language": "Python"
-  }'
-```
+**Query Complessa** (Reasoning Mode ~8s):
+- Digita: "Debug this code and refactor it following SOLID principles"
+- Il sistema usa CodeLlama + Reasoning Module
 
-**Risultato**: Usa CodeLlama + Reasoning (~8s)
-
-### 3. Visualizza Statistiche
+### 3. Test API (Opzionale - per sviluppatori)
 
 ```bash
+# Statistiche
 curl http://localhost:5001/api/stats
+
+# Query test
+curl -X POST http://localhost:5001/api/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "What is a variable?", "language": "Python"}'
 ```
 
 ---
@@ -340,9 +342,9 @@ Per migliorare ulteriormente:
 
 ### Cosa Puoi Fare Ora
 
-1. **Avvia il server**: `python3 app.py`
-2. **Testa con query**: Usa curl o frontend
-3. **Monitora statistiche**: `curl http://localhost:5001/api/stats`
+1. **Avvia l'applicazione desktop**: `./scripts/start_cap9000.sh`
+2. **Testa con query**: Usa l'interfaccia desktop
+3. **Monitora statistiche**: Visibili nell'app o via API
 4. **Raccogli feedback**: Testa con utenti reali
 5. **Itera**: Migliora basandoti sui dati
 
