@@ -21,9 +21,16 @@
     "files": [
       "dist/**/*",
       "electron/**/*",
-      "../app.py",
-      "../main.py",
-      "../languages.py"
+      "../*.py",
+      "../knowledge_base/**/*",
+      "../docs/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../",
+        "to": "python",
+        "filter": ["*.py", "knowledge_base/**/*"]
+      }
     ],
     "mac": {
       "category": "public.app-category.developer-tools",

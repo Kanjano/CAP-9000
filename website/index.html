@@ -340,18 +340,18 @@
         <!-- Features -->
         <div class="features">
             <div class="feature-card">
-                <h3 data-i18n="feature1Title">🧠 Advanced AI Integration</h3>
+                <h3 data-i18n="feature1Title">🧠 Hybrid AI System</h3>
                 <p data-i18n="feature1Desc">
-                    Powered by Ollama LLM with enhanced prompting strategies and RAG system for accessing official 
-                    documentation and best practices in real-time.
+                    CodeLlama 7B + Recursive Reasoning Module (5.2M params) with intelligent auto-detection. 
+                    Simple queries use direct LLM, complex ones activate multi-step reasoning for superior results.
                 </p>
             </div>
 
             <div class="feature-card">
-                <h3 data-i18n="feature2Title">⚡ Real-Time Streaming</h3>
+                <h3 data-i18n="feature2Title">⚡ ChatGPT-Style Streaming</h3>
                 <p data-i18n="feature2Desc">
-                    Responses appear progressively as they are generated, providing immediate feedback and reducing 
-                    perceived wait time. Just like observing my thought processes in real-time.
+                    Progressive text rendering via Python Bridge (stdin/stdout). Responses appear word-by-word in ~2s 
+                    with 40-50% faster inference. Zero HTTP overhead, direct Electron ↔ Python communication.
                 </p>
             </div>
 
@@ -364,10 +364,10 @@
             </div>
 
             <div class="feature-card">
-                <h3 data-i18n="feature4Title">📚 Official Documentation</h3>
+                <h3 data-i18n="feature4Title">📚 RAG System + Intelligent Cache</h3>
                 <p data-i18n="feature4Desc">
-                    Direct integration with official programming language documentation (Python, Java, JavaScript, C, C++, Go) 
-                    ensuring accurate and up-to-date information.
+                    Retrieval-Augmented Generation with official docs (Python, Java, JavaScript, C, C++, Go). 
+                    Smart caching system reduces redundant queries. PyTorch-based reasoning for complex problems.
                 </p>
             </div>
 
@@ -388,6 +388,58 @@
             </div>
         </div>
 
+        <!-- Tech Stack Section -->
+        <div class="description" style="margin-top: 50px;">
+            <h2 style="text-align: center; margin-bottom: 30px;">🔧 Technology Stack</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="padding: 15px; background: rgba(255, 0, 0, 0.05); border-radius: 8px; border: 1px solid rgba(255, 0, 0, 0.2);">
+                    <h4 style="color: #ff0000; margin-bottom: 10px;">🧠 AI Core</h4>
+                    <ul style="list-style: none; padding: 0; color: #c0c0c0; line-height: 1.8;">
+                        <li>• CodeLlama 7B (Q4_0)</li>
+                        <li>• PyTorch 2.x</li>
+                        <li>• Ollama Runtime</li>
+                        <li>• Custom Reasoning Module</li>
+                    </ul>
+                </div>
+                <div style="padding: 15px; background: rgba(255, 0, 0, 0.05); border-radius: 8px; border: 1px solid rgba(255, 0, 0, 0.2);">
+                    <h4 style="color: #ff0000; margin-bottom: 10px;">⚡ Backend</h4>
+                    <ul style="list-style: none; padding: 0; color: #c0c0c0; line-height: 1.8;">
+                        <li>• Python 3.9+</li>
+                        <li>• Python Bridge (stdin/stdout)</li>
+                        <li>• RAG System</li>
+                        <li>• Intelligent Caching</li>
+                    </ul>
+                </div>
+                <div style="padding: 15px; background: rgba(255, 0, 0, 0.05); border-radius: 8px; border: 1px solid rgba(255, 0, 0, 0.2);">
+                    <h4 style="color: #ff0000; margin-bottom: 10px;">🖥️ Frontend</h4>
+                    <ul style="list-style: none; padding: 0; color: #c0c0c0; line-height: 1.8;">
+                        <li>• Electron 27</li>
+                        <li>• React 18</li>
+                        <li>• Vite 4</li>
+                        <li>• TailwindCSS 3</li>
+                    </ul>
+                </div>
+                <div style="padding: 15px; background: rgba(255, 0, 0, 0.05); border-radius: 8px; border: 1px solid rgba(255, 0, 0, 0.2);">
+                    <h4 style="color: #ff0000; margin-bottom: 10px;">🎨 UI/UX</h4>
+                    <ul style="list-style: none; padding: 0; color: #c0c0c0; line-height: 1.8;">
+                        <li>• Prism.js Syntax</li>
+                        <li>• VS Code Dark+ Theme</li>
+                        <li>• Lucide Icons</li>
+                        <li>• Real-time Streaming</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255, 0, 0, 0.08); border-radius: 8px; border: 1px solid rgba(255, 0, 0, 0.3);">
+                <h4 style="color: #ff0000; margin-bottom: 15px; text-align: center;">⚙️ Architecture Highlights</h4>
+                <ul style="color: #c0c0c0; line-height: 2; max-width: 800px; margin: 0 auto;">
+                    <li><strong style="color: #ff4444;">Zero HTTP Overhead:</strong> Direct Electron ↔ Python communication via stdin/stdout</li>
+                    <li><strong style="color: #ff4444;">Hybrid Reasoning:</strong> Auto-detection switches between Simple (5-10s) and Reasoning (8-15s) modes</li>
+                    <li><strong style="color: #ff4444;">Smart Caching:</strong> LRU cache with 1000-item capacity reduces redundant LLM calls</li>
+                    <li><strong style="color: #ff4444;">Progressive Rendering:</strong> ChatGPT-style streaming with ~2s first token latency</li>
+                </ul>
+            </div>
+        </div>
+
         <!-- Download Section -->
         <div class="download-section">
             <h2 data-i18n="downloadTitle">Download CAP 9000</h2>
@@ -396,7 +448,7 @@
             </p>
             
             <div class="download-buttons">
-                <a href="downloads/CAP-9000-Windows-v1.0.0.zip" download class="download-btn">
+                <a href="downloads/CAP-9000-Windows-v1.1.0.zip" download class="download-btn">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
                     </svg>
@@ -406,13 +458,13 @@
                     </span>
                 </a>
                 
-                <a href="downloads/CAP-9000-macOS-v1.0.0.dmg" download class="download-btn">
+                <a href="downloads/CAP 9000 Code Assistant-1.0.0-arm64.dmg" download class="download-btn">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                     </svg>
                     <span>
                         macOS
-                        <small style="display: block; font-size: 0.7em; opacity: 0.7;">(748 KB)</small>
+                        <small style="display: block; font-size: 0.7em; opacity: 0.7;">(92 MB - Apple Silicon)</small>
                     </span>
                 </a>
             </div>
@@ -477,14 +529,14 @@
                 contactBtn: "Contact via Email",
                 footerQuote: "\"I'm sorry, Dave. I'm afraid I can't do that.\" - But I can help you code.",
                 footerCopyright: "All systems operational.",
-                feature1Title: "🧠 Advanced AI Integration",
-                feature1Desc: "Powered by Ollama LLM with enhanced prompting strategies and RAG system for accessing official documentation and best practices in real-time.",
-                feature2Title: "⚡ Real-Time Streaming",
-                feature2Desc: "Responses appear progressively as they are generated, providing immediate feedback and reducing perceived wait time. Just like observing my thought processes in real-time.",
+                feature1Title: "🧠 Hybrid AI System",
+                feature1Desc: "CodeLlama 7B + Recursive Reasoning Module (5.2M params) with intelligent auto-detection. Simple queries use direct LLM, complex ones activate multi-step reasoning for superior results.",
+                feature2Title: "⚡ ChatGPT-Style Streaming",
+                feature2Desc: "Progressive text rendering via Python Bridge (stdin/stdout). Responses appear word-by-word in ~2s with 40-50% faster inference. Zero HTTP overhead, direct Electron ↔ Python communication.",
                 feature3Title: "🌍 Multi-Language Support",
                 feature3Desc: "Automatic detection of your system language with support for Italian, English, French, German, Spanish, Portuguese, Dutch, and Polish. I adapt to your environment.",
-                feature4Title: "📚 Official Documentation",
-                feature4Desc: "Direct integration with official programming language documentation (Python, Java, JavaScript, C, C++, Go) ensuring accurate and up-to-date information.",
+                feature4Title: "📚 RAG System + Intelligent Cache",
+                feature4Desc: "Retrieval-Augmented Generation with official docs (Python, Java, JavaScript, C, C++, Go). Smart caching system reduces redundant queries. PyTorch-based reasoning for complex problems.",
                 feature5Title: "💾 Conversation Management",
                 feature5Desc: "Persistent conversation history with import/export capabilities. Your interactions with me are never lost, ensuring continuity across sessions.",
                 feature6Title: "🎨 VS Code Theme",
@@ -505,14 +557,14 @@
                 contactBtn: "Contatta via Email",
                 footerQuote: "\"Mi dispiace, Dave. Temo di non poterlo fare.\" - Ma posso aiutarti a programmare.",
                 footerCopyright: "Tutti i sistemi operativi.",
-                feature1Title: "🧠 Integrazione AI Avanzata",
-                feature1Desc: "Alimentato da Ollama LLM con strategie di prompting avanzate e sistema RAG per accedere a documentazione ufficiale e best practice in tempo reale.",
-                feature2Title: "⚡ Streaming in Tempo Reale",
-                feature2Desc: "Le risposte appaiono progressivamente mentre vengono generate, fornendo feedback immediato e riducendo il tempo di attesa percepito. Come osservare i miei processi di pensiero in tempo reale.",
+                feature1Title: "🧠 Sistema AI Ibrido",
+                feature1Desc: "CodeLlama 7B + Modulo Reasoning Ricorsivo (5.2M parametri) con auto-detection intelligente. Query semplici usano LLM diretto, quelle complesse attivano reasoning multi-step per risultati superiori.",
+                feature2Title: "⚡ Streaming Stile ChatGPT",
+                feature2Desc: "Rendering progressivo del testo via Python Bridge (stdin/stdout). Risposte appaiono parola per parola in ~2s con inferenza 40-50% più veloce. Zero overhead HTTP, comunicazione diretta Electron ↔ Python.",
                 feature3Title: "🌍 Supporto Multi-Lingua",
                 feature3Desc: "Rilevamento automatico della lingua del tuo sistema con supporto per italiano, inglese, francese, tedesco, spagnolo, portoghese, olandese e polacco. Mi adatto al tuo ambiente.",
-                feature4Title: "📚 Documentazione Ufficiale",
-                feature4Desc: "Integrazione diretta con la documentazione ufficiale dei linguaggi di programmazione (Python, Java, JavaScript, C, C++, Go) garantendo informazioni accurate e aggiornate.",
+                feature4Title: "📚 Sistema RAG + Cache Intelligente",
+                feature4Desc: "Retrieval-Augmented Generation con documentazione ufficiale (Python, Java, JavaScript, C, C++, Go). Sistema di caching intelligente riduce query ridondanti. Reasoning basato su PyTorch per problemi complessi.",
                 feature5Title: "💾 Gestione Conversazioni",
                 feature5Desc: "Cronologia conversazioni persistente con capacità di import/export. Le tue interazioni con me non vengono mai perse, garantendo continuità tra le sessioni.",
                 feature6Title: "🎨 Tema VS Code",
