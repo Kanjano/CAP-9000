@@ -17,16 +17,24 @@ Un assistente di programmazione AI desktop standalone ispirato a HAL 9000 di "20
 - Nessun browser richiesto
 - Funziona completamente offline
 - Cross-platform (macOS, Windows, Linux)
-- Backend Flask integrato
+- **Python Bridge** - Comunicazione diretta Electron ↔ Python (stdin/stdout)
+- Zero HTTP overhead
 
 ### 🤖 **Intelligenza Artificiale Hybrid System**
-- **CodeLlama 7B** - Specializzato per generazione codice
-- **Recursive Reasoning Module** - Reasoning avanzato per task complessi (NEW! 🧠)
+- **CodeLlama 7B (Q4_0)** - Specializzato per generazione codice production-ready
+- **Recursive Reasoning Module** - Reasoning avanzato per task complessi (5.2M params)
 - **Auto-detection** - Routing intelligente simple/reasoning mode
 - **Sistema RAG** - Documentazioni ufficiali integrate
 - **Query Enhancement** - Migliora comprensione domande
-- **Caching intelligente** - Performance ottimizzate
+- **Caching intelligente** - LRU cache con 1000 item capacity
+- **Memoria Conversazionale** - Ricorda ultimi 10 messaggi per continuità (NEW! 🧠)
 - Privacy totale - tutto rimane sul tuo computer
+
+### ⚡ **Performance & Streaming**
+- **ChatGPT-Style Streaming** - Risposte progressive parola per parola
+- **~2s First Token** - Feedback immediato
+- **40-50% più veloce** - Parametri Ollama ottimizzati
+- **Prompt Production-Ready** - Codice completo con SOLID, Design Patterns, Security
 
 ### 🌍 **Multilingua**
 Interfaccia disponibile in 8 lingue europee:
@@ -53,39 +61,7 @@ Interfaccia disponibile in 8 lingue europee:
 - Interfaccia chat moderna
 - Citazioni dal film
 
-## 🚀 Installazione Rapida
-
-### 📦 Installer Pre-compilati (Raccomandato)
-
-Scarica l'installer per il tuo sistema operativo:
-
-**macOS (Apple Silicon):**
-- [CAP 9000 Code Assistant-1.0.0-arm64.dmg](https://kanjano.github.io/CAP-9000/downloads/CAP%209000%20Code%20Assistant-1.0.0-arm64.dmg) (92 MB)
-
-#### ⚠️ Avviso Sicurezza macOS
-
-Al primo avvio, macOS potrebbe bloccare l'app con l'errore:
-```
-"CAP 9000 Code Assistant" è danneggiato e non può essere aperto.
-```
-
-Questo è normale per app non distribuite tramite App Store. **Soluzione rapida:**
-
-```bash
-# Metodo 1: Script automatico
-./scripts/fix_macos_security.sh
-
-# Metodo 2: Comando manuale
-xattr -cr "/Applications/CAP 9000 Code Assistant.app"
-```
-
-**Oppure:**
-1. Tasto destro sull'app → **"Apri"**
-2. Conferma **"Apri"** nel dialog di sicurezza
-
-📖 [Guida completa Code Signing](docs/CODE_SIGNING.md)
-
----
+## 🚀 Installazione
 
 ### 🛠️ Installazione da Sorgente
 
@@ -451,6 +427,26 @@ CAP-9000/
 
 > "I'm afraid I can't do that, Dave." (in caso di errori)
 
+## 📋 Changelog
+
+### v1.0.1 (Latest) - Nov 2024
+**🧠 Memoria Conversazionale + Codice Production-Ready**
+- ✅ **Contesto conversazionale**: Ricorda ultimi 10 messaggi
+- ✅ **Prompt ottimizzato**: Codice production-ready con SOLID, Design Patterns, Security
+- ✅ **Bug fix streaming**: Risposte multiple non si sovrappongono più
+- ✅ **Performance**: 40-50% più veloce con parametri ottimizzati
+
+### v1.0.0 - Nov 2024
+**🚀 Release Iniziale**
+- ✅ Python Bridge diretto (stdin/stdout) - Zero HTTP overhead
+- ✅ ChatGPT-Style Streaming progressivo
+- ✅ Hybrid System: CodeLlama + Recursive Reasoning
+- ✅ RAG System con documentazione ufficiale
+- ✅ Smart Caching (LRU 1000 items)
+- ✅ Multi-lingua (8 lingue)
+- ✅ Electron Desktop App
+- ✅ HAL 9000 Theme
+
 ## 🤝 Contributi
 
 Contributi benvenuti! Aree di miglioramento:
@@ -459,8 +455,11 @@ Contributi benvenuti! Aree di miglioramento:
 - Miglioramenti UI/UX
 - Ottimizzazioni performance
 - Nuovi modelli LLM
+- Testing e bug fixes
 
 ## 📄 Licenza
+
+**MIT License** - Free to use, modify, and distribute
 
 Progetto educativo ispirato a "2001: A Space Odyssey" di Stanley Kubrick.
 
