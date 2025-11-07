@@ -194,7 +194,7 @@ Provide COMPLETE, PRODUCTION-READY solutions that can be used immediately."""
             print(f"Error calling Ollama: {e}")
             return None
     
-    def generate_response_streaming(self, query, language, ui_language='en'):
+    def generate_response_streaming(self, query, language, ui_language='en', context=None):
         """
         Genera una risposta in streaming per visualizzazione progressiva
         
@@ -202,6 +202,7 @@ Provide COMPLETE, PRODUCTION-READY solutions that can be used immediately."""
             query: Domanda dell'utente
             language: Linguaggio di programmazione
             ui_language: Lingua dell'interfaccia
+            context: Contesto conversazionale (opzionale)
         
         Yields:
             str: Chunks della risposta
@@ -282,6 +283,10 @@ Provide COMPLETE, PRODUCTION-READY solutions that can be used immediately."""
         
         # User prompt con reminder FORTISSIMO della lingua
         user_prompt = f"[RESPOND ONLY IN {response_language} - NOT English, NOT Portuguese, NOT Spanish] Question about {language}: {query}"
+        
+        # Aggiungi contesto conversazionale se presente
+        if context:
+            user_prompt = f"{context}\n\n{user_prompt}"
         
         print(f"[RAG Streaming] Prompt enriched with official documentation for {language}")
 

@@ -30,22 +30,33 @@ detector = LanguageDetector()
 print("Python Bridge ready", file=sys.stderr, flush=True)
 
 def process_query(request_id, data, streaming=False):
-    """Processa una query e ritorna risposta (con supporto streaming)"""
+    """Processa una query e ritorna risposta (con supporto streaming e contesto)"""
     try:
         query = data.get('query', '')
         language = data.get('language', 'Python')
         ui_language = data.get('ui_language', 'en')
+        context = data.get('context', [])
         
-        print(f"Processing query: {query[:50]}... (streaming={streaming})", file=sys.stderr, flush=True)
+        print(f"Processing query: {query[:50]}... (streaming={streaming}, context_msgs={len(context)})", file=sys.stderr, flush=True)
         
         # Auto-detect UI language se non specificato
         if not ui_language or ui_language == 'auto':
             ui_language = detector.detect_language(query)
         
+        # Costruisci contesto conversazionale
+        context_str = ""
+        if context and len(context) > 0:
+            context_str = "\n\nPREVIOUS CONVERSATION:\n"
+            for msg in context:
+                role = "User" if msg.get('role') == 'user' else "Assistant"
+                content = msg.get('content', '')[:200]  # Limita lunghezza
+                context_str += f"{role}: {content}\n"
+            context_str += "\nCurrent question (consider the conversation above):\n"
+        
         if streaming:
             # Streaming mode - invia chunks progressivamente
             try:
-                for chunk in llm.generate_response_streaming(query, language, ui_language):
+                for chunk in llm.generate_response_streaming(query, language, ui_language, context_str):
                     chunk_response = {
                         'id': request_id,
                         'type': 'chunk',
@@ -83,7 +94,7 @@ def process_query(request_id, data, streaming=False):
                 }
         else:
             # Non-streaming mode - risposta completa
-            response = llm.generate_response(query, language, ui_language)
+            response = llm.generate_response(query, language, ui_language, context_str)
             
             # Determina se reasoning è stato usato
             stats = llm.get_stats()

@@ -216,9 +216,16 @@ function App() {
       console.log('Using streaming query');
       
       try {
+        // Prepara contesto conversazione (ultimi 10 messaggi)
+        const conversationContext = messages.slice(-10).map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }));
+        
         const data = await window.electronAPI.sendQuery({
           query: currentQuery,
-          language: language
+          language: language,
+          context: conversationContext
         });
         
         // Streaming completato, aggiorna con risposta finale se necessario
