@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     return ipcRenderer.invoke('send-query', data);
   },
   onQueryChunk: (callback) => {
+    // Rimuovi listener precedenti per evitare duplicati
+    ipcRenderer.removeAllListeners('query-chunk');
     ipcRenderer.on('query-chunk', (event, chunk) => callback(chunk));
   },
   sendQueryStream: (data, onChunk, onComplete, onError) => {
