@@ -202,19 +202,18 @@ function App() {
     if (!input.trim() || isTyping) return  // Blocca se già sta rispondendo
 
     const userMessage = { role: 'user', content: input }
-    setMessages(prev => [...prev, userMessage])
     const currentQuery = input
     setInput('')
     setIsTyping(true)  // Disabilita input durante risposta
 
+    // Aggiungi messaggio utente E messaggio assistant vuoto insieme
+    setMessages(prev => [...prev, userMessage, { role: 'assistant', content: '' }]);
+    const messageIndex = messages.length + 1; // Indice del messaggio assistant
+    setStreamingMessageIndex(messageIndex);
+
     try {
       // Usa streaming progressivo (come ChatGPT)
       console.log('Using streaming query');
-      
-      // Aggiungi messaggio vuoto che verrà riempito progressivamente
-      const messageIndex = messages.length + 1;
-      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-      setStreamingMessageIndex(messageIndex);
       
       try {
         const data = await window.electronAPI.sendQuery({
