@@ -159,16 +159,13 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": False,
                     "options": {
-                        "temperature": 0.58,  # Bilanciato
-                        "top_p": 0.63,  # Bilanciato
-                        "top_k": 38,  # Bilanciato
-                        "num_predict": 5160,  # Bilanciato
-                        "repeat_penalty": 1.2,  # ALTO per qualità
-                        "num_ctx": 11468,  # 70% memoria conversazione
-                        "num_keep": 8028,  # 70% del context
-                        "num_thread": 12,  # Parallelismo
-                        "num_gpu": 1,  # GPU
-                        "num_batch": 1024  # Batch grande
+                        "temperature": 0.7,
+                        "top_p": 0.9,
+                        "top_k": 40,
+                        "num_predict": 2048,  # Ridotto per velocità
+                        "repeat_penalty": 1.1,
+                        "num_ctx": 4096,  # Ridotto per evitare timeout
+                        "num_thread": 8
                     }
                 },
                 timeout=90  # Aumentato per risposte più lunghe
@@ -286,20 +283,17 @@ Be complete, practical, efficient - IN {response_language}."""
                     "system": enriched_system_prompt,  # System message separato per forzare lingua
                     "stream": True,
                     "options": {
-                        "temperature": 0.58,  # Bilanciato
-                        "top_p": 0.63,  # Bilanciato
-                        "top_k": 38,  # Bilanciato
-                        "num_predict": 5160,  # Bilanciato
-                        "repeat_penalty": 1.2,  # ALTO per qualità
-                        "num_ctx": 11468,  # 70% memoria conversazione
-                        "num_keep": 8028,  # 70% del context
-                        "num_thread": 12,  # Parallelismo
-                        "num_gpu": 1,  # GPU
-                        "num_batch": 1024  # Batch grande
+                        "temperature": 0.7,
+                        "top_p": 0.9,
+                        "top_k": 40,
+                        "num_predict": 2048,  # Ridotto per velocità
+                        "repeat_penalty": 1.1,
+                        "num_ctx": 4096,  # Ridotto per evitare timeout
+                        "num_thread": 8
                     }
                 },
                 stream=True,
-                timeout=180  # Aumentato per streaming
+                timeout=90  # Aumentato per risposte più lunghe
             )
             
             for line in response.iter_lines():
