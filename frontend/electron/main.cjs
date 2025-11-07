@@ -1,32 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-const { spawn } = require('child_process');
+const PythonBridge = require('./python-bridge.cjs');
 
 let mainWindow;
-let flaskProcess;
-
-// Start Flask backend
-function startFlaskServer() {
-  const pythonPath = process.platform === 'win32' ? 'python' : 'python3';
-  const appPath = path.join(__dirname, '..', '..', 'app.py');
-  
-  flaskProcess = spawn(pythonPath, [appPath], {
-    cwd: path.join(__dirname, '..', '..')
-  });
-
-  flaskProcess.stdout.on('data', (data) => {
-    console.log(`Flask: ${data}`);
-  });
-
-  flaskProcess.stderr.on('data', (data) => {
-    console.error(`Flask Error: ${data}`);
-  });
-
-  // Wait for Flask to start
-  return new Promise((resolve) => {
-    setTimeout(resolve, 2000);
-  });
-}
+let pythonBridge;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -75,67 +52,26 @@ function createWindow() {
   });
 }
 
-// Handle IPC from renderer
+// Handle IPC from renderer - Direct Python Bridge (no HTTP)
 ipcMain.handle('send-query', async (event, data) => {
   try {
-    const fetch = (await import('node-fetch')).default;
-    const response = await fetch('http://127.0.0.1:5001/api/query', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    });
-    
-    return await response.json();
+    return await pythonBridge.query(data);
   } catch (error) {
     console.error('Query error:', error);
     return {
       response: "I'm afraid I can't do that. An error occurred processing your request.",
-      error: true
+      error: true,
+      source: 'error'
     };
   }
 });
 
-// Handle streaming query
-ipcMain.handle('send-query-stream', async (event, data) => {
+// Handle stats request
+ipcMain.handle('get-stats', async (event) => {
   try {
-    const fetch = (await import('node-fetch')).default;
-    const response = await fetch('http://127.0.0.1:5001/api/query/stream', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    });
-    
-    const reader = response.body;
-    let buffer = '';
-    
-    reader.on('data', (chunk) => {
-      buffer += chunk.toString();
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-      
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          try {
-            const data = JSON.parse(line.slice(6));
-            event.sender.send('query-stream-chunk', data);
-          } catch (e) {
-            console.error('Parse error:', e);
-          }
-        }
-      }
-    });
-    
-    return new Promise((resolve, reject) => {
-      reader.on('end', () => resolve({ done: true }));
-      reader.on('error', reject);
-    });
-    
+    return await pythonBridge.getStats();
   } catch (error) {
-    console.error('Streaming query error:', error);
+    console.error('Stats error:', error);
     return {
       error: true,
       message: error.message
@@ -144,7 +80,10 @@ ipcMain.handle('send-query-stream', async (event, data) => {
 });
 
 app.whenReady().then(async () => {
-  await startFlaskServer();
+  // Start Python Bridge instead of Flask
+  pythonBridge = new PythonBridge();
+  await pythonBridge.start();
+  
   createWindow();
 
   app.on('activate', () => {
@@ -155,8 +94,8 @@ app.whenReady().then(async () => {
 });
 
 app.on('window-all-closed', () => {
-  if (flaskProcess) {
-    flaskProcess.kill();
+  if (pythonBridge) {
+    pythonBridge.stop();
   }
   if (process.platform !== 'darwin') {
     app.quit();
@@ -164,7 +103,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('quit', () => {
-  if (flaskProcess) {
-    flaskProcess.kill();
+  if (pythonBridge) {
+    pythonBridge.stop();
   }
 });
