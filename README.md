@@ -8,8 +8,8 @@ Un assistente di programmazione AI desktop standalone ispirato a HAL 9000 di "20
 ![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge)
 ![Electron](https://img.shields.io/badge/Electron-Latest-47848F?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge)
-![CodeLlama](https://img.shields.io/badge/CodeLlama-7B-orange?style=for-the-badge)
-![Mistral](https://img.shields.io/badge/Mistral-NLU-purple?style=for-the-badge)
+![qwen2.5-coder](https://img.shields.io/badge/qwen2.5--coder-3b-orange?style=for-the-badge)
+![Ollama](https://img.shields.io/badge/Ollama-Runtime-purple?style=for-the-badge)
 
 ## ✨ Caratteristiche
 
@@ -21,20 +21,21 @@ Un assistente di programmazione AI desktop standalone ispirato a HAL 9000 di "20
 - Zero HTTP overhead
 
 ### 🤖 **Intelligenza Artificiale Hybrid System**
-- **CodeLlama 7B (Q4_0)** - Specializzato per generazione codice production-ready
-- **Recursive Reasoning Module** - Reasoning avanzato per task complessi (5.2M params)
+- **qwen2.5-coder:3b** - Modello di codice veloce (fallback automatico a codellama)
+- **Reasoning leggero** - Passo di reasoning conciso per task complessi, configurabile
 - **Auto-detection** - Routing intelligente simple/reasoning mode
-- **Sistema RAG** - Documentazioni ufficiali integrate
-- **Query Enhancement** - Migliora comprensione domande
+- **Sistema RAG opzionale** - Documentazioni ufficiali integrate (off di default per velocità)
+- **Modello configurabile** - via variabili d'ambiente (`config.py`)
 - **Caching intelligente** - LRU cache con 1000 item capacity
-- **Memoria Conversazionale** - Ricorda ultimi 10 messaggi per continuità (NEW! 🧠)
+- **Memoria Conversazionale** - Ricorda ultimi 10 messaggi per continuità
 - Privacy totale - tutto rimane sul tuo computer
 
 ### ⚡ **Performance & Streaming**
+- **Risposte < 8s** - media ~4.3s, max ~6.6s (benchmark 100 query su Apple M2 Pro)
 - **ChatGPT-Style Streaming** - Risposte progressive parola per parola
-- **~2s First Token** - Feedback immediato
-- **40-50% più veloce** - Parametri Ollama ottimizzati
-- **Prompt Production-Ready** - Codice completo con SOLID, Design Patterns, Security
+- **~1-2s First Token** - Feedback immediato
+- **Modello tenuto caldo in RAM** (`keep_alive`) - nessun cold-start
+- **Vedi [UPGRADE_LOCAL.md](UPGRADE_LOCAL.md)** per tuning e benchmark
 
 ### 🌍 **Multilingua**
 Interfaccia disponibile in 8 lingue europee:
@@ -142,14 +143,14 @@ curl -fsSL https://ollama.ai/install.sh | sh
 
 ### Scarica un Modello
 ```bash
-# CodeLlama (consigliato per programmazione)
+# qwen2.5-coder:3b (DEFAULT - veloce, risposte < 8s in locale)
+ollama pull qwen2.5-coder:3b
+
+# Variante ultra-veloce (qualita' leggermente inferiore)
+ollama pull qwen2.5-coder:1.5b
+
+# Fallback / alternativa piu' grande
 ollama pull codellama
-
-# Oppure DeepSeek Coder
-ollama pull deepseek-coder
-
-# Oppure Phi (veloce e leggero)
-ollama pull phi
 ```
 
 ### Avvia Ollama
@@ -157,7 +158,8 @@ ollama pull phi
 ollama serve
 ```
 
-**Vedi [SETUP_LLM.md](SETUP_LLM.md) per dettagli completi**
+**Per l'upgrade allo stack locale veloce e tutte le opzioni di tuning, vedi
+[UPGRADE_LOCAL.md](UPGRADE_LOCAL.md). Dettagli LLM in [SETUP_LLM.md](SETUP_LLM.md).**
 
 ## 📦 Creazione Pacchetto Installabile
 

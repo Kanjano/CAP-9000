@@ -23,17 +23,19 @@ class OllamaInstaller {
                 linux: 400
             },
             model: {
-                'codellama': 3800, // MB (~3.8 GB)
+                'qwen2.5-coder:1.5b': 1000, // MB (~1 GB)
+                'qwen2.5-coder:3b': 1900,   // MB (~1.9 GB) - default
+                'qwen2.5-coder:7b': 4500,
+                'codellama': 3800,          // fallback
                 'codellama:7b': 3800,
-                'codellama:13b': 7000,
-                'qwen2.5-coder:7b': 4500
+                'codellama:13b': 7000
             }
         };
     }
 
     getRequiredSpace() {
         const ollamaSize = this.sizes.ollama[this.platform] || 500;
-        const modelSize = this.sizes.model['codellama'] || 3800;
+        const modelSize = this.sizes.model['qwen2.5-coder:3b'] || 1900;
         const docsSize = 50; // MB per documentazioni
         const appSize = 200; // MB per CAP 9000
         
@@ -202,7 +204,7 @@ class OllamaInstaller {
         });
     }
 
-    async downloadModel(modelName = 'codellama', progressCallback) {
+    async downloadModel(modelName = 'qwen2.5-coder:3b', progressCallback) {
         return new Promise((resolve, reject) => {
             const process = exec(`ollama pull ${modelName}`);
             
@@ -270,10 +272,10 @@ class OllamaInstaller {
             
             // 5. Download model
             if (progressCallback) {
-                progressCallback({ stage: 'model', progress: 0, message: 'Downloading CodeLlama model...' });
+                progressCallback({ stage: 'model', progress: 0, message: 'Downloading qwen2.5-coder model...' });
             }
-            
-            await this.downloadModel('codellama', progressCallback);
+
+            await this.downloadModel('qwen2.5-coder:3b', progressCallback);
             
             // 6. Complete
             if (progressCallback) {

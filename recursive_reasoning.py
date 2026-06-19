@@ -6,148 +6,125 @@ Paper: "Less is More: Recursive Reasoning with Tiny Networks"
 GitHub: https://github.com/SamsungSAILMontreal/TinyRecursiveModels
 """
 
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from typing import Optional, Tuple, Dict, Any
 import json
 from pathlib import Path
 import hashlib
 
+# NOTE: torch e' importato in modo lazy (solo se si usa effettivamente la rete
+# neurale prototipo). Il percorso di risposta runtime NON usa torch: sfrutta
+# solo ReasoningAnalyzer e ReasoningCache (puro Python). Cosi' lo startup
+# dell'app non paga il costo di caricamento di torch (~1-2s) ne' lo richiede
+# come dipendenza obbligatoria.
+torch = None
+nn = None
 
-class RecursiveReasoningModule(nn.Module):
+
+def _require_torch():
+    """Importa torch on-demand. Sollevato ImportError chiaro se assente."""
+    global torch, nn
+    if torch is None:
+        try:
+            import torch as _torch
+            import torch.nn as _nn
+        except ImportError as exc:  # pragma: no cover - percorso opzionale
+            raise ImportError(
+                "torch non installato. La rete RecursiveReasoningModule e' "
+                "opzionale e non serve al runtime. Per usarla: pip install torch"
+            ) from exc
+        torch, nn = _torch, _nn
+    return torch, nn
+
+
+def _build_module_class():
     """
-    Modulo di recursive reasoning ispirato a TRM
-    
-    Architettura:
-    - Input: embedding da CodeLlama (simulato come 4096-dim per compatibilità)
-    - Latent: stato ricorsivo (512-dim)
-    - Output: enhanced embedding (4096+512-dim)
-    
-    Process:
-    1. Project embedding → latent space
-    2. Recursive updates (3-5 iterations)
-    3. Combine original + enhanced
-    
-    Nota: Questa è una versione prototipo che lavora a livello di prompt enhancement.
-    In futuro potrà essere integrata direttamente con gli embeddings di Ollama.
+    Costruisce la classe nn.Module solo quando torch e' disponibile.
+
+    La definizione e' annidata perche' eredita da nn.Module, che esiste solo
+    dopo l'import di torch. Mantiene intatta l'architettura prototipo TRM.
     """
-    
-    def __init__(
-        self,
-        input_dim: int = 4096,  # CodeLlama embedding dim (simulato)
-        hidden_dim: int = 512,
-        num_layers: int = 2,
-        num_recursions: int = 3,
-        dropout: float = 0.1
-    ):
-        super().__init__()
-        
-        self.input_dim = input_dim
-        self.hidden_dim = hidden_dim
-        self.num_recursions = num_recursions
-        
-        # Projection layers
-        self.input_projection = nn.Linear(input_dim, hidden_dim)
-        self.latent_projection = nn.Linear(hidden_dim, hidden_dim)
-        
-        # Recursive reasoning network (tiny, 2 layers come TRM)
-        self.reasoning_net = nn.Sequential(
-            nn.Linear(input_dim + hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(dropout),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
-            nn.ReLU()
-        )
-        
-        # Output projection
-        self.output_projection = nn.Linear(hidden_dim, hidden_dim)
-        
-        # Initialize weights
-        self._init_weights()
-        
-        print(f"✓ RecursiveReasoningModule initialized:")
-        print(f"  - Input dim: {input_dim}")
-        print(f"  - Hidden dim: {hidden_dim}")
-        print(f"  - Num recursions: {num_recursions}")
-        print(f"  - Total parameters: {self.count_parameters():,}")
-    
-    def _init_weights(self):
-        """Initialize weights with Xavier uniform"""
-        for module in self.modules():
-            if isinstance(module, nn.Linear):
-                nn.init.xavier_uniform_(module.weight)
-                if module.bias is not None:
-                    nn.init.zeros_(module.bias)
-    
-    def count_parameters(self) -> int:
-        """Count total trainable parameters"""
-        return sum(p.numel() for p in self.parameters() if p.requires_grad)
-    
-    def forward(
-        self,
-        embedding: torch.Tensor,
-        num_recursions: Optional[int] = None
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        """
-        Forward pass con recursive reasoning
-        
-        Args:
-            embedding: CodeLlama embedding (batch_size, input_dim)
-            num_recursions: Numero di ricorsioni (default: self.num_recursions)
-        
-        Returns:
-            enhanced_embedding: Embedding potenziato (batch_size, input_dim + hidden_dim)
-            latent: Stato latente finale (batch_size, hidden_dim)
-        """
-        if num_recursions is None:
-            num_recursions = self.num_recursions
-        
-        batch_size = embedding.shape[0]
-        
-        # Initialize latent state
-        latent = torch.zeros(batch_size, self.hidden_dim, device=embedding.device)
-        
-        # Recursive reasoning loop (ispirato a TRM)
-        for i in range(num_recursions):
-            # Combine embedding + latent
-            combined = torch.cat([embedding, latent], dim=-1)
-            
-            # Update latent through reasoning network
-            latent_update = self.reasoning_net(combined)
-            
-            # Residual connection (importante per stabilità)
-            latent = latent + latent_update
-        
-        # Project latent to output space
-        enhanced_latent = self.output_projection(latent)
-        
-        # Combine original embedding + enhanced latent
-        enhanced_embedding = torch.cat([embedding, enhanced_latent], dim=-1)
-        
-        return enhanced_embedding, latent
-    
-    def save(self, path: str):
-        """Save model weights"""
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        torch.save({
-            'state_dict': self.state_dict(),
-            'config': {
-                'input_dim': self.input_dim,
-                'hidden_dim': self.hidden_dim,
-                'num_recursions': self.num_recursions
-            }
-        }, path)
-        print(f"✓ Model saved to {path}")
-    
-    def load(self, path: str):
-        """Load model weights"""
-        checkpoint = torch.load(path, map_location='cpu')
-        self.load_state_dict(checkpoint['state_dict'])
-        print(f"✓ Model loaded from {path}")
-        return checkpoint['config']
+    _torch, _nn = _require_torch()
+
+    class _RecursiveReasoningModule(_nn.Module):
+        def __init__(self, input_dim=4096, hidden_dim=512, num_layers=2,
+                     num_recursions=3, dropout=0.1):
+            super().__init__()
+            self.input_dim = input_dim
+            self.hidden_dim = hidden_dim
+            self.num_recursions = num_recursions
+
+            self.input_projection = _nn.Linear(input_dim, hidden_dim)
+            self.latent_projection = _nn.Linear(hidden_dim, hidden_dim)
+            self.reasoning_net = _nn.Sequential(
+                _nn.Linear(input_dim + hidden_dim, hidden_dim),
+                _nn.LayerNorm(hidden_dim),
+                _nn.ReLU(),
+                _nn.Dropout(dropout),
+                _nn.Linear(hidden_dim, hidden_dim),
+                _nn.LayerNorm(hidden_dim),
+                _nn.ReLU(),
+            )
+            self.output_projection = _nn.Linear(hidden_dim, hidden_dim)
+            self._init_weights()
+
+            print("✓ RecursiveReasoningModule initialized:")
+            print(f"  - Input dim: {input_dim}")
+            print(f"  - Hidden dim: {hidden_dim}")
+            print(f"  - Num recursions: {num_recursions}")
+            print(f"  - Total parameters: {self.count_parameters():,}")
+
+        def _init_weights(self):
+            for module in self.modules():
+                if isinstance(module, _nn.Linear):
+                    _nn.init.xavier_uniform_(module.weight)
+                    if module.bias is not None:
+                        _nn.init.zeros_(module.bias)
+
+        def count_parameters(self):
+            return sum(p.numel() for p in self.parameters() if p.requires_grad)
+
+        def forward(self, embedding, num_recursions=None):
+            if num_recursions is None:
+                num_recursions = self.num_recursions
+            batch_size = embedding.shape[0]
+            latent = _torch.zeros(batch_size, self.hidden_dim, device=embedding.device)
+            for _ in range(num_recursions):
+                combined = _torch.cat([embedding, latent], dim=-1)
+                latent = latent + self.reasoning_net(combined)
+            enhanced_latent = self.output_projection(latent)
+            enhanced_embedding = _torch.cat([embedding, enhanced_latent], dim=-1)
+            return enhanced_embedding, latent
+
+        def save(self, path):
+            Path(path).parent.mkdir(parents=True, exist_ok=True)
+            _torch.save({
+                'state_dict': self.state_dict(),
+                'config': {
+                    'input_dim': self.input_dim,
+                    'hidden_dim': self.hidden_dim,
+                    'num_recursions': self.num_recursions,
+                },
+            }, path)
+            print(f"✓ Model saved to {path}")
+
+        def load(self, path):
+            checkpoint = _torch.load(path, map_location='cpu')
+            self.load_state_dict(checkpoint['state_dict'])
+            print(f"✓ Model loaded from {path}")
+            return checkpoint['config']
+
+    return _RecursiveReasoningModule
+
+
+def RecursiveReasoningModule(*args, **kwargs):
+    """
+    Factory compatibile con l'API originale: ``RecursiveReasoningModule(...)``.
+
+    Prototipo NON usato nel percorso di risposta runtime (vedi nota in testa
+    al file). Costruisce la rete torch solo on-demand.
+    """
+    cls = _build_module_class()
+    return cls(*args, **kwargs)
 
 
 class ReasoningCache:
