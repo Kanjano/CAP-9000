@@ -1,6 +1,6 @@
 """
 Recursive Reasoning Module ispirato a TinyRecursiveModels (Samsung SAIL)
-Implementa recursive reasoning per potenziare CodeLlama in CAP 9000
+Implementa recursive reasoning per potenziare Mistral in CAP 9000
 
 Paper: "Less is More: Recursive Reasoning with Tiny Networks"
 GitHub: https://github.com/SamsungSAILMontreal/TinyRecursiveModels

@@ -1,10 +1,10 @@
 """
 Hybrid LLM Handler per CAP 9000
-Combina CodeLlama + Recursive Reasoning Module
+Combina Mistral + Recursive Reasoning Module
 
 Modalità:
-1. Simple Mode: Solo CodeLlama (query semplici)
-2. Reasoning Mode: CodeLlama + Recursive Reasoning (query complesse)
+1. Simple Mode: Solo Mistral (query semplici)
+2. Reasoning Mode: Mistral + Recursive Reasoning (query complesse)
 """
 
 import time
@@ -18,12 +18,12 @@ from recursive_reasoning import (
 
 class HybridLLMHandler:
     """
-    Handler ibrido che combina CodeLlama con Recursive Reasoning
+    Handler ibrido che combina Mistral con Recursive Reasoning
     
     Funzionamento:
     - Analizza la query per determinare complessità
-    - Query semplici → Solo CodeLlama (veloce)
-    - Query complesse → CodeLlama con prompt enhancement (reasoning)
+    - Query semplici → Solo Mistral (veloce)
+    - Query complesse → Mistral con prompt enhancement (reasoning)
     
     Nota: Questa è la versione prototipo che usa prompt enhancement.
     In futuro potrà integrare direttamente gli embeddings di Ollama.
@@ -45,8 +45,8 @@ class HybridLLMHandler:
             enable_cache: Abilita caching
             num_recursions: Numero di ricorsioni (3-5 raccomandato)
         """
-        # Base CodeLlama handler
-        self.codellama = LLMHandler(ollama_url)
+        # Base Mistral handler
+        self.mistral = LLMHandler(ollama_url)
         
         # Reasoning configuration
         self.enable_reasoning = enable_reasoning
@@ -69,7 +69,7 @@ class HybridLLMHandler:
         print(f"\n{'='*60}")
         print(f"  CAP 9000 - {mode} MODE INITIALIZED")
         print(f"{'='*60}")
-        print(f"✓ CodeLlama: {'Available' if self.codellama.available else 'Unavailable'}")
+        print(f"✓ Mistral: {'Available' if self.mistral.available else 'Unavailable'}")
         print(f"✓ Reasoning: {'Enabled' if enable_reasoning else 'Disabled'}")
         print(f"✓ Cache: {'Enabled' if enable_cache else 'Disabled'}")
         print(f"✓ Recursions: {num_recursions}")
@@ -166,12 +166,12 @@ class HybridLLMHandler:
                 print(f"[CACHE] ✓ Hit! Returning cached response ({elapsed:.2f}s)")
                 return cached.get('response', '')
         
-        # Simple mode: direct CodeLlama
+        # Simple mode: direct Mistral
         if not use_reasoning or not self.enable_reasoning:
             self.stats['simple_queries'] += 1
-            print(f"\n[MODE] 🔵 SIMPLE (CodeLlama only)")
+            print(f"\n[MODE] 🔵 SIMPLE (Mistral only)")
             
-            response = self.codellama.generate_response(
+            response = self.mistral.generate_response(
                 query, language, ui_language, context=context
             )
 
@@ -181,17 +181,17 @@ class HybridLLMHandler:
 
             return response
         
-        # Reasoning mode: CodeLlama + Recursive Reasoning
+        # Reasoning mode: Mistral + Recursive Reasoning
         self.stats['reasoning_queries'] += 1
-        print(f"\n[MODE] 🧠 REASONING (CodeLlama + {num_recursions} recursions)")
+        print(f"\n[MODE] 🧠 REASONING (Mistral + {num_recursions} recursions)")
         
         # Enhance prompt with reasoning
         enhanced_query = self._enhance_prompt_with_reasoning(
             query, language, num_recursions
         )
         
-        # Generate with CodeLlama
-        response = self.codellama.generate_response(
+        # Generate with Mistral
+        response = self.mistral.generate_response(
             enhanced_query,
             language,
             ui_language,
@@ -242,8 +242,8 @@ class HybridLLMHandler:
         else:
             print(f"\n[MODE] 🔵 SIMPLE STREAMING")
         
-        # Stream from CodeLlama
-        for chunk in self.codellama.generate_response_streaming(
+        # Stream from Mistral
+        for chunk in self.mistral.generate_response_streaming(
             query, language, ui_language, context=context
         ):
             yield chunk
@@ -252,7 +252,7 @@ class HybridLLMHandler:
         """Get handler statistics"""
         stats = {
             'mode': 'hybrid' if self.enable_reasoning else 'simple',
-            'codellama_available': self.codellama.available,
+            'mistral_available': self.mistral.available,
             'reasoning_enabled': self.enable_reasoning,
             'cache_enabled': self.cache is not None,
             'num_recursions': self.num_recursions,
@@ -287,7 +287,7 @@ class HybridLLMHandler:
         print(f"  CAP 9000 - HYBRID HANDLER STATISTICS")
         print(f"{'='*60}")
         print(f"Mode: {stats['mode'].upper()}")
-        print(f"CodeLlama: {'✓ Available' if stats['codellama_available'] else '✗ Unavailable'}")
+        print(f"Mistral: {'✓ Available' if stats['mistral_available'] else '✗ Unavailable'}")
         print(f"Reasoning: {'✓ Enabled' if stats['reasoning_enabled'] else '✗ Disabled'}")
         print(f"Cache: {'✓ Enabled' if stats['cache_enabled'] else '✗ Disabled'}")
         print(f"\nQueries:")
@@ -308,7 +308,7 @@ class HybridLLMHandler:
     
     def get_model_info(self):
         """Get model information"""
-        info = self.codellama.get_model_info()
+        info = self.mistral.get_model_info()
         info['hybrid_mode'] = self.enable_reasoning
         info['reasoning_recursions'] = self.num_recursions
         return info

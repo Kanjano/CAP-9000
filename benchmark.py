@@ -84,10 +84,10 @@ def main():
     print(f"\n{'='*64}\n  CAP 9000 - RESPONSE TIME BENCHMARK ({n} query, target < {TARGET_SECONDS}s)\n{'='*64}")
 
     llm = get_hybrid_handler()
-    if not llm.codellama.available:
+    if not llm.mistral.available:
         print("ERRORE: Ollama non disponibile. Avviare 'ollama serve'.")
         sys.exit(2)
-    print(f"Modello attivo: {llm.codellama.model}\n")
+    print(f"Modello attivo: {llm.mistral.model}\n")
 
     detector = get_language_detector()
     queries = build_queries(n)
@@ -128,7 +128,7 @@ def main():
     # Salva report JSON
     report = {
         'timestamp': datetime.now().isoformat(),
-        'model': llm.codellama.model,
+        'model': llm.mistral.model,
         'num_queries': len(times),
         'target_seconds': TARGET_SECONDS,
         'min': min(times), 'avg': statistics.mean(times),

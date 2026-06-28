@@ -6,7 +6,9 @@ from knowledge_base import find_answer
 from llm_handler import get_fallback_response
 from hybrid_llm_handler import get_hybrid_handler
 from language_detector import get_language_detector
+import config
 import json
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -14,14 +16,14 @@ CORS(app)
 # Initialize the assistant
 assistant = CodeAssistant()
 
-# Initialize Hybrid LLM handler (CodeLlama + Recursive Reasoning)
+# Initialize Hybrid LLM handler (Mistral + Recursive Reasoning)
 llm = get_hybrid_handler(
     enable_reasoning=True,  # Abilita recursive reasoning
     enable_cache=True,      # Abilita caching
     num_recursions=3        # 3 cicli di reasoning (raccomandato)
 )
-print(f"CodeLlama (via Ollama) available: {llm.codellama.available}")
-if llm.codellama.available:
+print(f"Mistral (via Ollama) available: {llm.mistral.available}")
+if llm.mistral.available:
     model_info = llm.get_model_info()
     print(f"Model: {model_info['name']} {model_info['version']}")
     print(f"Hybrid Mode: {'Enabled' if model_info['hybrid_mode'] else 'Disabled'}")
@@ -52,7 +54,7 @@ def handle_query():
         })
     
     # Try Hybrid LLM first (if available)
-    if llm.codellama.available:
+    if llm.mistral.available:
         # Determina se usare reasoning
         use_reasoning = data.get('use_reasoning', None)  # None = auto-detect
         
@@ -83,7 +85,7 @@ def handle_query():
         source = 'knowledge_base'
     else:
         # Last resort: generic response
-        if not llm.codellama.available:
+        if not llm.mistral.available:
             response = get_fallback_response(language, query)
             source = 'fallback_ollama_offline'
         else:
@@ -118,7 +120,7 @@ def handle_query_stream():
             return
         
         # Try Hybrid LLM streaming
-        if llm.codellama.available:
+        if llm.mistral.available:
             try:
                 for chunk in llm.generate_response_streaming(query, language, ui_language):
                     if chunk:
@@ -156,6 +158,29 @@ def get_languages():
     return jsonify({
         'languages': languages
     })
+
+@app.route('/api/health', methods=['GET'])
+def health():
+    """Healthcheck endpoint Mistral locale (per indicatore stato UI)."""
+    hc = llm.mistral.health_check()
+    info = llm.get_model_info() if hc.get('available') else {}
+    return jsonify({
+        'status': 'online' if hc.get('available') else 'offline',
+        'available': hc.get('available', False),
+        'api_base': hc.get('api_base'),
+        'model': hc.get('model'),
+        'description': info.get('description'),
+        'params': {
+            'temperature': config.TEMPERATURE,
+            'top_p': config.TOP_P,
+            'max_tokens': config.MAX_TOKENS,
+            'num_ctx': config.NUM_CTX,
+        },
+        'reasoning_enabled': llm.enable_reasoning,
+        'timestamp': time.strftime('%Y-%m-%dT%H:%M:%S'),
+        'error': hc.get('error'),
+    }), (200 if hc.get('available') else 503)
+
 
 @app.route('/api/stats', methods=['GET'])
 def get_stats():

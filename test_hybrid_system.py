@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script per il sistema Hybrid LLM (CodeLlama + Recursive Reasoning)
+Test script per il sistema Hybrid LLM (Mistral + Recursive Reasoning)
 Testa tutti i componenti del prototipo
 """
 
@@ -83,7 +83,7 @@ def test_integration():
         print(f"  - Reasoning: {'Enabled' if handler.enable_reasoning else 'Disabled'}")
         print(f"  - Cache: {'Enabled' if handler.cache else 'Disabled'}")
         print(f"  - Recursions: {handler.num_recursions}")
-        print(f"  - CodeLlama: {'Available' if handler.codellama.available else 'Unavailable'}")
+        print(f"  - Mistral: {'Available' if handler.mistral.available else 'Unavailable'}")
         
         # Test stats
         stats = handler.get_stats()

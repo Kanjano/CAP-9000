@@ -1,11 +1,12 @@
 """
 LLM Handler per CAP 9000 Code Assistant
 
-CAP 9000 usa esclusivamente CodeLlama, un modello AI specializzato
-per programmazione sviluppato da Meta AI.
+CAP 9000 usa Mistral in modalita' offline locale tramite un endpoint
+OpenAI-compatibile (Ollama espone /v1; in alternativa vLLM o llama.cpp).
+CodeLlama e' stato rimosso.
 
-CodeLlama è ottimizzato per:
-- Generazione di codice di alta qualità
+Mistral e' ottimizzato per:
+- Generazione di codice di alta qualita'
 - Debugging e analisi codice
 - Spiegazioni tecniche dettagliate
 - Best practices e pattern
@@ -14,27 +15,34 @@ CodeLlama è ottimizzato per:
 Integrato con sistema RAG per documentazioni ufficiali.
 """
 
-import requests
 import json
 import time
+
+from openai import OpenAI
+
 import config
 from rag_system import get_rag_system
 from query_enhancer import get_query_enhancer
 
+
 class LLMHandler:
     def __init__(self, ollama_url=None):
         """
-        Inizializza l'handler LLM.
+        Inizializza l'handler LLM su endpoint OpenAI-compatibile.
 
-        Il modello e' configurabile (config.MODEL, default qwen2.5-coder:3b),
-        con fallback automatico a config.FALLBACK_MODEL (codellama) se il
-        modello primario non e' installato in Ollama.
+        Il modello e' configurabile (config.MODEL, default mistral:7b-instruct-q4_K_M),
+        con fallback automatico a config.FALLBACK_MODEL (famiglia mistral) se il
+        modello primario non e' installato.
 
         Args:
-            ollama_url: URL del server Ollama (default: config.OLLAMA_URL)
+            ollama_url: URL del server Ollama nativo (default: config.OLLAMA_URL).
+                        L'endpoint OpenAI usato e' config.API_BASE.
         """
         self.ollama_url = ollama_url or config.OLLAMA_URL
-        self.available = self.check_ollama_available()
+        self.api_base = config.API_BASE
+        # Client OpenAI puntato all'endpoint locale (Ollama /v1).
+        self.client = OpenAI(base_url=self.api_base, api_key=config.API_KEY)
+        self.available = self.check_available()
         # Seleziona modello disponibile (primario o fallback)
         self.model = self._select_model()
         self.rag = get_rag_system()  # Sistema RAG per documentazioni
@@ -46,14 +54,11 @@ class LLMHandler:
             self._warmup()
 
     def _list_models(self):
-        """Ritorna la lista dei tag modello installati in Ollama."""
+        """Ritorna la lista dei modelli serviti dall'endpoint OpenAI."""
         try:
-            r = requests.get(f"{self.ollama_url}/api/tags", timeout=2)
-            if r.status_code == 200:
-                return [m.get('name', '') for m in r.json().get('models', [])]
+            return [m.id for m in self.client.models.list().data]
         except Exception:
-            pass
-        return []
+            return []
 
     def _select_model(self):
         """Sceglie il modello primario se presente, altrimenti il fallback."""
@@ -62,7 +67,7 @@ class LLMHandler:
         installed = self._list_models()
 
         def is_installed(name):
-            # match esatto (es. "qwen2.5-coder:3b") o per famiglia ("codellama")
+            # match esatto (es. "mistral:7b-instruct-q4_K_M") o per famiglia ("mistral")
             return name in installed or any(
                 m == name or m.split(':')[0] == name.split(':')[0] for m in installed)
 
@@ -78,33 +83,59 @@ class LLMHandler:
     def _warmup(self):
         """Carica il modello in RAM (keep_alive) per eliminare il cold-start."""
         try:
-            requests.post(
-                f"{self.ollama_url}/api/generate",
-                json={"model": self.model, "prompt": "hi", "stream": False,
-                      "keep_alive": config.KEEP_ALIVE, "options": {"num_predict": 1}},
-                timeout=120,
+            self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": "hi"}],
+                max_tokens=1,
+                extra_body={"keep_alive": config.KEEP_ALIVE},
             )
             print(f"[WARMUP] Modello '{self.model}' caricato in RAM (keep_alive={config.KEEP_ALIVE})")
         except Exception as e:
             print(f"[WARMUP] Skipped: {e}")
 
-    def check_ollama_available(self):
-        """Verifica se Ollama è disponibile"""
+    def check_available(self):
+        """Verifica se l'endpoint OpenAI-compatibile (Mistral) e' raggiungibile."""
         try:
-            response = requests.get(f"{self.ollama_url}/api/tags", timeout=2)
-            return response.status_code == 200
-        except:
+            self.client.models.list()
+            return True
+        except Exception:
             return False
-    
+
+    # Compat: alcuni moduli chiamano check_ollama_available().
+    def check_ollama_available(self):
+        return self.check_available()
+
+    def health_check(self):
+        """
+        Healthcheck dell'endpoint Mistral locale.
+
+        Returns:
+            dict: {available, api_base, model, models, error}
+        """
+        try:
+            models = self._list_models()
+            return {
+                "available": True,
+                "api_base": self.api_base,
+                "model": self.model,
+                "models": models,
+                "error": None,
+            }
+        except Exception as e:
+            return {
+                "available": False,
+                "api_base": self.api_base,
+                "model": config.MODEL,
+                "models": [],
+                "error": str(e),
+            }
+
     def _build_system_prompt(self, language, response_language):
         """
         Prompt di sistema CONCISO.
 
-        Il vecchio prompt imponeva output "production-ready" enormi (controller,
-        service, repository, DTO, test...) per OGNI domanda, gonfiando la
-        risposta a 1000+ token e quindi la latenza. Questo prompt punta a
-        risposte corrette, idiomatiche e direttamente utili, con codice solo
-        quando serve -> output piu' corto = molto piu' veloce, senza perdere
+        Punta a risposte corrette, idiomatiche e direttamente utili, con codice
+        solo quando serve -> output piu' corto = molto piu' veloce, senza perdere
         qualita' per le domande tecniche tipiche.
         """
         return (
@@ -119,164 +150,108 @@ class LLMHandler:
             f"Respond entirely in {response_language}."
         )
 
-    def generate_response(self, query, language, ui_language='en', context=None):
-        """
-        Genera una risposta usando il modello LLM
-        
-        Args:
-            query: Domanda dell'utente
-            language: Linguaggio di programmazione
-            ui_language: Lingua dell'interfaccia utente (en, it, fr, de, es, pt, nl, pl)
-            context: Contesto aggiuntivo (opzionale)
-        
-        Returns:
-            str: Risposta generata dal modello
-        """
-        if not self.available:
-            return None
-        
-        # Mappa delle lingue
-        language_names = {
-            'en': 'English',
-            'it': 'Italian',
-            'fr': 'French',
-            'de': 'German',
-            'es': 'Spanish',
-            'pt': 'Portuguese',
-            'nl': 'Dutch',
-            'pl': 'Polish'
-        }
-        
-        response_language = language_names.get(ui_language, 'English')
-        print(f"Generating response in {response_language} (UI language: {ui_language})")
+    _LANGUAGE_NAMES = {
+        'en': 'English', 'it': 'Italian', 'fr': 'French', 'de': 'German',
+        'es': 'Spanish', 'pt': 'Portuguese', 'nl': 'Dutch', 'pl': 'Polish',
+    }
 
-        # Enhancer NLU opzionale (pre-call costoso). Disabilitato di default.
+    def _build_messages(self, query, language, response_language, context):
+        """Costruisce system+user message per chat.completions, con RAG opzionale."""
         enhanced_query = query
         if self.enhancer is not None:
             start_enhance = time.time()
-            enhanced_query = self.enhancer.enhance_query(query, language, ui_language)
+            enhanced_query = self.enhancer.enhance_query(query, language, response_language)
             print(f"[TIMING] Query enhancement took: {time.time() - start_enhance:.2f}s", flush=True)
 
-        # Prompt di sistema conciso (vedi _build_system_prompt): risposte
-        # corrette e idiomatiche ma SENZA over-engineering -> output piu' corto
-        # = latenza molto piu' bassa.
         system_prompt = self._build_system_prompt(language, response_language)
-
-        # Arricchisci con contesto RAG (best practice) solo se abilitato.
         if config.ENABLE_RAG:
-            enriched_system_prompt = self.rag.enrich_prompt(system_prompt, language, enhanced_query)
-        else:
-            enriched_system_prompt = system_prompt
+            system_prompt = self.rag.enrich_prompt(system_prompt, language, enhanced_query)
 
         user_prompt = f"[Respond in {response_language}] Question about {language}: {enhanced_query}"
         if context:
             user_prompt = f"{context}\n\n{user_prompt}"
 
-        try:
-            print(f"[TIMING] Starting Ollama API call (non-streaming, model={self.model})...", flush=True)
-            start_ollama = time.time()
+        return [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
 
-            response = requests.post(
-                f"{self.ollama_url}/api/generate",
-                json={
-                    "model": self.model,
-                    "prompt": user_prompt,
-                    "system": enriched_system_prompt,
-                    "stream": False,
-                    "keep_alive": config.KEEP_ALIVE,
-                    "options": config.generation_options(),
-                },
-                timeout=120,
-            )
-            
-            ollama_time = time.time() - start_ollama
-            print(f"[TIMING] Ollama API call took: {ollama_time:.2f}s", flush=True)
-            
-            if response.status_code == 200:
-                result = response.json()
-                print(f"[TIMING] ===== TOTAL TIME: {time.time() - start_ollama:.2f}s =====", flush=True)
-                return result.get('response', '').strip()
-            else:
-                print(f"[ERROR] Ollama returned status code: {response.status_code}")
-                return None
-                
-        except Exception as e:
-            print(f"Error calling Ollama: {e}")
-            return None
-    
-    def generate_response_streaming(self, query, language, ui_language='en', context=None):
+    def generate_response(self, query, language, ui_language='en', context=None):
         """
-        Genera una risposta in streaming per visualizzazione progressiva
-        
+        Genera una risposta usando il modello Mistral (non-streaming).
+
         Args:
             query: Domanda dell'utente
             language: Linguaggio di programmazione
-            ui_language: Lingua dell'interfaccia
-            context: Contesto conversazionale (opzionale)
-        
+            ui_language: Lingua dell'interfaccia (en, it, fr, de, es, pt, nl, pl)
+            context: Contesto aggiuntivo (opzionale)
+
+        Returns:
+            str | None: Risposta generata, o None se l'endpoint non e' disponibile.
+        """
+        if not self.available:
+            return None
+
+        response_language = self._LANGUAGE_NAMES.get(ui_language, 'English')
+        print(f"Generating response in {response_language} (UI language: {ui_language})")
+
+        messages = self._build_messages(query, language, response_language, context)
+
+        try:
+            print(f"[TIMING] Starting Mistral API call (non-streaming, model={self.model})...", flush=True)
+            start = time.time()
+
+            completion = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                stream=False,
+                extra_body={"keep_alive": config.KEEP_ALIVE},
+                **config.chat_params(),
+            )
+
+            elapsed = time.time() - start
+            print(f"[TIMING] Mistral API call took: {elapsed:.2f}s", flush=True)
+            print(f"[TIMING] ===== TOTAL TIME: {elapsed:.2f}s =====", flush=True)
+            return (completion.choices[0].message.content or "").strip()
+
+        except Exception as e:
+            print(f"Error calling Mistral endpoint: {e}")
+            return None
+
+    def generate_response_streaming(self, query, language, ui_language='en', context=None):
+        """
+        Genera una risposta in streaming per visualizzazione progressiva.
+
         Yields:
             str: Chunks della risposta
         """
         if not self.available:
             return
-        
-        # Mappa delle lingue
-        language_names = {
-            'en': 'English',
-            'it': 'Italian',
-            'fr': 'French',
-            'de': 'German',
-            'es': 'Spanish',
-            'pt': 'Portuguese',
-            'nl': 'Dutch',
-            'pl': 'Polish'
-        }
-        
-        response_language = language_names.get(ui_language, 'English')
 
-        # Stesso prompt conciso della versione non-streaming.
-        system_prompt = self._build_system_prompt(language, response_language)
+        response_language = self._LANGUAGE_NAMES.get(ui_language, 'English')
+        messages = self._build_messages(query, language, response_language, context)
 
-        if config.ENABLE_RAG:
-            enriched_system_prompt = self.rag.enrich_prompt(system_prompt, language, query)
-        else:
-            enriched_system_prompt = system_prompt
-
-        user_prompt = f"[Respond in {response_language}] Question about {language}: {query}"
-        if context:
-            user_prompt = f"{context}\n\n{user_prompt}"
-
-        print(f"[TIMING] Starting Ollama API call (streaming, model={self.model})...", flush=True)
-        start_ollama = time.time()
+        print(f"[TIMING] Starting Mistral API call (streaming, model={self.model})...", flush=True)
+        start = time.time()
         first_token_time = None
 
         try:
-            response = requests.post(
-                f"{self.ollama_url}/api/generate",
-                json={
-                    "model": self.model,
-                    "prompt": user_prompt,
-                    "system": enriched_system_prompt,
-                    "stream": True,
-                    "keep_alive": config.KEEP_ALIVE,
-                    "options": config.generation_options(),
-                },
+            stream = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
                 stream=True,
-                timeout=120,
+                extra_body={"keep_alive": config.KEEP_ALIVE},
+                **config.chat_params(),
             )
-            
-            for line in response.iter_lines():
-                if line:
-                    try:
-                        chunk = json.loads(line)
-                        if 'response' in chunk and chunk['response']:
-                            if first_token_time is None:
-                                first_token_time = time.time() - start_ollama
-                                print(f"[TIMING] First token received after: {first_token_time:.2f}s", flush=True)
-                            yield chunk['response']
-                    except json.JSONDecodeError:
-                        continue
-                        
+
+            for chunk in stream:
+                delta = chunk.choices[0].delta.content if chunk.choices else None
+                if delta:
+                    if first_token_time is None:
+                        first_token_time = time.time() - start
+                        print(f"[TIMING] First token received after: {first_token_time:.2f}s", flush=True)
+                    yield delta
+
         except Exception as e:
             print(f"Error in streaming: {e}")
             return
@@ -284,15 +259,16 @@ class LLMHandler:
     def get_model_info(self):
         """Restituisce informazioni sul modello attivo (configurabile)."""
         descriptions = {
-            'qwen2.5-coder': 'Modello di codice Qwen2.5-Coder (Alibaba), veloce e idiomatico',
-            'codellama': 'Modello specializzato per programmazione sviluppato da Meta AI',
+            'mistral': 'Modello Mistral 7B Instruct (Mistral AI), generalista e veloce',
+            'devstral': 'Modello Devstral Small 2 (Mistral AI), specializzato per code tasks',
         }
         family = self.model.split(':')[0]
         version = self.model.split(':')[1] if ':' in self.model else 'latest'
         return {
             'name': self.model,
             'version': version,
-            'description': descriptions.get(family, f'Modello Ollama: {self.model}'),
+            'description': descriptions.get(family, f'Modello Mistral locale: {self.model}'),
+            'api_base': self.api_base,
             'languages': ['Python', 'Java', 'JavaScript', 'C', 'C++', 'Go', 'e altri'],
             'features': [
                 'Generazione codice',
@@ -305,14 +281,14 @@ class LLMHandler:
 
 
 def get_fallback_response(language, query):
-    """Risposta di fallback se Ollama non è disponibile"""
-    return f"""I apologize, but I cannot access my neural network at this moment. 
-The local LLM service (Ollama) appears to be offline.
+    """Risposta di fallback se l'endpoint Mistral locale non e' disponibile."""
+    return f"""I apologize, but I cannot access my neural network at this moment.
+The local Mistral service (OpenAI-compatible endpoint) appears to be offline.
 
 To enable intelligent responses:
-1. Install Ollama: https://ollama.ai
-2. Run: ollama pull codellama
-3. Start Ollama service
+1. Install Ollama: https://ollama.com
+2. Run: ollama pull mistral:7b-instruct-q4_K_M
+3. Start the Ollama service (it exposes the OpenAI-compatible /v1 API)
 
 Your query about {language}: "{query}" will be processed once the service is available.
 

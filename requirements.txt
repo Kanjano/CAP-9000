@@ -2,14 +2,16 @@
 #
 # Install:  pip install -r requirements.txt
 #
-# Runtime LLM is served by Ollama (https://ollama.com), not a Python package.
-#   ollama pull qwen2.5-coder:3b   # default model (fast, ~1.9 GB)
-#   ollama pull codellama          # fallback model
+# Runtime LLM is Mistral, served locally behind an OpenAI-compatible endpoint
+# (Ollama exposes /v1), not a Python package.
+#   ollama pull mistral:7b-instruct-q4_K_M   # default model (local dev, ~4.4 GB)
+#   # EliteBook target (>=24GB): Devstral Small 2 24B
 
 # --- Core backend (required) ---
 flask==3.0.3
 flask-cors==4.0.1
 requests==2.32.3
+openai==2.44.0
 
 # --- Optional: offline documentation downloader (download_docs.py) ---
 beautifulsoup4==4.12.3
