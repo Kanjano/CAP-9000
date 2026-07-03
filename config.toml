@@ -1,0 +1,41 @@
+# CAP 9000 - Configurazione modello locale (Mistral offline)
+#
+# Formato ispirato alla doc ufficiale Mistral (Vibe Code CLI, provider
+# OpenAI-compatible): https://docs.mistral.ai/vibe/code/cli/offline-models
+#
+# CAP 9000 gira interamente offline su un endpoint OpenAI-compatibile.
+# In locale (dev, 16GB) il provider e' Ollama con Mistral 7B.
+# Sul target HP EliteBook (>=24GB) usare Devstral Small 2 24B.
+#
+# I valori qui sono documentativi/per tooling esterno: il runtime Python
+# legge config.py (sovrascrivibile via variabili d'ambiente CAP9000_*).
+
+[[providers]]
+name = "local"
+api_base = "http://localhost:11434/v1"   # Ollama OpenAI-compatible
+api_style = "openai"
+backend = "generic"
+api_key = "not-needed"
+
+# --- Modello attivo in locale (dev machine, 16GB) ---------------------------
+[[models]]
+name = "mistral:7b-instruct-q4_K_M"
+provider = "local"
+alias = "mistral-local"
+temperature = 0.3
+top_p = 0.9
+max_tokens = 320          # cap per latenza < 8s su CPU locale
+
+# --- Modello target EliteBook (>=24GB) --------------------------------------
+# Abilitare sul portatile aziendale: pull devstral, poi active_model = "devstral-local".
+[[models]]
+name = "mistralai/Devstral-Small-2-24B-Instruct-2512"
+provider = "local"
+alias = "devstral-local"
+temperature = 0.3
+top_p = 0.9
+max_tokens = 1024
+
+active_model = "mistral-local"
+enable_telemetry = false
+enable_auto_update = false

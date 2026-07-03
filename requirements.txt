@@ -1,23 +1,23 @@
-# Requirements
+# CAP 9000 - Python dependencies (local execution)
+#
+# Install:  pip install -r requirements.txt
+#
+# Runtime LLM is Mistral, served locally behind an OpenAI-compatible endpoint
+# (Ollama exposes /v1), not a Python package.
+#   ollama pull mistral:7b-instruct-q4_K_M   # default model (local dev, ~4.4 GB)
+#   # EliteBook target (>=24GB): Devstral Small 2 24B
 
-## Python Packages
-- tensorflow==2.9.0
-- numpy==1.21.0
-- pandas==1.3.0
-- scikit-learn==1.0
-- flask==2.0.1
-- flask-cors==4.0.0
-- requests==2.31.0
-- beautifulsoup4==4.12.2
-- langdetect==1.0.9
+# --- Core backend (required) ---
+flask==3.0.3
+flask-cors==4.0.1
+requests==2.32.3
+openai==2.44.0
 
-## Recursive Reasoning (TRM Integration)
-- torch>=2.0.0
-- torchvision>=0.15.0
+# --- Optional: offline documentation downloader (download_docs.py) ---
+beautifulsoup4==4.12.3
 
-## Additional Tools
-- Bazel for building the CLgen project
-
-## Optional: Download local documentation
-# Run once to download official docs for offline use:
-# python download_docs.py
+# NOTE: tensorflow / numpy / pandas / scikit-learn / langdetect were declared
+# previously but never imported anywhere in the codebase -> removed.
+# torch was only used by an unused prototype neural net (recursive_reasoning)
+# and is now imported lazily; install it ONLY to experiment with that module:
+#   pip install torch

@@ -25,7 +25,7 @@ if ! command -v ollama &> /dev/null; then
     echo "Per installare Ollama:"
     echo "1. Visita: https://ollama.ai"
     echo "2. Scarica e installa Ollama per macOS"
-    echo "3. Esegui: ollama pull codellama"
+    echo "3. Esegui: ollama pull qwen2.5-coder:3b   (modello di default, veloce)"
     echo ""
     exit 1
 fi
@@ -42,12 +42,14 @@ for i in {1..20}; do
     if check_ollama; then
         echo "✅ Ollama avviato con successo (PID: $OLLAMA_PID)"
         
-        # Verifica se il modello codellama è disponibile
-        if ollama list | grep -q "codellama"; then
-            echo "✅ Modello codellama disponibile"
+        # Verifica modello: default qwen2.5-coder:3b, fallback codellama
+        if ollama list | grep -q "qwen2.5-coder"; then
+            echo "✅ Modello qwen2.5-coder disponibile (default)"
+        elif ollama list | grep -q "codellama"; then
+            echo "✅ Modello codellama disponibile (fallback)"
         else
-            echo "⚠️  Modello codellama non trovato"
-            echo "📥 Download consigliato: ollama pull codellama"
+            echo "⚠️  Nessun modello di codice trovato"
+            echo "📥 Download consigliato: ollama pull qwen2.5-coder:3b"
         fi
         
         exit 0

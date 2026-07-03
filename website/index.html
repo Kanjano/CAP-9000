@@ -375,16 +375,16 @@
             <div class="feature-card">
                 <h3 data-i18n="feature1Title">🧠 Hybrid AI System</h3>
                 <p data-i18n="feature1Desc">
-                    CodeLlama 7B + Recursive Reasoning Module (5.2M params) with intelligent auto-detection. 
-                    Simple queries use direct LLM, complex ones activate multi-step reasoning for superior results.
+                    Mistral 7B Instruct (Q4_K_M) via OpenAI-compatible /v1 endpoint and lightweight reasoning with intelligent auto-detection.
+                    Simple queries use the direct LLM, complex ones add a concise reasoning step for superior results.
                 </p>
             </div>
 
             <div class="feature-card">
                 <h3 data-i18n="feature2Title">⚡ ChatGPT-Style Streaming</h3>
                 <p data-i18n="feature2Desc">
-                    Progressive text rendering via Python Bridge (stdin/stdout). Responses appear word-by-word in ~2s 
-                    with 40-50% faster inference. Zero HTTP overhead, direct Electron ↔ Python communication.
+                    Progressive text rendering via Python Bridge (stdin/stdout). Responses appear word-by-word in ~1-2s,
+                    with full answers in under 8s (avg ~4.3s) thanks to the faster model and tuned generation. Zero HTTP overhead, direct Electron ↔ Python communication.
                 </p>
             </div>
 
@@ -399,8 +399,8 @@
             <div class="feature-card">
                 <h3 data-i18n="feature4Title">📚 RAG System + Intelligent Cache</h3>
                 <p data-i18n="feature4Desc">
-                    Retrieval-Augmented Generation with official docs (Python, Java, JavaScript, C, C++, Go). 
-                    Smart caching system reduces redundant queries. PyTorch-based reasoning for complex problems.
+                    Optional Retrieval-Augmented Generation with official docs (Python, Java, JavaScript, C, C++, Go).
+                    Smart caching reduces redundant queries. Lightweight prompt-based reasoning for complex problems, fully configurable.
                 </p>
             </div>
 
@@ -428,10 +428,10 @@
                 <div style="padding: 15px; background: rgba(255, 0, 0, 0.05); border-radius: 8px; border: 1px solid rgba(255, 0, 0, 0.2);">
                     <h4 style="color: #ff0000; margin-bottom: 10px;">🧠 AI Core</h4>
                     <ul style="list-style: none; padding: 0; color: #c0c0c0; line-height: 1.8;">
-                        <li>• CodeLlama 7B (Q4_0)</li>
-                        <li>• PyTorch 2.x</li>
+                        <li>• Mistral 7B Instruct (Q4_K_M)</li>
+                        <li>• OpenAI-compatible /v1 endpoint</li>
                         <li>• Ollama Runtime</li>
-                        <li>• Custom Reasoning Module</li>
+                        <li>• Lightweight Reasoning + Cache</li>
                     </ul>
                 </div>
                 <div style="padding: 15px; background: rgba(255, 0, 0, 0.05); border-radius: 8px; border: 1px solid rgba(255, 0, 0, 0.2);">
@@ -466,9 +466,10 @@
                 <h4 style="color: #ff0000; margin-bottom: 15px; text-align: center;">⚙️ Architecture Highlights</h4>
                 <ul style="color: #c0c0c0; line-height: 2; max-width: 800px; margin: 0 auto;">
                     <li><strong style="color: #ff4444;">Zero HTTP Overhead:</strong> Direct Electron ↔ Python communication via stdin/stdout</li>
-                    <li><strong style="color: #ff4444;">Hybrid Reasoning:</strong> Auto-detection switches between Simple (5-10s) and Reasoning (8-15s) modes</li>
+                    <li><strong style="color: #ff4444;">Fast Responses:</strong> All replies under 8s (avg ~4.3s, max ~6.6s on Apple M2 Pro, 100-query benchmark)</li>
+                    <li><strong style="color: #ff4444;">Hybrid Reasoning:</strong> Auto-detection between Simple and lightweight Reasoning, both within the 8s budget</li>
                     <li><strong style="color: #ff4444;">Smart Caching:</strong> LRU cache with 1000-item capacity reduces redundant LLM calls</li>
-                    <li><strong style="color: #ff4444;">Progressive Rendering:</strong> ChatGPT-style streaming with ~2s first token latency</li>
+                    <li><strong style="color: #ff4444;">Progressive Rendering:</strong> ChatGPT-style streaming with ~1-2s first token latency</li>
                 </ul>
             </div>
         </div>
@@ -570,13 +571,13 @@
                 footerQuote: "\"I'm sorry, Dave. I'm afraid I can't do that.\" - But I can help you code.",
                 footerCopyright: "All systems operational.",
                 feature1Title: "🧠 Hybrid AI System",
-                feature1Desc: "CodeLlama 7B + Recursive Reasoning Module (5.2M params) with intelligent auto-detection. Simple queries use direct LLM, complex ones activate multi-step reasoning for superior results.",
+                feature1Desc: "Mistral 7B Instruct (Q4_K_M) via OpenAI-compatible /v1 endpoint and lightweight reasoning with intelligent auto-detection. Simple queries use the direct LLM, complex ones add a concise reasoning step for superior results.",
                 feature2Title: "⚡ ChatGPT-Style Streaming",
-                feature2Desc: "Progressive text rendering via Python Bridge (stdin/stdout). Responses appear word-by-word in ~2s with 40-50% faster inference. Zero HTTP overhead, direct Electron ↔ Python communication.",
+                feature2Desc: "Progressive text rendering via Python Bridge (stdin/stdout). Responses appear word-by-word in ~1-2s, with full answers in under 8s (avg ~4.3s) thanks to the faster model and tuned generation. Zero HTTP overhead, direct Electron ↔ Python communication.",
                 feature3Title: "🌍 Multi-Language Support",
                 feature3Desc: "Automatic detection of your system language with support for Italian, English, French, German, Spanish, Portuguese, Dutch, and Polish. I adapt to your environment.",
                 feature4Title: "📚 RAG System + Intelligent Cache",
-                feature4Desc: "Retrieval-Augmented Generation with official docs (Python, Java, JavaScript, C, C++, Go). Smart caching system reduces redundant queries. PyTorch-based reasoning for complex problems.",
+                feature4Desc: "Optional Retrieval-Augmented Generation with official docs (Python, Java, JavaScript, C, C++, Go). Smart caching reduces redundant queries. Lightweight prompt-based reasoning for complex problems, fully configurable.",
                 feature5Title: "💾 Conversation Management",
                 feature5Desc: "Persistent conversation history with import/export capabilities. Your interactions with me are never lost, ensuring continuity across sessions.",
                 feature6Title: "🎨 VS Code Theme",
@@ -598,13 +599,13 @@
                 footerQuote: "\"Mi dispiace, Dave. Temo di non poterlo fare.\" - Ma posso aiutarti a programmare.",
                 footerCopyright: "Tutti i sistemi operativi.",
                 feature1Title: "🧠 Sistema AI Ibrido",
-                feature1Desc: "CodeLlama 7B + Modulo Reasoning Ricorsivo (5.2M parametri) con auto-detection intelligente. Query semplici usano LLM diretto, quelle complesse attivano reasoning multi-step per risultati superiori.",
+                feature1Desc: "Mistral 7B Instruct (Q4_K_M) via endpoint OpenAI-compatibile /v1 e reasoning leggero con auto-detection intelligente. Le query semplici usano l'LLM diretto, quelle complesse aggiungono un passo di reasoning conciso per risultati superiori.",
                 feature2Title: "⚡ Streaming Stile ChatGPT",
-                feature2Desc: "Rendering progressivo del testo via Python Bridge (stdin/stdout). Risposte appaiono parola per parola in ~2s con inferenza 40-50% più veloce. Zero overhead HTTP, comunicazione diretta Electron ↔ Python.",
+                feature2Desc: "Rendering progressivo del testo via Python Bridge (stdin/stdout). Le risposte appaiono parola per parola in ~1-2s, complete in meno di 8s (media ~4.3s) grazie al modello più veloce e alla generazione ottimizzata. Zero overhead HTTP, comunicazione diretta Electron ↔ Python.",
                 feature3Title: "🌍 Supporto Multi-Lingua",
                 feature3Desc: "Rilevamento automatico della lingua del tuo sistema con supporto per italiano, inglese, francese, tedesco, spagnolo, portoghese, olandese e polacco. Mi adatto al tuo ambiente.",
                 feature4Title: "📚 Sistema RAG + Cache Intelligente",
-                feature4Desc: "Retrieval-Augmented Generation con documentazione ufficiale (Python, Java, JavaScript, C, C++, Go). Sistema di caching intelligente riduce query ridondanti. Reasoning basato su PyTorch per problemi complessi.",
+                feature4Desc: "Retrieval-Augmented Generation opzionale con documentazione ufficiale (Python, Java, JavaScript, C, C++, Go). Il caching intelligente riduce le query ridondanti. Reasoning leggero basato su prompt per problemi complessi, completamente configurabile.",
                 feature5Title: "💾 Gestione Conversazioni",
                 feature5Desc: "Cronologia conversazioni persistente con capacità di import/export. Le tue interazioni con me non vengono mai perse, garantendo continuità tra le sessioni.",
                 feature6Title: "🎨 Tema VS Code",

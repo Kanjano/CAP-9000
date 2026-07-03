@@ -17,7 +17,28 @@ function App() {
   const [currentConversationId, setCurrentConversationId] = useState(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [streamingMessageIndex, setStreamingMessageIndex] = useState(null)
+  const [serverHealth, setServerHealth] = useState({ status: 'checking', model: null, params: null, timestamp: null, error: null })
   const messagesEndRef = useRef(null)
+
+  // Backend locale (Flask). Sovrascrivibile via env Vite.
+  const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5001'
+
+  // Healthcheck periodico dell'endpoint Mistral locale (indicatore stato).
+  useEffect(() => {
+    let cancelled = false
+    const checkHealth = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/health`)
+        const data = await res.json()
+        if (!cancelled) setServerHealth({ ...data, status: data.available ? 'online' : 'offline' })
+      } catch (e) {
+        if (!cancelled) setServerHealth({ status: 'offline', model: null, params: null, timestamp: null, error: String(e) })
+      }
+    }
+    checkHealth()
+    const id = setInterval(checkHealth, 15000)
+    return () => { cancelled = true; clearInterval(id) }
+  }, [])
 
   // Rileva lingua dal sistema operativo (macOS, Windows, Linux)
   const detectSystemLanguage = () => {
@@ -319,20 +340,57 @@ function App() {
             </div>
           </div>
 
-          {/* Right: Programming Language Selector Only */}
-          <div className="flex items-center gap-2">
-            <span className="text-red-500 text-xs opacity-70">Language:</span>
-            <select 
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="bg-black border border-red-900 text-red-400 px-3 py-1.5 rounded text-sm focus:outline-none focus:border-hal-red"
+          {/* Right: Server status badge + Language selector */}
+          <div className="flex items-center gap-4">
+            {/* Local Mistral status badge */}
+            <a
+              href="https://docs.mistral.ai/vibe/code/cli/offline-models"
+              target="_blank"
+              rel="noopener noreferrer"
+              title={serverHealth.status === 'online'
+                ? `Model: ${serverHealth.model}\nTemp: ${serverHealth.params?.temperature} · top_p: ${serverHealth.params?.top_p} · max_tokens: ${serverHealth.params?.max_tokens}\nLast sync: ${serverHealth.timestamp}\nMistral docs ↗`
+                : 'Server Mistral locale OFFLINE — vedi istruzioni di ripristino. Mistral docs ↗'}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded border text-xs transition-colors ${
+                serverHealth.status === 'online'
+                  ? 'border-green-700 bg-green-950/40 text-green-400 hover:bg-green-900/40'
+                  : serverHealth.status === 'checking'
+                    ? 'border-yellow-700 bg-yellow-950/40 text-yellow-400'
+                    : 'border-red-700 bg-red-950/40 text-red-400 hover:bg-red-900/40'
+              }`}
             >
-              {languages.map(lang => (
-                <option key={lang} value={lang}>{lang}</option>
-              ))}
-            </select>
+              <span className={`w-2 h-2 rounded-full ${
+                serverHealth.status === 'online' ? 'bg-green-500 animate-pulse'
+                  : serverHealth.status === 'checking' ? 'bg-yellow-500'
+                  : 'bg-red-500'
+              }`}></span>
+              <span className="font-medium">Local Mistral Devstral</span>
+              {serverHealth.status === 'online' && serverHealth.model && (
+                <span className="opacity-60 hidden sm:inline">· {serverHealth.model}</span>
+              )}
+            </a>
+
+            <div className="flex items-center gap-2">
+              <span className="text-red-500 text-xs opacity-70">Language:</span>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="bg-black border border-red-900 text-red-400 px-3 py-1.5 rounded text-sm focus:outline-none focus:border-hal-red"
+              >
+                {languages.map(lang => (
+                  <option key={lang} value={lang}>{lang}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
+
+        {/* Offline warning banner */}
+        {serverHealth.status === 'offline' && (
+          <div className="max-w-4xl mx-auto mt-3 px-3 py-2 rounded border border-red-700 bg-red-950/60 text-red-300 text-xs">
+            ⚠ Server Mistral locale offline. Ripristino:
+            <span className="opacity-90"> 1) avvia Ollama &nbsp; 2) <code className="text-red-200">ollama pull mistral:7b-instruct-q4_K_M</code> &nbsp; 3) verifica <code className="text-red-200">{API_BASE}/api/health</code></span>
+          </div>
+        )}
       </div>
 
       {/* Chat Container - Scrollable */}

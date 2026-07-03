@@ -2,12 +2,12 @@
 Query Enhancer per CAP 9000
 
 Migliora la comprensione delle domande usando un modello NLU
-prima di passarle a CodeLlama per la generazione del codice.
+prima di passarle a Mistral per la generazione del codice.
 
 Strategia: Usa un modello generale (Mistral/Llama2) per:
 1. Comprendere l'intento della domanda
 2. Estrarre dettagli tecnici
-3. Riformulare in modo più chiaro per CodeLlama
+3. Riformulare in modo più chiaro per Mistral
 """
 
 import requests
@@ -38,7 +38,7 @@ class QueryEnhancer:
     
     def enhance_query(self, query, language, ui_language='it'):
         """
-        Migliora la query per una migliore comprensione da parte di CodeLlama
+        Migliora la query per una migliore comprensione da parte di Mistral
         
         Args:
             query: Domanda originale dell'utente

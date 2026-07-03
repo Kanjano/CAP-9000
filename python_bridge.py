@@ -34,14 +34,16 @@ def process_query(request_id, data, streaming=False):
     try:
         query = data.get('query', '')
         language = data.get('language', 'Python')
-        ui_language = data.get('ui_language', 'en')
+        ui_language = data.get('ui_language', 'auto')
         context = data.get('context', [])
-        
+
         print(f"Processing query: {query[:50]}... (streaming={streaming}, context_msgs={len(context)})", file=sys.stderr, flush=True)
-        
-        # Auto-detect UI language se non specificato
+
+        # Rileva sempre la lingua dal testo della query (override se non esplicito)
+        detected = detector.detect_language(query)
         if not ui_language or ui_language == 'auto':
-            ui_language = detector.detect_language(query)
+            ui_language = detected
+        print(f"[LANG] passed={data.get('ui_language','auto')} detected={detected} used={ui_language}", file=sys.stderr, flush=True)
         
         # Costruisci contesto conversazionale
         context_str = ""
