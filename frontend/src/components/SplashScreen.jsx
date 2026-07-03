@@ -30,7 +30,7 @@ export default function SplashScreen({ onComplete, translations }) {
     "Initializing CAP 9000 Hybrid System...",
     halQuotes[Math.floor(Math.random() * halQuotes.length)],
     "Verifying Ollama LLM service...",
-    "Loading CodeLlama model (code generation)...",
+    "Loading Mistral model (offline, code generation)...",
     halQuotes[Math.floor(Math.random() * halQuotes.length)],
     "Loading Recursive Reasoning Module (5.2M parameters)...",
     "Initializing Hybrid LLM Handler...",
@@ -56,14 +56,16 @@ export default function SplashScreen({ onComplete, translations }) {
         
         if (response.ok) {
           const data = await response.json();
-          const hasCodeLlama = data.models?.some(m => m.name.includes('codellama'));
-          
-          if (hasCodeLlama) {
+          const hasMistral = data.models?.some(m =>
+            m.name.includes('mistral') || m.name.includes('devstral')
+          );
+
+          if (hasMistral) {
             setOllamaStatus('online');
             setCanProceed(true);
           } else {
             setOllamaStatus('no-model');
-            setError('CodeLlama model not found. Please run: ollama pull codellama');
+            setError('Mistral model not found. Please run: ollama pull mistral:7b-instruct-q4_K_M');
           }
         } else {
           setOllamaStatus('offline');
@@ -190,7 +192,7 @@ export default function SplashScreen({ onComplete, translations }) {
             </span>
           </div>
           <div className="flex justify-between px-4">
-            <span>CODELLAMA MODEL:</span>
+            <span>MISTRAL MODEL:</span>
             <span className={canProceed && progress > 30 ? "text-green-500" : "text-yellow-500"}>
               {canProceed && progress > 30 ? "LOADED" : "LOADING..."}
             </span>
